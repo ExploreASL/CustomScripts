@@ -40,7 +40,7 @@ if ~exist(QParmsPath, 'file')
     return;
 end
 
-MotherData = xASL_import_json(QParmsPath); % spm_jsonread
+MotherData = xASL_io_ReadDataPar(QParmsPath); % JSON read of dataPar
 SubjectList = xASL_adm_GetFileList(AnalysisDir, '^\d{3}EPAD\d*(|_\d*)$', 'FPList', [0 Inf], true);
 
 if isempty(SubjectList)
@@ -69,7 +69,7 @@ for iSubject=1:length(SubjectList)
                 for iField=1:length(FieldsAre)
                     jsonData.(FieldsAre{iField}) = MotherData.(CurrentSite).(FieldsAre{iField});
                 end
-                xASL_adm_SaveJSON(jsonData,JSONPath{iJSON});
+                spm_jsonwrite(JSONPath{iJSON},jsonData);
             end
         end
     end

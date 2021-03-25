@@ -436,17 +436,17 @@ diary('off');
 if length(fields(DifferentStudyUIDList))>0
     warning('Some subjects had scans with different Study IDs, check this in the list, please check ./DifferentStudyUIDList.json');
     SavePath = fullfile(RawDir, 'DifferentStudyUIDList.json');
-    xASL_adm_SaveJSON(DifferentStudyUIDList, SavePath);
+    spm_jsonwrite(SavePath, DifferentStudyUIDList);
 end
 if length(fields(DeleteActiveList))>0
     warning('We deleted active scans as the inactive scans were more complete, please check ./DeleteActiveList.json');
     SavePath = fullfile(RawDir, 'DeleteActiveList.json');
-    xASL_adm_SaveJSON(DeleteActiveList, SavePath);
+    spm_jsonwrite(SavePath, DeleteActiveList);
 end
 if length(fields(ActiveMissingList))>0
     warning('Some subjects only had inactive complete scans, check this in the list, please check ./ActiveMissingList.json');
     SavePath = fullfile(RawDir, 'ActiveMissingList.json');
-    xASL_adm_SaveJSON(ActiveMissingList, SavePath);
+    spm_jsonwrite(SavePath, ActiveMissingList);
 end
 
 end
