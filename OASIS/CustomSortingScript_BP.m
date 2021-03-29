@@ -2,13 +2,14 @@
 
 ExploreASL_Master('',0);
 
-Odir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/OASIS/sourcedata/';
+Odir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/OASIS/test_sourcedata/';
 Ddir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/OASIS/rawdata';
 
 xASL_adm_CreateDir(Ddir);
 Slist1 = xASL_adm_GetFileList(Odir, '^OAS\d*', 'FPList',[0 Inf], true);
 
 fprintf('Converting OASIS data to ExploreASL-compatible:   ');
+iElement=1;
 
 for iS1=1:length(Slist1)
     xASL_TrackProgress(iS1, length(Slist1));
@@ -43,9 +44,9 @@ for iS1=1:length(Slist1)
             for iScan=1:length(ScanList)
                 NiftiDir = fullfile(ScanList{iScan}, 'NIFTI');
                 BIDSDir = fullfile(ScanList{iScan}, 'BIDS');
-                ScanType = {'asl' 'fieldmap','T1w','FLAIR','TOF_angio', 'swi'}; % DICOM name
-                SubDirName = {'perf' 'fmap' 'anat' 'anat' 'other' 'other'}; %these empty spaces can be 'Other' for TOF and swi
-                FileName = {'ASL4D' 'fieldmap' 'T1' 'FLAIR' 'TOF_angio' 'swi'};
+                ScanType = {'T1w','FLAIR','asl' 'fieldmap','TOF_angio', 'swi'}; % DICOM name
+                SubDirName = {'anat' 'anat' 'perf' 'fmap' 'other' 'other'}; %these empty spaces can be 'Other' for TOF and swi
+                FileName = {'T1' 'FLAIR' 'ASL4D' 'fieldmap' 'TOF_angio' 'swi'};
                 for iType=1:length(ScanType)
                     
                     % == Inside NIFTI folder (to get scan.niis)  == %
@@ -85,6 +86,15 @@ for iS1=1:length(Slist1)
                             
                             xASL_adm_CreateDir(DestDir);
                             xASL_Copy(BIDSlist{iBids}, DestFile, true);
+                            if strcmp(ScanType{iType},'T1w') % Extract information from first scan every time
+                                json = spm_jsonread(BIDSlist{iBids});
+                                if isfield(json,'ManufacturersModelName')
+                                    scannerList{iElement,1} = sub;
+                                    scannerList{iElement,2} = ses;
+                                    scannerList{iElement,3} = json.ManufacturersModelName;
+                                    iElement = iElement+1;
+                                end
+                            end
                         end
                     end
                 end

@@ -3,7 +3,7 @@
 ExploreASL_Master('',0);
 
 Odir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/OASIS/sourcedata/';
-Ddir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/OASIS/derivatives/ExploreASL';
+Ddir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/OASIS/rawdata';
 
 xASL_adm_CreateDir(Ddir);
 Slist1 = xASL_adm_GetFileList(Odir, '^OAS\d*', 'FPList',[0 Inf], true);
@@ -35,7 +35,7 @@ for iS1=1:length(Slist1)
             % BIDS folder -> dataset_description.JSON file
             BIDSfolder = xASL_adm_GetFileList(MRlist{iMR}, 'BIDS$', 'FPList',[0 Inf], true);
             JSONlist = xASL_adm_GetFileList(BIDSfolder, '\.json$', 'FPList',[0 Inf]);
-            DestFile = fullfile(DestSubjSesDir, [sub, '_', ses, '_', 'dataset_description.json']);
+            DestFile = fullfile(DestSubjSesDir, ['dataset_description.json']);
             xASL_Copy(JSONlist{1}, DestFile, true);
             
             % Scan folders (anat1, anat2, fmap1, fmap2, anat3, etc)
@@ -44,8 +44,7 @@ for iS1=1:length(Slist1)
                 NiftiDir = fullfile(ScanList{iScan}, 'NIFTI');
                 BIDSDir = fullfile(ScanList{iScan}, 'BIDS');
                 ScanType = {'asl' 'fieldmap','T1w','FLAIR','TOF_angio', 'swi'}; % DICOM name
-                SubDirHas = [1 1 1 1 0 0];
-                SubDirName = {'perf' 'fmap' 'anat' 'anat' '' ''}; %these empty spaces can be 'Other' for TOF and swi
+                SubDirName = {'perf' 'fmap' 'anat' 'anat' 'other' 'other'}; %these empty spaces can be 'Other' for TOF and swi
                 FileName = {'ASL4D' 'fieldmap' 'T1' 'FLAIR' 'TOF_angio' 'swi'};
                 for iType=1:length(ScanType)
                     
@@ -54,13 +53,10 @@ for iS1=1:length(Slist1)
                     if ~isempty(NIIlist)
                         for iNii=1:length(NIIlist) %this is only>1 if there is more than 1 scantype (ex:2 T1s)
                             clear DestDir DestFile
-                            if SubDirHas(iType)
+                            if iNii==1
                                 DestDir = fullfile(DestSubjSesDir, SubDirName{iType});
                                 DestFile = fullfile(DestDir, [sub, '_', ses, '_', FileName{iType} '.nii.gz']);
-                            elseif ~SubDirHas(iType) && iNii==1
-                                DestDir = DestSubjSesDir;
-                                DestFile = fullfile(DestDir, [sub, '_', ses, '_', FileName{iType} '.nii.gz']);
-                            elseif ~SubDirHas(iType) && iNii>1
+                            elseif iNii>1
                                 DestDir = DestSubjSesDir;
                                 DestFile = fullfile(DestDir, [sub, '_', ses, '_', FileName{iType} '_' num2str(iNii) '.nii.gz']);
                             else
@@ -77,13 +73,10 @@ for iS1=1:length(Slist1)
                     if ~isempty(BIDSlist)
                         for iBids=1:length(BIDSlist) %this is only>1 if there is more than 1 scantype (ex:2 T1s)
                             clear DestDir DestFile
-                            if SubDirHas(iType)
+                            if iBids==1
                                 DestDir = fullfile(DestSubjSesDir, SubDirName{iType});
                                 DestFile = fullfile(DestDir, [sub, '_', ses, '_', FileName{iType} '.json']);
-                            elseif ~SubDirHas(iType) && iBids==1
-                                DestDir = DestSubjSesDir;
-                                DestFile = fullfile(DestDir, [sub, '_', ses, '_', FileName{iType} '.nii.gz']);
-                            elseif ~SubDirHas(iType) && iBids>1
+                            elseif iBids>1
                                 DestDir = DestSubjSesDir;
                                 DestFile = fullfile(DestDir, [sub, '_', ses, '_', FileName{iType} '_' num2str(iBids) '.nii.gz']);
                             else
