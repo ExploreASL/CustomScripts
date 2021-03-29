@@ -3,7 +3,7 @@
 ExploreASL_Master('',0);
 
 Odir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/OASIS/sourcedata/';
-Ddir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/OASIS/derivatives/ExploreASL';
+Ddir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/OASIS/rawdata';
 
 xASL_adm_CreateDir(Ddir);
 Slist1 = xASL_adm_GetFileList(Odir, '^OAS\d*', 'FPList',[0 Inf], true);
@@ -35,7 +35,7 @@ for iS1=1:length(Slist1)
             % BIDS folder -> dataset_description.JSON file
             BIDSfolder = xASL_adm_GetFileList(MRlist{iMR}, 'BIDS$', 'FPList',[0 Inf], true);
             JSONlist = xASL_adm_GetFileList(BIDSfolder, '\.json$', 'FPList',[0 Inf]);
-            DestFile = fullfile(DestSubjSesDir, [sub, '_', ses, '_', 'dataset_description.json']);
+            DestFile = fullfile(DestSubjSesDir, ['dataset_description.json']);
             xASL_Copy(JSONlist{1}, DestFile, true);
             
             % Scan folders (anat1, anat2, fmap1, fmap2, anat3, etc)
