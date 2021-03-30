@@ -104,7 +104,7 @@ for iS1=1:length(Slist1)
     end
 end
 
-scanners = unique([scannerList(:,3)]);
+scanners = unique(scannerList(:,3));
 root = Ddir;
 for iScanner = 1:length(scanners)
     
@@ -116,9 +116,9 @@ for iScanner = 1:length(scanners)
     % Copy all subjects that have this type to the directory
     for iElement = 1:size(scannerList,2)
         if strcmp(scannerList{iElement,3},scanners{iScanner})
-            source = fullfile(root,scanners{iScanner});
-            FinalDest = fullfile(root,scanners{iScanner});
-            xASL_Copy(source,FinalDest); % Use the recursive option
+            source = fullfile(root,scannerList{iElement,1},scannerList{iElement,2});
+            FinalDest = fullfile(root,scanners{iScanner}, scannerList{iElement,1},scannerList{iElement,2});
+            xASL_Move(source,FinalDest,true); % Use the recursive option
             
         end
         
