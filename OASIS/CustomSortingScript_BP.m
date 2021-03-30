@@ -86,6 +86,7 @@ for iS1=1:length(Slist1)
                             
                             xASL_adm_CreateDir(DestDir);
                             xASL_Copy(BIDSlist{iBids}, DestFile, true);
+                            
                             if strcmp(ScanType{iType},'T1w') % Extract information from first scan every time
                                 json = spm_jsonread(BIDSlist{iBids});
                                 if isfield(json,'ManufacturersModelName')
@@ -102,3 +103,26 @@ for iS1=1:length(Slist1)
         end
     end
 end
+
+scanners = unique([scannerList(:,3)]);
+root = Ddir;
+for iScanner = 1:length(scanners)
+    
+    % Create the output directory for the current scanner type
+    FinalDest=fullfile(root,scanners{iScanner});
+    xASL_adm_CreateDir(FinalDest); 
+    
+    %==not completed==%
+    % Copy all subjects that have this type to the directory
+    for iElement = 1:size(scannerList,2)
+        if strcmp(scannerList{iElement,3},scanners{iScanner})
+            source = fullfile(root,scanners{iScanner});
+            FinalDest = fullfile(root,scanners{iScanner});
+            xASL_Copy(source,FinalDest); % Use the recursive option
+            
+        end
+        
+    end
+    
+end
+ 
