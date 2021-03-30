@@ -53,10 +53,17 @@ for iS1=1:length(Slist1)
                     NIIlist = xASL_adm_GetFileList(NiftiDir, ['.*' ScanType{iType} '\.nii$'], 'FPList',[0 Inf]);
                     if ~isempty(NIIlist)
                         for iNii=1:length(NIIlist) %this is only>1 if there is more than 1 scantype (ex:2 T1s)
+                            [~, ScanTypeName] = fileparts(NIIlist{iNii});
                             clear DestDir DestFile
                             if iNii==1
                                 DestDir = fullfile(DestSubjSesDir, SubDirName{iType});
-                                DestFile = fullfile(DestDir, [sub, '_', ses, '_', FileName{iType} '.nii.gz']);
+                                if ~isempty(regexp(ScanTypeName, '_run-','ONCE'))
+                                    [StartI, EndI] = regexp(ScanTypeName, '_run-\d*');
+                                    run= ScanTypeName(StartI:EndI);
+                                    DestFile = fullfile(DestDir, [sub, '_', ses, run, '_', FileName{iType} '.nii.gz']);
+                                else
+                                    DestFile = fullfile(DestDir, [sub, '_', ses, '_', FileName{iType} '.nii.gz']);
+                                end
                             elseif iNii>1
                                 DestDir = DestSubjSesDir;
                                 DestFile = fullfile(DestDir, [sub, '_', ses, '_', FileName{iType} '_' num2str(iNii) '.nii.gz']);
@@ -72,7 +79,7 @@ for iS1=1:length(Slist1)
                     % == Inside BIDS folder (to get scan.jsons) ==%
                     BIDSlist = xASL_adm_GetFileList(BIDSDir, ['.*' ScanType{iType} '\.json$'], 'FPList',[0 Inf]);
                     if ~isempty(BIDSlist)
-                        for iBids=1:length(BIDSlist) %this is only>1 if there is more than 1 scantype (ex:2 T1s)
+                        for iBids=1:length(BIDSlist)
                             clear DestDir DestFile
                             if iBids==1
                                 DestDir = fullfile(DestSubjSesDir, SubDirName{iType});
@@ -87,13 +94,15 @@ for iS1=1:length(Slist1)
                             xASL_adm_CreateDir(DestDir);
                             xASL_Copy(BIDSlist{iBids}, DestFile, true);
                             
-                            if strcmp(ScanType{iType},'T1w') % Extract information from first scan every time
+                            if strcmp(ScanType{iType},'T1w') % Extract information from first scan every time -> with this '_' before T1w it works with the runs
                                 json = spm_jsonread(BIDSlist{iBids});
-                                if isfield(json,'ManufacturersModelName')
-                                    scannerList{iElement,1} = sub;
-                                    scannerList{iElement,2} = ses;
-                                    scannerList{iElement,3} = json.ManufacturersModelName;
-                                    iElement = iElement+1;
+                                if isempty(regexp(ScanTypeName, '_run-02','ONCE')) %this should actually be digit>1 instead of 2
+                                    if isfield(json,'ManufacturersModelName')
+                                        scannerList{iElement,1} = sub;
+                                        scannerList{iElement,2} = ses;
+                                        scannerList{iElement,3} = json.ManufacturersModelName;
+                                        iElement = iElement+1;
+                                    end
                                 end
                             end
                         end
@@ -114,7 +123,7 @@ for iScanner = 1:length(scanners)
     
     %==not completed==%
     % Copy all subjects that have this type to the directory
-    for iElement = 1:size(scannerList,2)
+    for iElement = 1:size(scannerList,1)
         if strcmp(scannerList{iElement,3},scanners{iScanner})
             source = fullfile(root,scannerList{iElement,1},scannerList{iElement,2});
             FinalDest = fullfile(root,scanners{iScanner}, scannerList{iElement,1},scannerList{iElement,2});
