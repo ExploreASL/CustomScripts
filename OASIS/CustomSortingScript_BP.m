@@ -100,7 +100,7 @@ for iS1=1:length(Slist1)
                                     if isfield(json,'ManufacturersModelName')
                                         scannerList{iElement,1} = sub;
                                         scannerList{iElement,2} = ses;
-                                        scannerList{iElement,3} = json.ManufacturersModelName;
+                                        scannerList{iElement,3} = [json.Manufacturer '_' json.ManufacturersModelName '_' json.DeviceSerialNumber '_' json.SoftwareVersions];
                                         iElement = iElement+1;
                                     end
                                 end
@@ -121,12 +121,11 @@ for iScanner = 1:length(scanners)
     FinalDest=fullfile(root,scanners{iScanner});
     xASL_adm_CreateDir(FinalDest); 
     
-    %==not completed==%
     % Copy all subjects that have this type to the directory
     for iElement = 1:size(scannerList,1)
         if strcmp(scannerList{iElement,3},scanners{iScanner})
             source = fullfile(root,scannerList{iElement,1},scannerList{iElement,2});
-            FinalDest = fullfile(root,scanners{iScanner}, scannerList{iElement,1},scannerList{iElement,2});
+            FinalDest = fullfile(FinalDest, scannerList{iElement,1},scannerList{iElement,2});
             xASL_Move(source,FinalDest,true); % Use the recursive option
             
         end
@@ -134,4 +133,9 @@ for iScanner = 1:length(scanners)
     end
     
 end
- 
+
+% == Copying the WMH_SEG from OASIS/derivatives/ExploreASL_PreviousRun ==
+
+%if the scanner's folders are the same, check inside for the subject
+%number, copy the WMH_SEG (change the name of the WMH_SEG with bids
+%structure maybe? -> OAS3001_sesd1717_WMH_SEG)
