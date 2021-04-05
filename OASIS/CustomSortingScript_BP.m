@@ -131,18 +131,30 @@ end
 
 scanners = unique(scannerList(:,3));
 root = Ddir;
+
+NoASLDest=fullfile(root,'SubjectsWithoutASL'); %Create a folder for subjects with no ASL scans
+xASL_adm_CreateDir(NoASLDest);
+
 for iScanner = 1:length(scanners)
     
     % Create the output directory for the current scanner type
    
     FinalDest_Temp=fullfile(root,scanners{iScanner});
-    xASL_adm_CreateDir(fullfile(FinalDest_Temp));
+    xASL_adm_CreateDir(FinalDest_Temp);
+    
     
     % Copy all subjects that have this type to the directory
     for i = 1:size(scannerList,1)
         if strcmp(scannerList{i,3},scanners{iScanner})
             source = fullfile(root,scannerList{i,1},scannerList{i,2});
-            FinalDest = fullfile(FinalDest_Temp, scannerList{i,1},scannerList{i,2});
+            ASL_dir=fullfile(source, 'perf');
+            ASLfile_find=xASL_adm_GetFileList(ASL_dir, '\ASL4D.nii.gz$', 'FPList',[0 Inf]); %check if ther
+            if isempty (ASLfile_find)
+                FinalDest = fullfile(NoASLDest, scannerList{i,1},scannerList{i,2});
+            else
+                FinalDest = fullfile(FinalDest_Temp, scannerList{i,1},scannerList{i,2});
+            end
+            
             xASL_Move(source,FinalDest,true); % Use the recursive option
         end
     end
