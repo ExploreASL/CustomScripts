@@ -167,3 +167,14 @@ for iScanner = 1:length(scanners)
         end
     end
 end
+
+% == Delete the remaining "sub-OAS..." folders (Should be empty now) ==
+
+Subjfolders = unique(scannerList(:,1));
+for i=1:length(Subjfolders)
+    SubjFoldersDir = fullfile(root,Subjfolders{i});
+    SubjFiles=xASL_adm_GetFileList(SubjFoldersDir, '^.+$', 'FPList',[0 Inf]); %The Reg Exp matches all files
+    if isempty(SubjFiles)
+        xASL_delete(SubjFoldersDir);
+    end
+end
