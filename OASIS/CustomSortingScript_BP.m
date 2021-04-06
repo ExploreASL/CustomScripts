@@ -80,13 +80,20 @@ for iS1=1:length(Slist1)
                     BIDSlist = xASL_adm_GetFileList(BIDSDir, ['.*' ScanType{iType} '\.json$'], 'FPList',[0 Inf]);
                     if ~isempty(BIDSlist)
                         for iBids=1:length(BIDSlist)
+                            [~, JsonScanTypeName] = fileparts(BIDSlist{iBids});
                             clear DestDir DestFile
                             if iBids==1
                                 DestDir = fullfile(DestSubjSesDir, SubDirName{iType});
-                                DestFile = fullfile(DestDir, [sub, '_', ses, '_', FileName{iType} '.json']);
+                                if ~isempty(regexp(JsonScanTypeName, '_run-','ONCE'))
+                                    [StartI, EndI] = regexp(JsonScanTypeName, '_run-\d*');
+                                    run= JsonScanTypeName(StartI:EndI);
+                                    DestFile = fullfile(DestDir, [sub, '_', ses, run, '_', FileName{iType} '.json']);
+                                else
+                                    DestFile = fullfile(DestDir, [sub, '_', ses, '_', FileName{iType} '.json']);
+                                end
                             elseif iBids>1
                                 DestDir = DestSubjSesDir;
-                                DestFile = fullfile(DestDir, [sub, '_', ses, '_', FileName{iType} '_' num2str(iBids) '.nii.gz']);
+                                DestFile = fullfile(DestDir, [sub, '_', ses, '_', FileName{iType} '_' num2str(iBids) '.json']);
                             else
                                 warning(['Didnt know what to do for ' BIDSlist{iBids}]);
                             end
@@ -111,19 +118,20 @@ for iS1=1:length(Slist1)
                 end
             end
             
+              % UNCOMMENT FOR DERIVATIVES %
             
-            % == Copying the WMH_SEG from OASIS/derivatives/ExploreASL_PreviousRun ==
-            % FIRST RUN 'renameWMH_SEGMfiles.m'
-            clear WMHsesList
-            WMHfilesDir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/OASIS/rawdata/WMH_files';
-            WMHsesList= xASL_adm_GetFileList(WMHfilesDir, [SubjName '_' ses '\_WMH_SEGM.nii.gz$'], 'FPList',[0 Inf]); %List all the WMH_SEGM files with the ses of the subject
-            if ~isempty (WMHsesList)
-                for i=1:length(WMHsesList)
-                    [~, WMHsesname] = fileparts(WMHsesList{i});
-                    DestFile= fullfile(DestSubjSesDir, WMHsesname);
-                    xASL_Copy(WMHsesList{i}, DestFile, true);
-                end
-            end
+%             % == Copying the WMH_SEG from OASIS/derivatives/ExploreASL_PreviousRun ==
+%             % FIRST RUN 'renameWMH_SEGMfiles.m'
+%             clear WMHsesList
+%             WMHfilesDir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/OASIS/rawdata/WMH_files';
+%             WMHsesList= xASL_adm_GetFileList(WMHfilesDir, [SubjName '_' ses '\_WMH_SEGM.nii.gz$'], 'FPList',[0 Inf]); %List all the WMH_SEGM files with the ses of the subject
+%             if ~isempty (WMHsesList)
+%                 for i=1:length(WMHsesList)
+%                     [~, WMHsesname] = fileparts(WMHsesList{i});
+%                     DestFile= fullfile(DestSubjSesDir, WMHsesname);
+%                     xASL_Copy(WMHsesList{i}, DestFile, true);
+%                 end
+%             end
         end
     end
 end
