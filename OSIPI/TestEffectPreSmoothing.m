@@ -1,21 +1,22 @@
-pathOriginalASL = '/Users/henk/ExploreASL/OSIPI_TF6.1/Synthetic/Dataset_001/asl.nii.gz';
-pathOriginalM0 = '/Users/henk/ExploreASL/OSIPI_TF6.1/Synthetic/Dataset_001/m0.nii.gz';
-pathT1 = '/Users/henk/ExploreASL/OSIPI_TF6.1/Synthetic/Dataset_001/T1.nii.gz';
+% 1. Get ASL and M0 NIfTIs
+ExploreASL;
+pathData = '/scratch/hjmutsaerts/OSIPI_TF6.1/Synthetic';
+NIIlist = xASL_adm_GetFileList(pathData, '^.*(M0|asl)\.nii$', 'FPListRec');
 
-pathOriginalASLSmoothed = '/Users/henk/ExploreASL/OSIPI_TF6.1/Synthetic/Dataset_001/asl_smooth.nii.gz';
-pathOriginalM0Smoothed = '/Users/henk/ExploreASL/OSIPI_TF6.1/Synthetic/Dataset_001/m0_smooth.nii.gz';
+for iNii=1:length(NIIlist)
+    [Fpath, Ffile] = xASL_fileparts(NIIlist{iNii});
+    pathT1 = fullfile(xASL_fileparts(NIIlist{iNii}), 'T1.nii');
+    pathSmooth = fullfile(Fpath, [Ffile '_smooth.nii']);
+    
+    % 1) reslice them back to T1w
+    xASL_spm_reslice(pathT1, NIIlist{iNii}, [], [], 1, pathSmooth, 4);
+    
+    % 2) smooth them
+    xASL_spm_smooth(pathSmooth, [5 5 5], pathSmooth);
+    
+    % 3) 
+    xASL_spm_reslice(NIIlist{iNii}, pathSmooth, [], [], 1, pathSmooth, 4);
+end    
 
-pathOriginalASL_highRes = '/Users/henk/ExploreASL/OSIPI_TF6.1/Synthetic/Dataset_001/asl_highRes.nii.gz';
-pathOriginalM0_highRes = '/Users/henk/ExploreASL/OSIPI_TF6.1/Synthetic/Dataset_001/m0_highRes.nii.gz';
-
-% 1) reslice them back to T1
-xASL_spm_reslice(pathT1, pathOriginalM0, [], [], 1, pathOriginalM0_highRes, 2);
-xASL_spm_reslice(pathT1, pathOriginalASL, [], [], 1, pathOriginalASL_highRes, 2);
-
-% 2) smooth them
-xASL_spm_smooth(pathOriginalM0_highRes, [5 5 5], pathOriginalM0_highRes);
-xASL_spm_smooth(pathOriginalASL_highRes, [5 5 5], pathOriginalASL_highRes);
-
-% 3) Downsample them
-xASL_spm_reslice(pathOriginalM0, pathOriginalM0_highRes, [], [], 1, pathOriginalM0_highRes, 2);
-xASL_spm_reslice(pathOriginalM0, pathOriginalASL_highRes, [], [], 1, pathOriginalASL_highRes, 2);
+% Re-zip all files
+xASL_adm_GzipAllFiles(pathData);
