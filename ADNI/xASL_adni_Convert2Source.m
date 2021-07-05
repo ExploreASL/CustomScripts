@@ -239,10 +239,12 @@ for iCase = 1:size(adniCases,1)
             % Merge (keep and rename first, delete others)
             if allAreTheSame
                 close all
+                fclose all;
                 for iJson = 1:numel(dataParJsons)
                     if iJson==1
                         newName = strrep(dataParJsons{iJson},'-session_1','');
-                        xASL_Move(dataParJsons{iJson},newName);
+                        xASL_Copy(dataParJsons{iJson},newName);
+                        xASL_delete(dataParJsons{iJson},1);
                     else
                         xASL_delete(dataParJsons{iJson});
                     end
@@ -250,9 +252,12 @@ for iCase = 1:size(adniCases,1)
             end
         else
             % Rename the single session to "dataPar.json" instead of "dataPar-session...json"
+            close all
+            fclose all;
             dataParJsons = xASL_adm_GetFileList(newCaseRoot,'^dataPar.+\.json$','FPListRec');
             newName = strrep(dataParJsons{1},'-session_1','');
-            xASL_Move(dataParJsons{iJson},newName);
+            xASL_Copy(dataParJsons{iJson},newName);
+            xASL_delete(dataParJsons{iJson});
         end
         
     else
