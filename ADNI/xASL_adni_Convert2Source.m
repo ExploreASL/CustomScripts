@@ -132,6 +132,7 @@ for iCase = 1:size(adniCases,1)
             
             % Determine new case directory
             newCase = fullfile(adniDirectoryResults,adniCases{iCase,1},'sourcedata','sub-001',dateList_ASL{iSessions,1});
+            newCaseRoot = fullfile(adniDirectoryResults,adniCases{iCase,1});
             
             % Copy ASL session to new directory
             xASL_Copy(fullfile(currentDir,ASL_name,dateList_ASL{iSessions,2}),fullfile(newCase,'ASL'));
@@ -190,7 +191,7 @@ for iCase = 1:size(adniCases,1)
                 json.x.Vendor = 'Siemens';
                 
                 % Write JSON file
-                spm_jsonwrite(fullfile(newCase,['dataPar-' thisSessions '.json']),json);
+                spm_jsonwrite(fullfile(newCaseRoot,['dataPar-' thisSessions '.json']),json);
                 
             end
             
@@ -220,6 +221,40 @@ for iCase = 1:size(adniCases,1)
                 end
             end
         end
+        
+        % Merge identical dataPar.json files
+        dataParJsons = xASL_adm_GetFileList(newCaseRoot,'^dataPar.+\.json$','FPListRec');
+        if numel(dataParJsons)>1
+            for iJson = 1:numel(dataParJsons)
+                fileID = fopen(dataParJsons{iJson},'r');
+                dataParJSON.(['file_' num2str(iJson)]) = fileread(dataParJsons{iJson});
+                % Check if files two to end are the same as the first one
+                allAreTheSame = true;
+                if iJson>1
+                    if ~strcmp(dataParJSON.(['file_' num2str(1)]),dataParJSON.(['file_' num2str(iJson)]))
+                        allAreTheSame = false;
+                    end
+                end
+            end
+            % Merge (keep and rename first, delete others)
+            if allAreTheSame
+                close all
+                for iJson = 1:numel(dataParJsons)
+                    if iJson==1
+                        newName = strrep(dataParJsons{iJson},'-session_1','');
+                        xASL_Move(dataParJsons{iJson},newName);
+                    else
+                        xASL_delete(dataParJsons{iJson});
+                    end
+                end
+            end
+        else
+            % Rename the single session to "dataPar.json" instead of "dataPar-session...json"
+            dataParJsons = xASL_adm_GetFileList(newCaseRoot,'^dataPar.+\.json$','FPListRec');
+            newName = strrep(dataParJsons{1},'-session_1','');
+            xASL_Move(dataParJsons{iJson},newName);
+        end
+        
     else
         warning('The ASL date list should not be empty...');
     end
