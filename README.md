@@ -1,4 +1,4 @@
-![ExploreASL](Design/ExploreASL_logoHeader.png)
+![ExploreASL](https://github.com/ExploreASL/ExploreASL/blob/main/Design/ExploreASL_logoHeader.png)
 
 # CustomScripts
 
