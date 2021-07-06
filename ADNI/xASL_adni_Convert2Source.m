@@ -68,6 +68,16 @@ end
 % Free up memory
 clear currentDir currentModalities foundASL iCase iModality
 
+% Define sourceStructure template
+sourceStructure.folderHierarchy = {'^(.)+$','session_.+$','^(ASL|T1w|M0|T2|FLAIR)$', 'S.+$'};
+sourceStructure.tokenOrdering = [1 0 2];
+sourceStructure.tokenSessionAliases = {'', ''};
+sourceStructure.tokenScanAliases = {'^ASL$','ASL4D','^T1w$','T1w','^M0$','M0','^T2$','T2w','^FLAIR$','FLAIR'};
+sourceStructure.bMatchDirectories = true;
+
+% Define studyPar template
+studyPar.Authors = 'RandomText';
+
 % Remove ADNI cases without ASL scan
 removeIndex = find(~[adniCases{:,2}])';
 adniCases(removeIndex,:) = [];
@@ -119,7 +129,9 @@ for iCase = 1:size(adniCases,1)
     end
     % Compare lists with ASL list
     if ~isempty(dateList_ASL)
-        fprintf('Copy %s...\n',adniCases{iCase,1});
+        fprintf('Copy %s...    ',adniCases{iCase,1});
+        xASL_TrackProgress(iCase/size(adniCases,1)*100);
+        fprintf('\n');
         % Iterate over ASL sessions
         for iSessions = 1:numel(dateList_ASL)
             
@@ -176,7 +188,7 @@ for iCase = 1:size(adniCases,1)
                 % Create x struct
                 json.x = struct;
                 json.x.name = adniCases{iCase,1};
-                json.x.subject_regexp = '';
+                %json.x.subject_regexp = '';
                 if xasl.M0inASLsequence
                     json.x.M0PositionInASL4D = 1;
                 else
@@ -259,6 +271,10 @@ for iCase = 1:size(adniCases,1)
             xASL_Copy(dataParJsons{iJson},newName);
             xASL_delete(dataParJsons{iJson});
         end
+        % Add sourceStructure.json and studyPar.json
+        spm_jsonwrite(fullfile(newCaseRoot,'sourceStructure.json'),sourceStructure);
+        spm_jsonwrite(fullfile(newCaseRoot,'studyPar.json'),studyPar);
+        
         
     else
         warning('The ASL date list should not be empty...');
