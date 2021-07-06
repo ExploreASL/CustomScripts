@@ -76,7 +76,8 @@ sourceStructure.tokenScanAliases = {'^ASL$','ASL4D','^T1w$','T1w','^M0$','M0','^
 sourceStructure.bMatchDirectories = true;
 
 % Define studyPar template
-studyPar.Authors = 'RandomText';
+studyPar.Authors = 'ADNI';
+% studyPar.ASLContext = 'control,label'; % Can we automate this correctly?
 
 % Remove ADNI cases without ASL scan
 removeIndex = find(~[adniCases{:,2}])';
