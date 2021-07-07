@@ -77,7 +77,22 @@ sourceStructure.bMatchDirectories = true;
 
 % Define studyPar template
 studyPar.Authors = 'ADNI';
-% studyPar.ASLContext = 'control,label'; % Can we automate this correctly?
+studyPar.DatasetType = 'raw';
+studyPar.License = 'RandomText';
+studyPar.Authors = {'RandomText'};
+studyPar.Acknowledgements = 'RandomText';
+studyPar.HowToAcknowledge = 'Please cite this paper: https://www.ncbi.nlm.nih.gov/pubmed/001012092119281';
+studyPar.Funding = {'RandomText'};
+studyPar.EthicsApprovals = {'RandomText'};
+studyPar.ReferencesAndLinks = {'RandomText'};
+studyPar.DatasetDOI = 'RandomText';
+studyPar.VascularCrushing = false;
+studyPar.LabelingType = 'PASL';
+studyPar.PASLType = 'PICORE';
+studyPar.BackgroundSuppression = false;
+studyPar.M0 = false;
+studyPar.LabelingLocationDescription = 'Fixed, 9 cm below ACPC';
+studyPar.ASLContext = 'm0scan,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label';
 
 % Remove ADNI cases without ASL scan
 removeIndex = find(~[adniCases{:,2}])';
@@ -172,18 +187,33 @@ for iCase = 1:size(adniCases,1)
                     xasl.PLD = 2000;
                 end
                 xasl.labelingDuration = 700;
-                if regexpi(xasl.SoftwareVersions,'B15')
-                    xasl.sliceReadoutTime = 27.5;
-                else
-                    xasl.sliceReadoutTime = 42.0;
-                end
-                if regexpi(xasl.PulseSequenceType,'3D')
-                    xasl.sliceReadoutTime = 0;
-                end
+                
                 if regexpi(xasl.PulseSequenceType,'2D')
                     xasl.M0inASLsequence = 1;
                 else
                     xasl.M0inASLsequence = 0;
+                end
+                
+                % Fix slice timings
+                if regexpi(xasl.SoftwareVersions,'B15')
+                    if regexpi(xasl.PulseSequenceType,'2D')
+                        studyPar.SliceTiming = {0,0.0275,0.0575,0.085,0.115,0.1425,0.1725,...
+                                                  0.2025,0.23,0.26,0.2875,0.3175,0.345,...
+                                                  0.375,0.405,0.4325,0.4625,0.49,0.52,...
+                                                  0.55,0.5775,0.6075,0.635,0.665};
+                    end
+                else
+                    if regexpi(xasl.PulseSequenceType,'2D')
+                        if isfield(studyPar,'SliceTiming')
+                            studyPar = rmfield(studyPar,'SliceTiming');
+                        end
+                    end
+                end
+                
+                if regexpi(xasl.PulseSequenceType,'3D')
+                    if isfield(studyPar,'SliceTiming')
+                        studyPar = rmfield(studyPar,'SliceTiming');
+                    end
                 end
                 
                 % Create x struct
@@ -198,7 +228,7 @@ for iCase = 1:size(adniCases,1)
                 json.x.Q.LabelingType = 'PASL';
                 json.x.Q.Initial_PLD = xasl.PLD;
                 json.x.Q.LabelingDuration = xasl.labelingDuration;
-                json.x.Q.SliceReadoutTime = xasl.sliceReadoutTime;
+                % json.x.Q.SliceReadoutTime = xasl.sliceReadoutTime;
                 json.x.readout_dim = xasl.PulseSequenceType;
                 json.x.Quality = 1;
                 json.x.Vendor = 'Siemens';
