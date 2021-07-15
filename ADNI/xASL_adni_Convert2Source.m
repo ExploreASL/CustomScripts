@@ -218,10 +218,10 @@ for iCase = 1:size(adniCases,1)
                 
                 % Create x struct
                 json.x = struct;
-                json.x.name = adniCases{iCase,1};
+                json.x.dataset.name = adniCases{iCase,1};
                 %json.x.subject_regexp = '';
                 if xasl.M0inASLsequence
-                    json.x.M0PositionInASL4D = 1;
+                    json.x.modules.asl.M0PositionInASL4D = 1;
                 else
                     json.x.M0 = 'UseControlAsM0';
                 end
@@ -229,9 +229,9 @@ for iCase = 1:size(adniCases,1)
                 json.x.Q.Initial_PLD = xasl.PLD;
                 json.x.Q.LabelingDuration = xasl.labelingDuration;
                 % json.x.Q.SliceReadoutTime = xasl.sliceReadoutTime;
-                json.x.readout_dim = xasl.PulseSequenceType;
-                json.x.Quality = 1;
-                json.x.Vendor = 'Siemens';
+                json.x.Q.readoutDim = xasl.PulseSequenceType;
+                json.x.settings.Quality = 1;
+                json.x.Q.Vendor = 'Siemens';
                 
                 % Write JSON file
                 spm_jsonwrite(fullfile(newCaseRoot,['dataPar-' thisSessions '.json']),json);
