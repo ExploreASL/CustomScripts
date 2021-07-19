@@ -56,23 +56,40 @@ for iCase = 1:numel(adniCases)
     currentModalities = currentModalities';
     % Iterate over modalities
     foundASL = false;
+    foundT1 = false;
     for iModality = 1:numel(currentModalities)
         if regexpi(currentModalities{iModality,1}, 'ASL')
             foundASL = true;
         end
     end
+    for iModality = 1:numel(currentModalities)
+        if regexpi(currentModalities{iModality,1}, 'ASL')
+            foundASL = true;
+        end
+        if regexpi(currentModalities{iModality,1}, 'MPRAGE')
+            foundT1 = true;
+        end
+    end
     % Write value back
     adniCases{iCase,2} = foundASL;
+    % Write value back
+    adniCases{iCase,3} = foundT1;
 end
 
 % Free up memory
 clear currentDir currentModalities foundASL iCase iModality
 
 % Define sourceStructure template
-sourceStructure.folderHierarchy = {'^(.)+$','session_.+$','^(ASL|T1w|M0|T2|FLAIR)$', 'S.+$'};
-sourceStructure.tokenOrdering = [1 0 2];
+
+% token 1: (.+), token 2: (session_\\d{1}), token 3: (ASL|T1w|M0|T2|FLAIR)
+sourceStructure.folderHierarchy = {'^sub-(.+)$','^(session_\d{1}).+$','^(ASL|T1w|M0|T2|FLAIR)$', 'S.+$'};
+% subject: token 1, visit: token 2, session: none, scan: token 3
+sourceStructure.tokenOrdering = [1,2,0,3];
+% visit/session/scan aliases
+sourceStructure.tokenVisitAliases = {'session_1','_1','session_2','_2','session_3','_3','session_4','_4','session_5','_5','session_6','_6','session_7','_7'};
 sourceStructure.tokenSessionAliases = {'', ''};
 sourceStructure.tokenScanAliases = {'^ASL$','ASL4D','^T1w$','T1w','^M0$','M0','^T2$','T2w','^FLAIR$','FLAIR'};
+% Match directories
 sourceStructure.bMatchDirectories = true;
 
 % Define studyPar template
@@ -97,6 +114,10 @@ studyPar.ASLContext = 'm0scan,control,label,control,label,control,label,control,
 % Remove ADNI cases without ASL scan
 removeIndex = find(~[adniCases{:,2}])';
 adniCases(removeIndex,:) = [];
+
+% Remove ADNI cases without T1 scan
+removeIndex2 = find(~[adniCases{:,3}])';
+adniCases(removeIndex2,:) = [];
 
 %% Get sessions from date strings
 fprintf('Determining sessions from date strings...\n');
@@ -148,121 +169,75 @@ for iCase = 1:size(adniCases,1)
         fprintf('Copy %s...    ',adniCases{iCase,1});
         xASL_TrackProgress(iCase/size(adniCases,1)*100);
         fprintf('\n');
+        iSessionsNum = 1;
         % Iterate over ASL sessions
         for iSessions = 1:numel(dateList_ASL)
             
-            % Get this session
-            thisSessions = ['session_' num2str(iSessions)];
-            
             % Write new session format
             dateList_ASL{iSessions,2} = dateList_ASL{iSessions,1};
-            dateList_ASL{iSessions,1} = [thisSessions '_' dateList_ASL{iSessions,2}];
             
-            % Determine new case directory
-            newCase = fullfile(adniDirectoryResults,adniCases{iCase,1},'sourcedata','sub-001',dateList_ASL{iSessions,1});
-            newCaseRoot = fullfile(adniDirectoryResults,adniCases{iCase,1});
-            
-            % Copy ASL session to new directory
-            xASL_Copy(fullfile(currentDir,ASL_name,dateList_ASL{iSessions,2}),fullfile(newCase,'ASL'));
-            
-            % Get Dicoms
-            dcmPaths = xASL_adm_GetFileList(fullfile(newCase,'ASL'),'^.+\.dcm$','FPListRec');
-            if ~isempty(dcmPaths)
-                % headerDCM = xASL_io_DcmtkRead(dcmPaths{1});
-                
-                % Phoenix Protocol
-                [xasl,parameters,parameterList,phoenixProtocol] = xASL_bids_GetPhoenixProtocol(dcmPaths{1},true);
-                
-                if ~isfield(xasl,'SoftwareVersions')
-                    xasl.SoftwareVersions = 'unknown';
-                end
-                if ~isfield(xasl,'PulseSequenceType')
-                    xasl.PulseSequenceType = 'unknown';
-                end
-                
-                % Add dataPar.json
-                if ADNI_VERSION==2
-                    xasl.PLD = 1900;
-                else
-                    xasl.PLD = 2000;
-                end
-                xasl.labelingDuration = 700;
-                
-                if regexpi(xasl.PulseSequenceType,'2D')
-                    xasl.M0inASLsequence = 1;
-                else
-                    xasl.M0inASLsequence = 0;
-                end
-                
-                % Fix slice timings
-                if regexpi(xasl.SoftwareVersions,'B15')
-                    if regexpi(xasl.PulseSequenceType,'2D')
-                        studyPar.SliceTiming = {0,0.0275,0.0575,0.085,0.115,0.1425,0.1725,...
-                                                  0.2025,0.23,0.26,0.2875,0.3175,0.345,...
-                                                  0.375,0.405,0.4325,0.4625,0.49,0.52,...
-                                                  0.55,0.5775,0.6075,0.635,0.665};
-                    end
-                else
-                    if regexpi(xasl.PulseSequenceType,'2D')
-                        if isfield(studyPar,'SliceTiming')
-                            studyPar = rmfield(studyPar,'SliceTiming');
-                        end
-                    end
-                end
-                
-                if regexpi(xasl.PulseSequenceType,'3D')
-                    if isfield(studyPar,'SliceTiming')
-                        studyPar = rmfield(studyPar,'SliceTiming');
-                    end
-                end
-                
-                % Create x struct
-                json.x = struct;
-                json.x.dataset.name = adniCases{iCase,1};
-                %json.x.subject_regexp = '';
-                if xasl.M0inASLsequence
-                    json.x.modules.asl.M0PositionInASL4D = 1;
-                else
-                    json.x.M0 = 'UseControlAsM0';
-                end
-                json.x.Q.LabelingType = 'PASL';
-                json.x.Q.Initial_PLD = xasl.PLD;
-                json.x.Q.LabelingDuration = xasl.labelingDuration;
-                % json.x.Q.SliceReadoutTime = xasl.sliceReadoutTime;
-                json.x.Q.readoutDim = xasl.PulseSequenceType;
-                json.x.settings.Quality = 1;
-                json.x.Q.Vendor = 'Siemens';
-                
-                % Write JSON file
-                spm_jsonwrite(fullfile(newCaseRoot,['dataPar-' thisSessions '.json']),json);
-                
-            end
-            
-            % Check if there are other modalities for this session
+            % Check if ASL has a corresponding T1w, if not then skip the this visit
+            foundT1wForASL = false;
             for iSessions_MPRAGE = 1:numel(dateList_MPRAGE)
-                if strcmp(dateList_MPRAGE{iSessions_MPRAGE,1},dateList_ASL{iSessions,2})
-                    % Copy MPRAGE session to new directory
-                    xASL_Copy(fullfile(currentDir,MPRAGE_name,dateList_MPRAGE{iSessions_MPRAGE,1}),fullfile(newCase,'T1w'));
+                if strcmp(dateList_MPRAGE{iSessions_MPRAGE,1},dateList_ASL{iSessions,1})
+                    foundT1wForASL = true;
                 end
             end
-            for iSessions_FLAIR = 1:numel(dateList_FLAIR)
-                if strcmp(dateList_FLAIR{iSessions_FLAIR,1},dateList_ASL{iSessions,2})
-                    % Copy MPRAGE session to new directory
-                    xASL_Copy(fullfile(currentDir,FLAIR_name,dateList_FLAIR{iSessions_FLAIR,1}),fullfile(newCase,'FLAIR'));
+            
+            if foundT1wForASL
+                % Get this session
+                thisSessions = ['session_' num2str(iSessionsNum)];
+                iSessionsNum = iSessionsNum+1;
+                dateList_ASL{iSessions,1} = [thisSessions '_' dateList_ASL{iSessions,2}];
+                
+                % Determine new case directory
+                newCase = fullfile(adniDirectoryResults,adniCases{iCase,1},'sourcedata','sub-001',dateList_ASL{iSessions,1});
+                newCaseRoot = fullfile(adniDirectoryResults,adniCases{iCase,1});
+
+                % Copy ASL session to new directory
+                xASL_Copy(fullfile(currentDir,ASL_name,dateList_ASL{iSessions,2}),fullfile(newCase,'ASL'),1);
+
+                % Get Dicoms
+                dcmPaths = xASL_adm_GetFileList(fullfile(newCase,'ASL'),'^.+\.dcm$','FPListRec');
+                if ~isempty(dcmPaths)
+                    % headerDCM = xASL_io_DcmtkRead(dcmPaths{1});
+
+                    % Phoenix Protocol
+                    [xasl,parameters,parameterList,phoenixProtocol] = xASL_bids_GetPhoenixProtocol(dcmPaths{1},true);
+                    [xasl, json, studyPar] = xASL_adni_PhoenixFix(xasl, studyPar, ADNI_VERSION, adniCases, iCase);
+
+                    % Write JSON file
+                    spm_jsonwrite(fullfile(newCaseRoot,['dataPar-' thisSessions '.json']),json);
+
+                end
+
+                % Check if there are other modalities for this session
+                for iSessions_MPRAGE = 1:numel(dateList_MPRAGE)
+                    if strcmp(dateList_MPRAGE{iSessions_MPRAGE,1},dateList_ASL{iSessions,2})
+                        % Copy MPRAGE session to new directory
+                        xASL_Copy(fullfile(currentDir,MPRAGE_name,dateList_MPRAGE{iSessions_MPRAGE,1}),fullfile(newCase,'T1w'));
+                    end
+                end
+                for iSessions_FLAIR = 1:numel(dateList_FLAIR)
+                    if strcmp(dateList_FLAIR{iSessions_FLAIR,1},dateList_ASL{iSessions,2})
+                        % Copy MPRAGE session to new directory
+                        xASL_Copy(fullfile(currentDir,FLAIR_name,dateList_FLAIR{iSessions_FLAIR,1}),fullfile(newCase,'FLAIR'));
+                    end
+                end
+                for iSessions_CALIBRATION = 1:numel(dateList_CALIBRATION)
+                    if strcmp(dateList_CALIBRATION{iSessions_CALIBRATION,1},dateList_ASL{iSessions,2})
+                        % Copy MPRAGE session to new directory
+                        xASL_Copy(fullfile(currentDir,CALIBRATION_name,dateList_CALIBRATION{iSessions_CALIBRATION,1}),fullfile(newCase,'CALIBRATION'));
+                    end
+                end
+                for iSessions_M0 = 1:numel(dateList_M0)
+                    if strcmp(dateList_M0{iSessions_M0,1},dateList_ASL{iSessions,2})
+                        % Copy MPRAGE session to new directory
+                        xASL_Copy(fullfile(currentDir,M0_name,dateList_M0{iSessions_M0,1}),fullfile(newCase,'M0'));
+                    end
                 end
             end
-            for iSessions_CALIBRATION = 1:numel(dateList_CALIBRATION)
-                if strcmp(dateList_CALIBRATION{iSessions_CALIBRATION,1},dateList_ASL{iSessions,2})
-                    % Copy MPRAGE session to new directory
-                    xASL_Copy(fullfile(currentDir,CALIBRATION_name,dateList_CALIBRATION{iSessions_CALIBRATION,1}),fullfile(newCase,'CALIBRATION'));
-                end
-            end
-            for iSessions_M0 = 1:numel(dateList_M0)
-                if strcmp(dateList_M0{iSessions_M0,1},dateList_ASL{iSessions,2})
-                    % Copy MPRAGE session to new directory
-                    xASL_Copy(fullfile(currentDir,M0_name,dateList_M0{iSessions_M0,1}),fullfile(newCase,'M0'));
-                end
-            end
+            
         end
         
         % Merge identical dataPar.json files
@@ -310,6 +285,73 @@ for iCase = 1:size(adniCases,1)
     else
         warning('The ASL date list should not be empty...');
     end
+
+end
+
+
+%% Helper function
+function [xasl, json, studyPar] = xASL_adni_PhoenixFix(xasl, studyPar, ADNI_VERSION, adniCases, iCase)
+
+    if ~isfield(xasl,'SoftwareVersions')
+        xasl.SoftwareVersions = 'unknown';
+    end
+    if ~isfield(xasl,'PulseSequenceType')
+        xasl.PulseSequenceType = 'unknown';
+    end
+
+    % Add dataPar.json
+    if ADNI_VERSION==2
+        xasl.PLD = 1900;
+    else
+        xasl.PLD = 2000;
+    end
+    xasl.labelingDuration = 700;
+
+    if regexpi(xasl.PulseSequenceType,'2D')
+        xasl.M0inASLsequence = 1;
+    else
+        xasl.M0inASLsequence = 0;
+    end
+
+    % Fix slice timings
+    if regexpi(xasl.SoftwareVersions,'B15')
+        if regexpi(xasl.PulseSequenceType,'2D')
+            studyPar.SliceTiming = {0,0.0275,0.0575,0.085,0.115,0.1425,0.1725,...
+                0.2025,0.23,0.26,0.2875,0.3175,0.345,...
+                0.375,0.405,0.4325,0.4625,0.49,0.52,...
+                0.55,0.5775,0.6075,0.635,0.665};
+        end
+    else
+        if regexpi(xasl.PulseSequenceType,'2D')
+            if isfield(studyPar,'SliceTiming')
+                studyPar = rmfield(studyPar,'SliceTiming');
+            end
+        end
+    end
+
+    if regexpi(xasl.PulseSequenceType,'3D')
+        if isfield(studyPar,'SliceTiming')
+            studyPar = rmfield(studyPar,'SliceTiming');
+        end
+    end
+
+    % Create x struct
+    json.x = struct;
+    json.x.dataset.name = adniCases{iCase,1};
+    %json.x.subject_regexp = '';
+    if xasl.M0inASLsequence
+        json.x.modules.asl.M0PositionInASL4D = 1;
+    else
+        json.x.M0 = 'UseControlAsM0';
+    end
+    json.x.Q.LabelingType = 'PASL';
+    json.x.Q.Initial_PLD = xasl.PLD;
+    json.x.Q.LabelingDuration = xasl.labelingDuration;
+    % json.x.Q.SliceReadoutTime = xasl.sliceReadoutTime;
+    json.x.Q.readoutDim = xasl.PulseSequenceType;
+    json.x.settings.Quality = 1;
+    json.x.Q.Vendor = 'Siemens';
+
 
 end
 
