@@ -26,10 +26,18 @@ end
 % Determine if we run this on ADNI-2 or ADNI-3
 ADNI_VERSION = 2;
 
+% Define user
+customUser = 'matlab';
+
 % Get ADNI "original" directory
-if strcmp(username,'matlab') % M. Stritt user
-    adniDirectory = 'E:\ASPIRE\ADNI\ADNI2\original';
-    adniDirectoryResults = 'M:\SoftwareDevelopment\MATLAB\m.stritt\Server_xASL\adni-2';
+if strcmp(username,customUser)
+    if ADNI_VERSION==2
+        adniDirectory = 'E:\ASPIRE\ADNI\ADNI2\original';
+        adniDirectoryResults = 'M:\SoftwareDevelopment\MATLAB\m.stritt\Server_xASL\adni-2';
+    else
+        adniDirectory = 'E:\ASPIRE\ADNI\ADNI3\original';
+        adniDirectoryResults = 'M:\SoftwareDevelopment\MATLAB\m.stritt\Server_xASL\adni-3';
+    end
 else
     adniDirectory = uigetdir([], 'Select ADNI directory...');
     adniDirectoryResults = uigetdir([], 'Select ADNI results directory...');
@@ -66,7 +74,7 @@ for iCase = 1:numel(adniCases)
         if regexpi(currentModalities{iModality,1}, 'ASL')
             foundASL = true;
         end
-        if regexpi(currentModalities{iModality,1}, 'MPRAGE')
+        if ~isempty(regexpi(currentModalities{iModality,1}, 'MPRAGE')) || ~isempty(regexpi(currentModalities{iModality,1}, 'FSPGR'))
             foundT1 = true;
         end
     end
@@ -122,7 +130,7 @@ adniCases(removeIndex2,:) = [];
 %% Get sessions from date strings
 fprintf('Determining sessions from date strings...\n');
 % Modalities of interest
-modalitiesOfInterest = {'ASL','MPRAGE','FLAIR','CALIBRATION','M0'}';
+modalitiesOfInterest = {'ASL','MPRAGE','FLAIR','CALIBRATION','M0','FSPGR'}';
 for iCase = 1:size(adniCases,1)
     % Get current case directory
     currentDir = fullfile(adniDirectory,adniCases{iCase,1});
@@ -149,7 +157,8 @@ for iCase = 1:size(adniCases,1)
             if regexpi(currentModalities{iModality},'ASL')
                 dateList_ASL = xASL_adm_GetFsList(fullfile(currentDir,currentModalities{iModality}),'^.+$',true)';
                 ASL_name = currentModalities{iModality};
-            elseif regexpi(currentModalities{iModality},'MPRAGE')
+            elseif ~isempty(regexpi(currentModalities{iModality},'MPRAGE')) || ...
+                   ~isempty(regexpi(currentModalities{iModality},'FSPGR'))
                 dateList_MPRAGE = xASL_adm_GetFsList(fullfile(currentDir,currentModalities{iModality}),'^.+$',true)';
                 MPRAGE_name = currentModalities{iModality};
             elseif regexpi(currentModalities{iModality},'FLAIR')
@@ -184,99 +193,18 @@ for iCase = 1:size(adniCases,1)
                 end
             end
             
+            % If a T1w and an ASL scan were found, we do the copying and so on for each modality
             if foundT1wForASL
-                % Get this session
-                thisSessions = ['session_' num2str(iSessionsNum)];
-                iSessionsNum = iSessionsNum+1;
-                dateList_ASL{iSessions,1} = [thisSessions '_' dateList_ASL{iSessions,2}];
-                
-                % Determine new case directory
-                newCase = fullfile(adniDirectoryResults,adniCases{iCase,1},'sourcedata','sub-001',dateList_ASL{iSessions,1});
-                newCaseRoot = fullfile(adniDirectoryResults,adniCases{iCase,1});
-
-                % Copy ASL session to new directory
-                xASL_Copy(fullfile(currentDir,ASL_name,dateList_ASL{iSessions,2}),fullfile(newCase,'ASL'),1);
-
-                % Get Dicoms
-                dcmPaths = xASL_adm_GetFileList(fullfile(newCase,'ASL'),'^.+\.dcm$','FPListRec');
-                if ~isempty(dcmPaths)
-                    % headerDCM = xASL_io_DcmtkRead(dcmPaths{1});
-
-                    % Phoenix Protocol
-                    [xasl,parameters,parameterList,phoenixProtocol] = xASL_bids_GetPhoenixProtocol(dcmPaths{1},true);
-                    [xasl, json, studyPar] = xASL_adni_PhoenixFix(xasl, studyPar, ADNI_VERSION, adniCases, iCase);
-
-                    % Write JSON file
-                    spm_jsonwrite(fullfile(newCaseRoot,['dataPar-' thisSessions '.json']),json);
-
-                end
-
-                % Check if there are other modalities for this session
-                for iSessions_MPRAGE = 1:numel(dateList_MPRAGE)
-                    if strcmp(dateList_MPRAGE{iSessions_MPRAGE,1},dateList_ASL{iSessions,2})
-                        % Copy MPRAGE session to new directory
-                        xASL_Copy(fullfile(currentDir,MPRAGE_name,dateList_MPRAGE{iSessions_MPRAGE,1}),fullfile(newCase,'T1w'));
-                    end
-                end
-                for iSessions_FLAIR = 1:numel(dateList_FLAIR)
-                    if strcmp(dateList_FLAIR{iSessions_FLAIR,1},dateList_ASL{iSessions,2})
-                        % Copy MPRAGE session to new directory
-                        xASL_Copy(fullfile(currentDir,FLAIR_name,dateList_FLAIR{iSessions_FLAIR,1}),fullfile(newCase,'FLAIR'));
-                    end
-                end
-                for iSessions_CALIBRATION = 1:numel(dateList_CALIBRATION)
-                    if strcmp(dateList_CALIBRATION{iSessions_CALIBRATION,1},dateList_ASL{iSessions,2})
-                        % Copy MPRAGE session to new directory
-                        xASL_Copy(fullfile(currentDir,CALIBRATION_name,dateList_CALIBRATION{iSessions_CALIBRATION,1}),fullfile(newCase,'CALIBRATION'));
-                    end
-                end
-                for iSessions_M0 = 1:numel(dateList_M0)
-                    if strcmp(dateList_M0{iSessions_M0,1},dateList_ASL{iSessions,2})
-                        % Copy MPRAGE session to new directory
-                        xASL_Copy(fullfile(currentDir,M0_name,dateList_M0{iSessions_M0,1}),fullfile(newCase,'M0'));
-                    end
-                end
+                [json, newCaseRoot] = xASL_adni_CopyAndModifySession(iSessionsNum, iSessions, iCase, dateList_ASL, currentDir, ADNI_VERSION, ...
+                                        dateList_MPRAGE, dateList_FLAIR, dateList_CALIBRATION, dateList_M0, ...
+                                        ASL_name, MPRAGE_name, FLAIR_name, CALIBRATION_name, M0_name, adniCases, adniDirectoryResults);
             end
             
         end
         
         % Merge identical dataPar.json files
-        dataParJsons = xASL_adm_GetFileList(newCaseRoot,'^dataPar.+\.json$','FPListRec');
-        if numel(dataParJsons)>1
-            for iJson = 1:numel(dataParJsons)
-                fileID = fopen(dataParJsons{iJson},'r');
-                dataParJSON.(['file_' num2str(iJson)]) = fileread(dataParJsons{iJson});
-                % Check if files two to end are the same as the first one
-                allAreTheSame = true;
-                if iJson>1
-                    if ~strcmp(dataParJSON.(['file_' num2str(1)]),dataParJSON.(['file_' num2str(iJson)]))
-                        allAreTheSame = false;
-                    end
-                end
-            end
-            % Merge (keep and rename first, delete others)
-            if allAreTheSame
-                close all
-                fclose all;
-                for iJson = 1:numel(dataParJsons)
-                    if iJson==1
-                        newName = strrep(dataParJsons{iJson},'-session_1','');
-                        xASL_Copy(dataParJsons{iJson},newName);
-                        xASL_delete(dataParJsons{iJson},1);
-                    else
-                        xASL_delete(dataParJsons{iJson});
-                    end
-                end
-            end
-        else
-            % Rename the single session to "dataPar.json" instead of "dataPar-session...json"
-            close all
-            fclose all;
-            dataParJsons = xASL_adm_GetFileList(newCaseRoot,'^dataPar.+\.json$','FPListRec');
-            newName = strrep(dataParJsons{1},'-session_1','');
-            xASL_Copy(dataParJsons{iJson},newName);
-            xASL_delete(dataParJsons{iJson});
-        end
+        xASL_adni_MergeJsons(newCaseRoot);
+        
         % Add sourceStructure.json and studyPar.json
         spm_jsonwrite(fullfile(newCaseRoot,'sourceStructure.json'),sourceStructure);
         spm_jsonwrite(fullfile(newCaseRoot,'studyPar.json'),studyPar);
@@ -285,11 +213,15 @@ for iCase = 1:size(adniCases,1)
     else
         warning('The ASL date list should not be empty...');
     end
+    
+    % Fee up space
+    clear ASL_name MPRAGE_name FLAIR_name CALIBRATION_name M0_name
+    clear dateList_ASL dateList_MPRAGE dateList_FLAIR dateList_CALIBRATION dateList_M0 
 
 end
 
 
-%% Helper function
+%% Helper function Siemens
 function [xasl, json, studyPar] = xASL_adni_PhoenixFix(xasl, studyPar, ADNI_VERSION, adniCases, iCase)
 
     if ~isfield(xasl,'SoftwareVersions')
@@ -337,10 +269,10 @@ function [xasl, json, studyPar] = xASL_adni_PhoenixFix(xasl, studyPar, ADNI_VERS
 
     % Create x struct
     json.x = struct;
-    json.x.dataset.name = adniCases{iCase,1};
+    json.x.name = adniCases{iCase,1};
     %json.x.subject_regexp = '';
     if xasl.M0inASLsequence
-        json.x.modules.asl.M0PositionInASL4D = 1;
+        json.x.M0PositionInASL4D = 1;
     else
         json.x.M0 = 'UseControlAsM0';
     end
@@ -349,8 +281,186 @@ function [xasl, json, studyPar] = xASL_adni_PhoenixFix(xasl, studyPar, ADNI_VERS
     json.x.Q.LabelingDuration = xasl.labelingDuration;
     % json.x.Q.SliceReadoutTime = xasl.sliceReadoutTime;
     json.x.Q.readoutDim = xasl.PulseSequenceType;
-    json.x.settings.Quality = 1;
-    json.x.Q.Vendor = 'Siemens';
+    json.x.Quality = 1;
+    json.x.Vendor = 'Siemens';
+
+
+end
+
+
+%% Helper function Philips
+function json = xASL_adni_GetJsonPhilips(headerDCM, ADNI_VERSION, adniCases, iCase)
+
+    % Tested with 006_S_6681
+
+    % Create x struct
+    json.x = struct;
+    json.x.name = adniCases{iCase,1};
+    json.x.M0 = 'UseControlAsM0';
+    json.x.Q.LabelingType = 'PASL';
+    json.x.Quality = 1;
+    json.x.Vendor = 'Philips';
+    if isfield(headerDCM,'SeriesDescription')
+        if ischar(headerDCM.SeriesDescription)
+            if ~isempty(regexpi(headerDCM.SeriesDescription,'PASL'))
+                json.x.Q.LabelingType = 'PASL';
+            end
+        end
+    end
+
+
+end
+
+
+%% Helper function GE
+function json = xASL_adni_GetJsonGE(headerDCM, ADNI_VERSION, adniCases, iCase)
+
+    % Tested with 027_S_5079
+
+    % Create x struct
+    json.x = struct;
+    json.x.name = adniCases{iCase,1};
+    % json.x.M0 = 'UseControlAsM0'; % 027_S_5079 should have M0 within the ASL sequence
+    json.x.Q.LabelingType = 'PCASL';
+    json.x.Quality = 1;
+    json.x.Vendor = 'GE';
+    if isfield(headerDCM,'GELabelingDuration')
+        if isnumeric(headerDCM.GELabelingDuration)
+            json.x.Q.Initial_PLD = headerDCM.GELabelingDuration; % I think there's a little mix-up here :)
+        end
+    end
+    if isfield(headerDCM,'SeriesDescription')
+        if ischar(headerDCM.SeriesDescription)
+            if ~isempty(regexpi(headerDCM.SeriesDescription,'PCASL'))
+                json.x.Q.LabelingType = 'PCASL';
+            end
+        end
+    end
+    json.x.Q.LabelingDuration = 700;
+
+
+end
+
+
+%% Merge dataPar.json files
+function xASL_adni_MergeJsons(newCaseRoot)
+
+    dataParJsons = xASL_adm_GetFileList(newCaseRoot,'^dataPar.+\.json$','FPListRec');
+    if numel(dataParJsons)>1
+        for iJson = 1:numel(dataParJsons)
+            fileID = fopen(dataParJsons{iJson},'r');
+            dataParJSON.(['file_' num2str(iJson)]) = fileread(dataParJsons{iJson});
+            % Check if files two to end are the same as the first one
+            allAreTheSame = true;
+            if iJson>1
+                if ~strcmp(dataParJSON.(['file_' num2str(1)]),dataParJSON.(['file_' num2str(iJson)]))
+                    allAreTheSame = false;
+                end
+            end
+        end
+        % Merge (keep and rename first, delete others)
+        if allAreTheSame
+            close all
+            fclose all;
+            for iJson = 1:numel(dataParJsons)
+                if iJson==1
+                    newName = strrep(dataParJsons{iJson},'-session_1','');
+                    xASL_Copy(dataParJsons{iJson},newName);
+                    xASL_delete(dataParJsons{iJson},1);
+                else
+                    xASL_delete(dataParJsons{iJson});
+                end
+            end
+        end
+    else
+        % Rename the single session to "dataPar.json" instead of "dataPar-session...json"
+        close all
+        fclose all;
+        dataParJsons = xASL_adm_GetFileList(newCaseRoot,'^dataPar.+\.json$','FPListRec');
+        newName = strrep(dataParJsons{1},'-session_1','');
+        xASL_Copy(dataParJsons{1},newName);
+        xASL_delete(dataParJsons{1});
+    end
+
+end
+
+
+%% Copy and modify session
+function [json, newCaseRoot] = xASL_adni_CopyAndModifySession(iSessionsNum, iSessions, iCase, dateList_ASL, currentDir, ADNI_VERSION, ...
+            dateList_MPRAGE, dateList_FLAIR, dateList_CALIBRATION, dateList_M0, ...
+            ASL_name, MPRAGE_name, FLAIR_name, CALIBRATION_name, M0_name, adniCases, adniDirectoryResults)
+
+    % Get this session
+    thisSessions = ['session_' num2str(iSessionsNum)];
+    iSessionsNum = iSessionsNum+1;
+    dateList_ASL{iSessions,1} = [thisSessions '_' dateList_ASL{iSessions,2}];
+
+    % Determine new case directory
+    newCase = fullfile(adniDirectoryResults,adniCases{iCase,1},'sourcedata','sub-001',dateList_ASL{iSessions,1});
+    newCaseRoot = fullfile(adniDirectoryResults,adniCases{iCase,1});
+
+    % Copy ASL session to new directory
+    xASL_Copy(fullfile(currentDir,ASL_name,dateList_ASL{iSessions,2}),fullfile(newCase,'ASL'),1);
+
+    % Get Dicoms
+    dcmPaths = xASL_adm_GetFileList(fullfile(newCase,'ASL'),'^.+\.dcm$','FPListRec');
+    if ~isempty(dcmPaths)
+        headerDCM = xASL_io_DcmtkRead(dcmPaths{1});
+
+        % Determine manufacturer from DICOM
+        if ~isempty(strfind(headerDCM.Manufacturer,'Siemens'))
+            manufacturer = 'Siemens';
+        elseif ~isempty(strfind(headerDCM.Manufacturer,'Philips'))
+            manufacturer = 'Philips';
+        elseif ~isempty(strfind(headerDCM.Manufacturer,'GE'))
+            manufacturer = 'GE';
+        else
+            manufacturer = '';
+        end
+
+        switch manufacturer
+            case 'Siemens'
+                % Phoenix Protocol
+                [xasl,parameters,parameterList,phoenixProtocol] = xASL_bids_GetPhoenixProtocol(dcmPaths{1},true);
+                [xasl, json, studyPar] = xASL_adni_PhoenixFix(xasl, studyPar, ADNI_VERSION, adniCases, iCase);
+            case 'Philips'
+                json = xASL_adni_GetJsonPhilips(headerDCM, ADNI_VERSION, adniCases, iCase);
+            case 'GE'
+                json = xASL_adni_GetJsonGE(headerDCM, ADNI_VERSION, adniCases, iCase);
+            otherwise
+                warning('Unknown manufacturer...');
+        end
+
+        % Write JSON file
+        spm_jsonwrite(fullfile(newCaseRoot,['dataPar-' thisSessions '.json']),json);
+
+    end
+
+    % Check if there are other modalities for this session
+    for iSessions_MPRAGE = 1:numel(dateList_MPRAGE)
+        if strcmp(dateList_MPRAGE{iSessions_MPRAGE,1},dateList_ASL{iSessions,2})
+            % Copy MPRAGE session to new directory
+            xASL_Copy(fullfile(currentDir,MPRAGE_name,dateList_MPRAGE{iSessions_MPRAGE,1}),fullfile(newCase,'T1w'));
+        end
+    end
+    for iSessions_FLAIR = 1:numel(dateList_FLAIR)
+        if strcmp(dateList_FLAIR{iSessions_FLAIR,1},dateList_ASL{iSessions,2})
+            % Copy MPRAGE session to new directory
+            xASL_Copy(fullfile(currentDir,FLAIR_name,dateList_FLAIR{iSessions_FLAIR,1}),fullfile(newCase,'FLAIR'));
+        end
+    end
+    for iSessions_CALIBRATION = 1:numel(dateList_CALIBRATION)
+        if strcmp(dateList_CALIBRATION{iSessions_CALIBRATION,1},dateList_ASL{iSessions,2})
+            % Copy MPRAGE session to new directory
+            xASL_Copy(fullfile(currentDir,CALIBRATION_name,dateList_CALIBRATION{iSessions_CALIBRATION,1}),fullfile(newCase,'CALIBRATION'));
+        end
+    end
+    for iSessions_M0 = 1:numel(dateList_M0)
+        if strcmp(dateList_M0{iSessions_M0,1},dateList_ASL{iSessions,2})
+            % Copy MPRAGE session to new directory
+            xASL_Copy(fullfile(currentDir,M0_name,dateList_M0{iSessions_M0,1}),fullfile(newCase,'M0'));
+        end
+    end
 
 
 end

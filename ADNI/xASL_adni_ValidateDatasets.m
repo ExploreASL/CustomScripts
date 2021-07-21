@@ -28,9 +28,15 @@ ADNI_VERSION = 2;
 
 % Get ADNI "original" directory
 if strcmp(username,'matlab') % M. Stritt user
-    adniDirectory = 'E:\ASPIRE\ADNI\ADNI2\original';
-    adniLabelFile = 'E:\ASPIRE\ADNI\ADNI2\ADNI-2_Labels.csv';
-    adniDirectoryResults = 'M:\SoftwareDevelopment\MATLAB\m.stritt\Server_xASL\adni-2';
+    if ADNI_VERSION==2
+        adniDirectory = 'E:\ASPIRE\ADNI\ADNI2\original';
+        adniLabelFile = 'E:\ASPIRE\ADNI\ADNI2\ADNI-2_Labels.csv';
+        adniDirectoryResults = 'M:\SoftwareDevelopment\MATLAB\m.stritt\Server_xASL\adni-2';
+    else
+        adniDirectory = 'E:\ASPIRE\ADNI\ADNI3\original';
+        adniLabelFile = 'E:\ASPIRE\ADNI\ADNI3\ADNI-3_Labels.csv';
+        adniDirectoryResults = 'M:\SoftwareDevelopment\MATLAB\m.stritt\Server_xASL\adni-3';
+    end
 else
     adniDirectory = uigetdir([], 'Select ADNI directory...');
     [adniLabelName, adniLabelFile] = uigetfile({'*.csv';'*.tsv';}, 'Select ADNI label file...');
