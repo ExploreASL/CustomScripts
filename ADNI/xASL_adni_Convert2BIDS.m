@@ -15,23 +15,8 @@
 x = ExploreASL;
 clc
 
-% Get user
-if isunix
-    [~,username] = system('id -u -n');
-    username=username(1:end-1);
-else
-    username = getenv('username');
-end
-
-% Determine if we run this on ADNI-2 or ADNI-3
-ADNI_VERSION = 2;
-
-% Get ADNI "original" directory
-if strcmp(username,'matlab') % M. Stritt user
-    adniDirectoryResults = 'M:\SoftwareDevelopment\MATLAB\m.stritt\Server_xASL\adni-2';
-else
-    adniDirectoryResults = uigetdir([], 'Select ADNI results directory...');
-end
+% Basic settings
+[userConfig,adniDirectory,adniDirectoryResults] = xASL_adni_BasicSettings();
 
 % Get directory list
 adniCases = xASL_adm_GetFsList(adniDirectoryResults,'^\d{3}_.+$',true);

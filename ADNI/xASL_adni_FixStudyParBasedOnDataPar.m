@@ -21,7 +21,9 @@ function studyPar = xASL_adni_FixStudyParBasedOnDataPar(json, studyPar)
     end
     
     if strcmpi(json.x.Vendor,'Philips')
-        studyPar.ASLContext = 'control,label';
+        studyPar.ASLContext = 'label,control';
+        warning('For the Philips scans it seems that we have to define the slice timings manually, I added a dummy vector from the flavor db...');
+        studyPar.SliceTiming = [0,0.0363,0.0726,0.1089,0.1452,0.1815,0.2178,0.2541,0.2904,0.3267,0.363,0.3993,0.4356,0.4719,0.5082,0.5445,0.5808];
     end
     
     if strcmpi(json.x.Vendor,'Siemens')
