@@ -50,9 +50,9 @@ function [json, newCaseRoot, iSessionsNum, studyPar] = xASL_adni_CopyAndModifySe
             case 'Siemens'
                 [json,studyPar] = xASL_adni_GetJsonSiemens(headerDCM, userConfig.ADNI_VERSION, adniCases, iCase, studyPar, dcmPaths);
             case 'Philips'
-                json = xASL_adni_GetJsonPhilips(headerDCM, userConfig.ADNI_VERSION, adniCases, iCase);
+                [json,studyPar] = xASL_adni_GetJsonPhilips(headerDCM, userConfig.ADNI_VERSION, adniCases, iCase, studyPar);
             case 'GE'
-                json = xASL_adni_GetJsonGE(headerDCM, userConfig.ADNI_VERSION, adniCases, iCase);
+                [json,studyPar] = xASL_adni_GetJsonGE(headerDCM, userConfig.ADNI_VERSION, adniCases, iCase, studyPar);
             otherwise
                 warning('Unknown manufacturer...');
         end

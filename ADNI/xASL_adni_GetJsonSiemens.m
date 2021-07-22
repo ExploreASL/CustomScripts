@@ -12,9 +12,14 @@ function [json,studyPar] = xASL_adni_GetJsonSiemens(headerDCM, ADNI_VERSION, adn
 % -----------------------------------------------------------------------------------------------------------------------------------------------------
 % Copyright 2015-2021 ExploreASL
 
+    % Tested with 011_S_4105
+
     % Phoenix Protocol
     [xasl,parameters,parameterList,phoenixProtocol] = xASL_bids_GetPhoenixProtocol(dcmPaths{1},true);
     [xasl, json, studyPar] = xASL_adni_PhoenixFix(xasl, studyPar, ADNI_VERSION, adniCases, iCase);
+    
+    %% Fix study par
+    studyPar = xASL_adni_FixStudyParBasedOnDataPar(json, studyPar);
 
 end
 
@@ -77,9 +82,19 @@ function [xasl, json, studyPar] = xASL_adni_PhoenixFix(xasl, studyPar, ADNI_VERS
     json.x.Q.Initial_PLD = xasl.PLD;
     json.x.Q.LabelingDuration = xasl.labelingDuration;
     % json.x.Q.SliceReadoutTime = xasl.sliceReadoutTime;
-    json.x.Q.readoutDim = xasl.PulseSequenceType;
+    if regexpi(xasl.PulseSequenceType,'2D')
+        json.x.readout_dim = '2D';
+    else
+        json.x.readout_dim = '3D';
+    end
     json.x.Quality = 1;
     json.x.Vendor = 'Siemens';
+    
+    if strcmp(json.x.readout_dim,'2D')
+        json.x.Sequence = '2D_EPI';
+    else
+        json.x.Sequence = '3D_GRASE';
+    end
 
 
 end
