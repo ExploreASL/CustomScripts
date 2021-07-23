@@ -1,4 +1,18 @@
 function patients = getPatient(patients,DicomDir)
+%getPatient The idea of this function is to get the patient from an item list
+%
+% INPUT:        n/a
+%
+% OUTPUT:       n/a
+%
+% -----------------------------------------------------------------------------------------------------------------------------------------------------
+% DESCRIPTION:  The idea of this function is to get the patient from an item list.
+%
+%               Written by M. Stritt & B. Padrela, 2021.
+%
+% EXAMPLE:      n/a
+% -----------------------------------------------------------------------------------------------------------------------------------------------------
+% Copyright 2015-2021 ExploreASL
 
     % List of items (studies, patients, sessions etc.)
     Items=DicomDir.DirectoryRecordSequence;

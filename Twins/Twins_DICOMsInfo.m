@@ -1,5 +1,19 @@
-%% Twins' DICOMDIR info extraction
-% These fields have info about the dicoms, including PatientID, Study and Series (has the name of the MRI sequence)
+%Twins_DICOMsInfo Main script for the database conversion
+%
+% INPUT:        n/a
+%
+% OUTPUT:       n/a
+%
+% -----------------------------------------------------------------------------------------------------------------------------------------------------
+% DESCRIPTION:  Main script for the database conversion.
+%               These fields have info about the dicoms, including PatientID, 
+%               Study and Series (has the name of the MRI sequence)
+%
+%               Written by M. Stritt & B. Padrela, 2021.
+%
+% EXAMPLE:      n/a
+% -----------------------------------------------------------------------------------------------------------------------------------------------------
+% Copyright 2015-2021 ExploreASL
 
 % Clean-up
 clear all
@@ -7,6 +21,14 @@ clear all
 % Initialize ExploreASL
 x=ExploreASL_Master('',0);
 clc
+
+% Get user
+if isunix
+    [~,username] = system('id -u -n');
+    username=username(1:end-1);
+else
+    username = getenv('username');
+end
 
 % Output directory
 outputDir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/Twins/BIDS';

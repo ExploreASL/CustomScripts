@@ -8,6 +8,8 @@ function studyPar = xASL_adni_FixStudyParBasedOnDataPar(json, studyPar)
 % -----------------------------------------------------------------------------------------------------------------------------------------------------
 % DESCRIPTION:  Minor helper function.
 %
+%               Written by M. Stritt, 2021.
+%
 % EXAMPLE:      studyPar = xASL_adni_FixStudyParBasedOnDataPar(json, studyPar);
 % -----------------------------------------------------------------------------------------------------------------------------------------------------
 % Copyright 2015-2021 ExploreASL

@@ -1,6 +1,8 @@
 
 # ADNI
 
+Conversion scripts written by M. Stritt, 2021.
+
 ## xASL_adni_ValidateDatasets.m
 
 Script to compare the downloaded ADNI archive with its corresponding label file. Helpful to validate if all cases have been downloaded.

@@ -8,6 +8,8 @@ function [sourceStructure,studyPar] = xASL_adni_BasicJsons()
 % -----------------------------------------------------------------------------------------------------------------------------------------------------
 % DESCRIPTION:  Basic settings for ADNI data.
 %
+%               Written by M. Stritt, 2021.
+%
 % EXAMPLE:      [sourceStructure,studyPar] = xASL_adni_BasicJsons();
 % -----------------------------------------------------------------------------------------------------------------------------------------------------
 % Copyright 2015-2021 ExploreASL

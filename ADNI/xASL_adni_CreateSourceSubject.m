@@ -8,6 +8,8 @@ function xASL_adni_CreateSourceSubject(adniCases,userConfig,adniDirectory,adniDi
 % -----------------------------------------------------------------------------------------------------------------------------------------------------
 % DESCRIPTION:  Create sourcedata of current subject.
 %
+%               Written by M. Stritt, 2021.
+%
 % EXAMPLE:      n/a
 % -----------------------------------------------------------------------------------------------------------------------------------------------------
 % Copyright 2015-2021 ExploreASL

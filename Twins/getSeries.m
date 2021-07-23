@@ -1,7 +1,18 @@
 function isThisSeries = getSeries(item,typeOfSeries)
-% The idea of this function is to get the series corresponding to each patient
+%getSeries The idea of this function is to get the series corresponding to each patient
 %
-% patients.(PATIENT_ID).series = item
+% INPUT:        n/a
+%
+% OUTPUT:       n/a
+%
+% -----------------------------------------------------------------------------------------------------------------------------------------------------
+% DESCRIPTION:  The idea of this function is to get the series corresponding to each patient.
+%
+%               Written by M. Stritt & B. Padrela, 2021.
+%
+% EXAMPLE:      n/a
+% -----------------------------------------------------------------------------------------------------------------------------------------------------
+% Copyright 2015-2021 ExploreASL
 
     % Default
     isThisSeries = false;

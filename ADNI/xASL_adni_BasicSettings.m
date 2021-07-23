@@ -8,6 +8,8 @@ function [userConfig,adniDirectory,adniDirectoryResults] = xASL_adni_BasicSettin
 % -----------------------------------------------------------------------------------------------------------------------------------------------------
 % DESCRIPTION:  Basic settings for ADNI data.
 %
+%               Written by M. Stritt, 2021.
+%
 % EXAMPLE:      [userConfig,adniDirectory,adniDirectoryResults] = xASL_adni_BasicSettings();
 % -----------------------------------------------------------------------------------------------------------------------------------------------------
 % Copyright 2015-2021 ExploreASL
