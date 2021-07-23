@@ -1,4 +1,4 @@
-function patientList = getPatientDirListXML(rootDir)
+function patientList = getPatientDirListXML(rootDir,outputDir)
 %getPatientDirListXML Get patient dir list
 %
 % INPUT:        n/a
