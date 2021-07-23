@@ -24,11 +24,13 @@ function isThisSeries = getSeries(item,typeOfSeries)
     if ~isempty(regexpi(recordType,'SERIES'))
         
         % Get the sequence name
-        MRIsequenceName=item.SeriesDescription;
+        if isfield(item,'SeriesDescription')
+            MRIsequenceName=item.SeriesDescription;
 
-        % Check if the series has the corresponding type
-        if ~isempty(regexpi(MRIsequenceName,typeOfSeries))
-            isThisSeries = true;
+            % Check if the series has the corresponding type
+            if ~isempty(regexpi(MRIsequenceName,typeOfSeries))
+                isThisSeries = true;
+            end
         end
         
     end
