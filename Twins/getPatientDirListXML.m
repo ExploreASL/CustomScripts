@@ -22,8 +22,7 @@ for iSubject = 1:numel(subjectDirs)
 
 	% Read XML file
 	xmlFile = fullfile(rootDir,subjectDirs{iSubject},'SECTRA','CONTENT.XML');
-	xDoc = xmlread(xmlFile);
-	allListItems = getElementsByTagName(xDoc,'listitem');
+	xmlStruct = xml2struct(xmlFile);
 
 
 end
