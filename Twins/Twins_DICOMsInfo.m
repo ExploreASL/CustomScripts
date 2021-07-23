@@ -68,7 +68,7 @@ if ~exist(fullfile(outputDir,'Patients.mat'),'file')
         if exist(fullfile(rootDir,currentDir,'DICOMDIR'),'file')
             DicomDir=dicominfo(fullfile(rootDir,currentDir,'DICOMDIR'));
             % Get individual patient
-            patients = getPatient(patients,DicomDir);
+            patients = getPatient(patients,DicomDir,iDir,numel(baseDirs));
         else
             warning('DICOMDIR does not exist...');
         end

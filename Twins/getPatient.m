@@ -1,4 +1,4 @@
-function patients = getPatient(patients,DicomDir)
+function patients = getPatient(patients,DicomDir,iPatient,numOfPatients)
 %getPatient The idea of this function is to get the patient from an item list
 %
 % INPUT:        n/a
@@ -35,7 +35,7 @@ function patients = getPatient(patients,DicomDir)
             patients.(validName) = currentItem;
             lastPatient = validName;
             fprintf('%s ...     ',lastPatient);
-            xASL_TrackProgress(It, numel(ItemsList));
+            xASL_TrackProgress(iPatient, numOfPatients);
             fprintf(' \n');
         end
 
