@@ -1,30 +1,52 @@
 %% Twins' DICOMDIR info extraction
 % These fields have info about the dicoms, including PatientID, Study and Series (has the name of the MRI sequence)
-% 
+
+% Clean-up
 clear all
+
+% Initialize ExploreASL
+x = ExploreASL;
 clc
-%%% 
 
-DicomDir=dicominfo('/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/Twins/Twins_sub1/DICOMDIR');
+% Set-up directories
+rootDir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/Twins/twins_FUscans/EMI_301/DICOM';
 
-% List of items (studies, patients, sessions etc.)
-Items=DicomDir.DirectoryRecordSequence; %11694 items
+% Get all sub directories
+baseDirs = xASL_adm_GetFsList(rootDir,'^.+$',true);
 
-% Fieldnames
-ItemsList= fieldnames(DicomDir.DirectoryRecordSequence);
+% Get items of each subject
+patients = struct;
+for iDir = 1:numel(baseDirs)
+    currentDir = baseDirs{iDir};
+    subjects.DicomDir=dicominfo(fullfile(baseDirs,currentDir));
+    % Get individual patient
+    patients = getPatient(patients,DicomDir);
+end
 
-% Iterate over all items and get a patient list
-for iElement = 1:numel(ItemsList)
+function patients = getPatient(patients,DicomDir)
 
-    % Get current item
-    currentItem = Items.(ItemsList{It});
+    % List of items (studies, patients, sessions etc.)
+    Items=DicomDir.DirectoryRecordSequence;
 
-    % Get the patients
-    if strcmp(currentItem.DirectoryRecordType,'PATIENT')
-        patients.(currentItem.PatientID) = currentItem;
+    % Fieldnames
+    ItemsList= fieldnames(DicomDir.DirectoryRecordSequence);
+
+    % Iterate over all items and get a patient list
+    for iElement = 1:numel(ItemsList)
+
+        % Get current item
+        currentItem = Items.(ItemsList{It});
+
+        % Get the patients
+        if strcmp(currentItem.DirectoryRecordType,'PATIENT')
+            patients.(currentItem.PatientID) = currentItem;
+        end
+
     end
 
 end
+
+
 
 % Now that we have the patient list, we want all the scans corresonding to each patient
 
