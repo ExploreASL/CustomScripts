@@ -109,25 +109,8 @@ for iPatient = 1:numel(allPatients)
         dataPar.name = thisPatient;
         spm_jsonwrite(fullfile(outputDir,thisPatient,'dataPar.json'),dataPar);
 
-        % Move series: ASL
-    %    if isfield(patients.(thisPatient),'asl')
-    %        xASL_Copy('...',fullfile(outputDir,thisPatient,'sourcedata','sub-001','session-1','ASL'));
-    %    end
-
-        % Move series: FLAIR
-    %    if isfield(patients.(thisPatient),'flair')
-    %        xASL_Copy('...',fullfile(outputDir,thisPatient,'sourcedata','sub-001','session-1','FLAIR'));
-    %    end
-
-        % Move series: M0
-    %    if isfield(patients.(thisPatient),'m0')
-    %        xASL_Copy('...',fullfile(outputDir,thisPatient,'sourcedata','sub-001','session-1','M0'));
-    %    end
-
-        % Move series: T1w
-    %    if isfield(patients.(thisPatient),'t1w')
-    %        xASL_Copy('...',fullfile(outputDir,thisPatient,'sourcedata','sub-001','session-1','T1w'));
-    %    end
+        % Copy series
+        copySeriesTwins(patients,thisPatient,outputDir);
 
     else
         fprintf('Patient %s already exists...\n', thisPatient);
