@@ -54,7 +54,7 @@ function patients = getPatient(patients,DicomDir)
         end
 
         % Set directory
-        patients.(lastPatient).DicomDir = DicomDir;
+        [~, patients.(lastPatient).DicomDir] = fileparts(fileparts(DicomDir.Filename));
 
     end
 
