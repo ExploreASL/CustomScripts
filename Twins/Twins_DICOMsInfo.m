@@ -8,11 +8,17 @@ clear all
 x=ExploreASL_Master('',0);
 clc
 
+% Output directory
+outputDir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/Twins/BIDS';
+
 % Set-up directories
 rootDir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/Twins/twins_FUscans/';
 
 % Get all sub directories
 baseDirs = xASL_adm_GetFsList(rootDir,'^.+$',true);
+
+%% Set-up patients structure
+fprintf('Determine patients...\n');
 
 % Get items of each subject
 patients = struct;
@@ -21,6 +27,58 @@ for iDir = 1:numel(baseDirs)
     DicomDir=dicominfo(fullfile(rootDir,currentDir,'DICOMDIR'));
     % Get individual patient
     patients = getPatient(patients,DicomDir);
+end
+
+%% Now we create our BIDS sourcedata
+fprintf('Create BIDS sourcedata...\n');
+mkdir(outputDir);
+
+% Defaults
+sourceStructure.folderHierarchy = {'^sub-(.+)$','^(session-\\d{1}).+$','^(ASL|T1w|M0|T2|FLAIR)$'};
+sourceStructure.tokenOrdering = [1,2,0,3];
+sourceStructure.tokenVisitAliases = {'session-1','_1'};
+sourceStructure.tokenSessionAliases = {'',''};
+sourceStructure.tokenScanAliases = {'^ASL$','ASL4D','^T1w$','T1w','^M0$','M0','^T2$','T2w','^FLAIR$','FLAIR'};
+sourceStructure.bMatchDirectories = true;
+dataPar.subject_regexp = '';
+
+% Iterate over patients & series
+allPatients = fieldnames(patients);
+for iPatient = 1:numel(allPatients)
+    % Create output directory
+    thisPatient = allPatients{iPatient};
+    mkdir(fullfile(outputDir,thisPatient));
+    % Create sourcedata
+    mkdir(fullfile(outputDir,thisPatient,'sourcedata'));
+    % Create subject
+    mkdir(fullfile(outputDir,thisPatient,'sourcedata','sub-001'));
+    % Create session
+    mkdir(fullfile(outputDir,thisPatient,'sourcedata','sub-001','session-1'));
+
+    % Create sourceStructure.json
+    spm_jsonwrite(fullfile(outputDir,thisPatient,'sourceStructure.json'),sourceStructure);
+
+    % Create dataPar.json
+    dataPar.name = thisPatient;
+    spm_jsonwrite(fullfile(outputDir,thisPatient,'dataPar.json'),dataPar);
+
+%    % Move series: ASL
+%    if isfield(patients.(thisPatient),'asl')
+%        xASL_Copy('...',fullfile(outputDir,thisPatient,'sourcedata','sub-001','session-1','ASL'));
+%    end
+%    % Move series: FLAIR
+%    if isfield(patients.(thisPatient),'flair')
+%        xASL_Copy('...',fullfile(outputDir,thisPatient,'sourcedata','sub-001','session-1','FLAIR'));
+%    end
+%    % Move series: M0
+%    if isfield(patients.(thisPatient),'m0')
+%        xASL_Copy('...',fullfile(outputDir,thisPatient,'sourcedata','sub-001','session-1','M0'));
+%    end
+%    % Move series: T1w
+%    if isfield(patients.(thisPatient),'t1w')
+%        xASL_Copy('...',fullfile(outputDir,thisPatient,'sourcedata','sub-001','session-1','T1w'));
+%    end
+
 end
 
 
