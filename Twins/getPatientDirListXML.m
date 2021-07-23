@@ -32,19 +32,24 @@ else
 
 		% Read XML file
 		xmlFile = fullfile(rootDir,subjectDirs{iSubject},'SECTRA','CONTENT.XML');
-		xmlStruct = xml2struct(xmlFile);
-
-		if isfield(xmlStruct,'content') && ...
-			isfield(xmlStruct.content,'patient') && ...
-			isfield(xmlStruct.content.patient,'patient_data') && ...
-			isfield(xmlStruct.content.patient.patient_data,'personal_id')
-			thisPatientID = xmlStruct.content.patient.patient_data.personal_id.Text;
-			thisSex = xmlStruct.content.patient.patient_data.sex.Text;
-			fprintf('%s ...     ',thisPatientID);
-			xASL_TrackProgress(iSubject, numel(subjectDirs));
-			fprintf(' \n');
+		if exist(xmlFile,'file')
+			xmlStruct = xml2struct(xmlFile);
+			if isfield(xmlStruct,'content') && ...
+				isfield(xmlStruct.content,'patient') && ...
+				isfield(xmlStruct.content.patient,'patient_data') && ...
+				isfield(xmlStruct.content.patient.patient_data,'personal_id')
+				thisPatientID = xmlStruct.content.patient.patient_data.personal_id.Text;
+				thisSex = xmlStruct.content.patient.patient_data.sex.Text;
+				fprintf('%s ...     ',thisPatientID);
+				xASL_TrackProgress(iSubject, numel(subjectDirs));
+				fprintf(' \n');
+			else
+				warning('It was not possible to extract the patient ID...');
+				thisPatientID = 'unknown';
+				thisSex = 'unknown';
+			end
 		else
-			warning('It was not possible to extract the patient ID...');
+			warning('XML file does not exist...');
 			thisPatientID = 'unknown';
 			thisSex = 'unknown';
 		end
