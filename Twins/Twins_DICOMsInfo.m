@@ -30,10 +30,8 @@ else
     username = getenv('username');
 end
 
-% Create output directory
-if ~exist(outputDir,'dir')
-    mkdir(outputDir);
-end
+% Warning
+fprintf('This script uses label files and mat files if they already exist, to get a clean start you can delete them...\n');
 
 % Get basic settings
 switch username
@@ -46,6 +44,11 @@ switch username
     otherwise
         fprintf('Unknown user...\n');
         return;
+end
+
+% Create output directory
+if ~exist(outputDir,'dir')
+    mkdir(outputDir);
 end
 
 % Get all sub directories
