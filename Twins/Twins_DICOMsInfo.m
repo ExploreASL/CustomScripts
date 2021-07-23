@@ -42,10 +42,11 @@ switch username
         fprintf('Unknown user...\n');
 end
 
-
-
 % Get all sub directories
 baseDirs = xASL_adm_GetFsList(rootDir,'^.+$',true);
+
+% Get patient directory list
+patientList = getPatientDirListXML(rootDir);
 
 %% Set-up patients structure
 fprintf('Determine patients...\n');
