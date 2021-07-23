@@ -7,7 +7,8 @@ Odir = fullfile(BasePath,'ASL_dicoms');
 Ddir = fullfile(BasePath,'sourcedata');
 
 xASL_adm_CreateDir(Ddir);
-Slist1 = xASL_adm_GetFileList(Odir, '^D1\d{4}', 'FPList',[0 Inf], true);
+%Slist1 = xASL_adm_GetFileList(Odir, '^D1\d{4}', 'FPList',[0 Inf], true);
+Slist1 = xASL_adm_GetFileList(Odir, '^D', 'FPList',[0 Inf], true);
 
 fprintf('Converting DDI data to ExploreASL-compatible:   ');
 iElement=1;

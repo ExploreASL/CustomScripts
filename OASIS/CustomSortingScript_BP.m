@@ -2,10 +2,10 @@
 
 ExploreASL_Master('',0);
 
-Odir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/OASIS/test_sourcedata/';
+Odir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/OASIS/sourcedata/';
 Ddir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/OASIS/rawdata';
 
-xASL_adm_CreateDir(Ddir);
+xASL_adm_CreateDir(Ddir);  
 Slist1 = xASL_adm_GetFileList(Odir, '^OAS\d*', 'FPList',[0 Inf], true);
 
 fprintf('Converting OASIS data to ExploreASL-compatible:   ');
