@@ -33,6 +33,7 @@ function patients = getPatient(patients,DicomDir)
         if strcmp(currentItem.DirectoryRecordType,'PATIENT')
             patients.(currentItem.PatientID) = currentItem;
             lastPatient = currentItem.PatientID;
+            fprintf('%s ...\n',lastPatient);
         end
 
         % Add all corresponding series elements of interest

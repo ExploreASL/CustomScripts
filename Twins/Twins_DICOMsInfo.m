@@ -34,7 +34,7 @@ end
 switch username
     case 'strittm'
         outputDir = '/home/strittm/lood_storage/divi/Projects/ExploreASL/Twins/BIDS';
-        rootDir = '/home/strittm/lood_storage/divi/Projects/ExploreASL/Twins/twins_FUscans/'
+        rootDir = '/home/strittm/lood_storage/divi/Projects/ExploreASL/Twins/twins_FUscans/';
     case 'padrelab'
         outputDir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/Twins/BIDS';
         rootDir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/Twins/twins_FUscans/';
