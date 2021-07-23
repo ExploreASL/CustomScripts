@@ -30,16 +30,22 @@ else
     username = getenv('username');
 end
 
+% Create output directory
+if ~exist(outputDir,'dir')
+    mkdir(outputDir);
+end
+
 % Get basic settings
 switch username
     case 'strittm'
         outputDir = '/home/strittm/lood_storage/divi/Projects/ExploreASL/Twins/BIDS';
         rootDir = '/home/strittm/lood_storage/divi/Projects/ExploreASL/Twins/twins_FUscans/';
-    case 'padrelab'
+    case 'bestevespadrela'
         outputDir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/Twins/BIDS';
         rootDir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/Twins/twins_FUscans/';
     otherwise
         fprintf('Unknown user...\n');
+        return;
 end
 
 % Get all sub directories
@@ -52,17 +58,22 @@ patientList = getPatientDirListXML(rootDir,outputDir);
 fprintf('Determine patients...\n');
 
 % Get items of each subject
-patients = struct;
-for iDir = 1:numel(baseDirs)
-    currentDir = baseDirs{iDir};
-    DicomDir=dicominfo(fullfile(rootDir,currentDir,'DICOMDIR'));
-    % Get individual patient
-    patients = getPatient(patients,DicomDir);
+if ~exist(fullfile(outputDir,'Patients.mat'),'file')
+    patients = struct;
+    for iDir = 1:numel(baseDirs)
+        currentDir = baseDirs{iDir};
+        DicomDir=dicominfo(fullfile(rootDir,currentDir,'DICOMDIR'));
+        % Get individual patient
+        patients = getPatient(patients,DicomDir);
+    end
+    save(fullfile(outputDir,'Patients.mat'),'patients');
+else
+    data = load(fullfile(outputDir,'Patients.mat'));
+    patients = data.patients;
 end
 
 %% Now we create our BIDS sourcedata
 fprintf('Create BIDS sourcedata...\n');
-mkdir(outputDir);
 
 % Defaults
 sourceStructure.folderHierarchy = {'^sub-(.+)$','^(session-\\d{1}).+$','^(ASL|T1w|M0|T2|FLAIR)$'};
