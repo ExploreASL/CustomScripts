@@ -15,7 +15,7 @@ function patientList = getPatientDirListXML(rootDir,outputDir)
 % Copyright 2015-2021 ExploreASL
 
 % Warning
-fprintf('Reading all XML files can take a while, checking if the file a label file exists already...\n');
+fprintf('Reading all XML files can take a while, checking if the label file exists already...\n');
 
 if exist(fullfile(outputDir,'labels.tsv'),'file')
 	patientList = xASL_tsvRead(fullfile(outputDir,'labels.tsv'));

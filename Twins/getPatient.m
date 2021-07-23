@@ -53,6 +53,9 @@ function patients = getPatient(patients,DicomDir)
             patients.(lastPatient).t1w = currentItem;
         end
 
+        % Set directory
+        patients.(lastPatient).DicomDir = DicomDir;
+
     end
 
 end
