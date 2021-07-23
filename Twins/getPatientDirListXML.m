@@ -15,9 +15,6 @@ function patientList = getPatientDirListXML(rootDir)
 % Copyright 2015-2021 ExploreASL
 
 
-% XML
-import matlab.io.xml.dom.*
-
 % Individual directories
 subjectDirs = xASL_adm_GetFsList(rootDir,'^.+$',true);
 
@@ -25,7 +22,7 @@ for iSubject = 1:numel(subjectDirs)
 
 	% Read XML file
 	xmlFile = fullfile(rootDir,subjectDirs{iSubject},'SECTRA','CONTENT.XML');
-	xDoc = parseFile(Parser,xmlFile);
+	xDoc = xmlread(xmlFile);
 	allListItems = getElementsByTagName(xDoc,'listitem');
 
 
