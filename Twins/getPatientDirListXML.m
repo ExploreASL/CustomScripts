@@ -40,8 +40,9 @@ else
 			isfield(xmlStruct.content.patient.patient_data,'personal_id')
 			thisPatientID = xmlStruct.content.patient.patient_data.personal_id.Text;
 			thisSex = xmlStruct.content.patient.patient_data.sex.Text;
-			fprintf('%s ...     \n',thisPatientID);
+			fprintf('%s ...     ',thisPatientID);
 			xASL_TrackProgress(iSubject, numel(subjectDirs));
+			fprintf(' \n');
 		else
 			warning('It was not possible to extract the patient ID...');
 			thisPatientID = 'unknown';
