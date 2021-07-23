@@ -130,7 +130,7 @@ for iPatient = 1:numel(allPatients)
     %    end
 
     else
-        warning('Patient already exists...');
+        fprintf('Patient %s already exists...\n', thisPatient);
     end
 
 end
