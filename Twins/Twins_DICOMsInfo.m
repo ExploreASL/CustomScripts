@@ -92,37 +92,46 @@ allPatients = fieldnames(patients);
 for iPatient = 1:numel(allPatients)
     % Create output directory
     thisPatient = allPatients{iPatient};
-    mkdir(fullfile(outputDir,thisPatient));
-    % Create sourcedata
-    mkdir(fullfile(outputDir,thisPatient,'sourcedata'));
-    % Create subject
-    mkdir(fullfile(outputDir,thisPatient,'sourcedata','sub-001'));
-    % Create session
-    mkdir(fullfile(outputDir,thisPatient,'sourcedata','sub-001','session-1'));
+    % Check if directory already exists
+    if ~exist(fullfile(outputDir,thisPatient),'dir')
+        mkdir(fullfile(outputDir,thisPatient));
+        % Create sourcedata
+        mkdir(fullfile(outputDir,thisPatient,'sourcedata'));
+        % Create subject
+        mkdir(fullfile(outputDir,thisPatient,'sourcedata','sub-001'));
+        % Create session
+        mkdir(fullfile(outputDir,thisPatient,'sourcedata','sub-001','session-1'));
 
-    % Create sourceStructure.json
-    spm_jsonwrite(fullfile(outputDir,thisPatient,'sourceStructure.json'),sourceStructure);
+        % Create sourceStructure.json
+        spm_jsonwrite(fullfile(outputDir,thisPatient,'sourceStructure.json'),sourceStructure);
 
-    % Create dataPar.json
-    dataPar.name = thisPatient;
-    spm_jsonwrite(fullfile(outputDir,thisPatient,'dataPar.json'),dataPar);
+        % Create dataPar.json
+        dataPar.name = thisPatient;
+        spm_jsonwrite(fullfile(outputDir,thisPatient,'dataPar.json'),dataPar);
 
-%    % Move series: ASL
-%    if isfield(patients.(thisPatient),'asl')
-%        xASL_Copy('...',fullfile(outputDir,thisPatient,'sourcedata','sub-001','session-1','ASL'));
-%    end
-%    % Move series: FLAIR
-%    if isfield(patients.(thisPatient),'flair')
-%        xASL_Copy('...',fullfile(outputDir,thisPatient,'sourcedata','sub-001','session-1','FLAIR'));
-%    end
-%    % Move series: M0
-%    if isfield(patients.(thisPatient),'m0')
-%        xASL_Copy('...',fullfile(outputDir,thisPatient,'sourcedata','sub-001','session-1','M0'));
-%    end
-%    % Move series: T1w
-%    if isfield(patients.(thisPatient),'t1w')
-%        xASL_Copy('...',fullfile(outputDir,thisPatient,'sourcedata','sub-001','session-1','T1w'));
-%    end
+        % Move series: ASL
+    %    if isfield(patients.(thisPatient),'asl')
+    %        xASL_Copy('...',fullfile(outputDir,thisPatient,'sourcedata','sub-001','session-1','ASL'));
+    %    end
+
+        % Move series: FLAIR
+    %    if isfield(patients.(thisPatient),'flair')
+    %        xASL_Copy('...',fullfile(outputDir,thisPatient,'sourcedata','sub-001','session-1','FLAIR'));
+    %    end
+
+        % Move series: M0
+    %    if isfield(patients.(thisPatient),'m0')
+    %        xASL_Copy('...',fullfile(outputDir,thisPatient,'sourcedata','sub-001','session-1','M0'));
+    %    end
+
+        % Move series: T1w
+    %    if isfield(patients.(thisPatient),'t1w')
+    %        xASL_Copy('...',fullfile(outputDir,thisPatient,'sourcedata','sub-001','session-1','T1w'));
+    %    end
+
+    else
+        warning('Patient already exists...');
+    end
 
 end
 
