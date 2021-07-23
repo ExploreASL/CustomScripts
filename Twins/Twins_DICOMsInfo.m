@@ -65,9 +65,13 @@ if ~exist(fullfile(outputDir,'Patients.mat'),'file')
     patients = struct;
     for iDir = 1:numel(baseDirs)
         currentDir = baseDirs{iDir};
-        DicomDir=dicominfo(fullfile(rootDir,currentDir,'DICOMDIR'));
-        % Get individual patient
-        patients = getPatient(patients,DicomDir);
+        if exist(fullfile(rootDir,currentDir,'DICOMDIR'),'file')
+            DicomDir=dicominfo(fullfile(rootDir,currentDir,'DICOMDIR'));
+            % Get individual patient
+            patients = getPatient(patients,DicomDir);
+        else
+            warning('DICOMDIR does not exist...');
+        end
     end
     save(fullfile(outputDir,'Patients.mat'),'patients');
 else
