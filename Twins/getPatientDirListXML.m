@@ -44,7 +44,7 @@ else
 		else
 			warning('It was not possible to extract the patient ID...');
 			thisPatientID = 'unknown';
-			thisSex = 'unknown'
+			thisSex = 'unknown';
 		end
 
 		patientList{iSubject+1,1} = thisPatientID;
