@@ -21,7 +21,7 @@ function isThisSeries = getSeries(item,typeOfSeries)
     recordType = item.DirectoryRecordType;
     
     % Check if the current element is a series
-    if ~isempty(regexpi(FieldType,'SERIES'))
+    if ~isempty(regexpi(recordType,'SERIES'))
         
         % Get the sequence name
         MRIsequenceName=item.SeriesDescription;
