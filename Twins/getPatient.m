@@ -31,8 +31,9 @@ function patients = getPatient(patients,DicomDir)
 
         % Get the patients
         if strcmp(currentItem.DirectoryRecordType,'PATIENT')
-            patients.(currentItem.PatientID) = currentItem;
-            lastPatient = currentItem.PatientID;
+            validName = matlab.lang.makeValidName(currentItem.PatientID);
+            patients.(validName) = currentItem;
+            lastPatient = validName;
             fprintf('%s ...     ',lastPatient);
             xASL_TrackProgress(It, numel(ItemsList));
             fprintf(' \n');
