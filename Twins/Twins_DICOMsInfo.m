@@ -24,24 +24,3 @@ for iDir = 1:numel(baseDirs)
 end
 
 
-% Now that we have the patient list, we want all the scans corresonding to each patient
-
-%i=1;
-%for It=1:length(ItemsList)
-%    
-%    DicomInfo = Items.(ItemsList{It});
-%    FieldType=DicomInfo.DirectoryRecordType;
-%    
-%    if strcmp(FieldType,'SERIES')
-%        MRIsequenceName=DicomInfo.SeriesDescription;
-%        if strcmp(MRIsequenceName,'ASL 2025')
-%            
-%        end
-%        
-%%         FieldTypes{i}=MRIsequenceName; %creates a list with all of the MRI sequences available
-%%         i=i+1;
-%        
-%    end
-%end
-
-
