@@ -5,11 +5,11 @@
 clear all
 
 % Initialize ExploreASL
-x = ExploreASL;
+x=ExploreASL_Master('',0);
 clc
 
 % Set-up directories
-rootDir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/Twins/twins_FUscans/EMI_301/DICOM';
+rootDir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/Twins/twins_FUscans/';
 
 % Get all sub directories
 baseDirs = xASL_adm_GetFsList(rootDir,'^.+$',true);
@@ -18,34 +18,10 @@ baseDirs = xASL_adm_GetFsList(rootDir,'^.+$',true);
 patients = struct;
 for iDir = 1:numel(baseDirs)
     currentDir = baseDirs{iDir};
-    subjects.DicomDir=dicominfo(fullfile(baseDirs,currentDir));
+    DicomDir=dicominfo(fullfile(rootDir,currentDir,'DICOMDIR'));
     % Get individual patient
     patients = getPatient(patients,DicomDir);
 end
-
-function patients = getPatient(patients,DicomDir)
-
-    % List of items (studies, patients, sessions etc.)
-    Items=DicomDir.DirectoryRecordSequence;
-
-    % Fieldnames
-    ItemsList= fieldnames(DicomDir.DirectoryRecordSequence);
-
-    % Iterate over all items and get a patient list
-    for iElement = 1:numel(ItemsList)
-
-        % Get current item
-        currentItem = Items.(ItemsList{It});
-
-        % Get the patients
-        if strcmp(currentItem.DirectoryRecordType,'PATIENT')
-            patients.(currentItem.PatientID) = currentItem;
-        end
-
-    end
-
-end
-
 
 
 % Now that we have the patient list, we want all the scans corresonding to each patient
