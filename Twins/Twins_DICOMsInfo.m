@@ -30,11 +30,19 @@ else
     username = getenv('username');
 end
 
-% Output directory
-outputDir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/Twins/BIDS';
+% Get basic settings
+switch username
+    case 'strittm'
+        outputDir = '/home/strittm/lood_storage/divi/Projects/ExploreASL/Twins/BIDS';
+        rootDir = '/home/strittm/lood_storage/divi/Projects/ExploreASL/Twins/twins_FUscans/'
+    case 'padrelab'
+        outputDir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/Twins/BIDS';
+        rootDir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/Twins/twins_FUscans/';
+    otherwise
+        fprintf('Unknown user...\n');
+end
 
-% Set-up directories
-rootDir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/Twins/twins_FUscans/';
+
 
 % Get all sub directories
 baseDirs = xASL_adm_GetFsList(rootDir,'^.+$',true);
