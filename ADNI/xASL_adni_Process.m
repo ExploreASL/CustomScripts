@@ -50,6 +50,8 @@ for iCase = 1:size(adniCases,1)
     % Check logging to see if something went wrong
     if isfield(x,'logging')
         loggingExists = true;
+    else
+        loggingExists = false;
     end
     try
         xASL_adni_AddLineToTSV(adniCases{iCase,1},userConfig.ADNI_PROCESSED,loggingExists);

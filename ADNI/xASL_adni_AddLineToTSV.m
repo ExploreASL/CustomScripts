@@ -15,14 +15,27 @@ function xASL_adni_AddLineToTSV(adniCase,tsvPath,loggingExists)
 % Copyright 2015-2021 ExploreASL
 
 
+    % Check if TSV file exists
+    if ~xASL_exist(tsvPath,'file')
+        tsvFile{1,1} = 'ADNI_Case';
+        tsvFile{1,2} = 'Logging';
+    else
+        tsvFile = xASL_tsvRead(tsvPath);
+    end
+    
+    % Get existing number of rows
+    existingRows = size(tsvFile,1);
+    
+    % Add case and logging info
+    tsvFile{existingRows+1,1} = adniCase;
+    if loggingExists
+        tsvFile{existingRows+1,2} = 'ERROR';
+    else
+        tsvFile{existingRows+1,2} = 'OK';
+    end
 
-	tsvFile = xASL_tsvRead(tsvPath);
-
-
-
-
-
-	xASL_tsvWrite(tsvFile,tsvPath);
+    % Write TSV file
+	xASL_tsvWrite(tsvFile,tsvPath,1);
 
 
 end
