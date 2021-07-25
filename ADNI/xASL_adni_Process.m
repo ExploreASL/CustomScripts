@@ -42,7 +42,13 @@ for iCase = 1:size(adniCases,1)
     fprintf('\n');
     % Run ExploreASL processing
     try
-        x = ExploreASL(currentDir,0,1);
+        processDataset = xASL_adni_CheckProcessingTSV(adniCases{iCase,1},userConfig.ADNI_PROCESSED);
+        if processDataset
+            x = ExploreASL(currentDir,0,1);
+        else
+            % Dataset was already proessed successfully
+            x = struct;
+        end
     catch
         warning('Processing of %s failed...',adniCases{iCase,1});
         x = struct;
