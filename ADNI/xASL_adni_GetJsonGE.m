@@ -8,6 +8,8 @@ function [json,studyPar] = xASL_adni_GetJsonGE(headerDCM, ADNI_VERSION, adniCase
 % -----------------------------------------------------------------------------------------------------------------------------------------------------
 % DESCRIPTION:  Minor helper function.
 %
+%               Written by M. Stritt, 2021.
+%
 % EXAMPLE:      json = xASL_adni_GetJsonGE(headerDCM, ADNI_VERSION, adniCases, iCase);
 % -----------------------------------------------------------------------------------------------------------------------------------------------------
 % Copyright 2015-2021 ExploreASL

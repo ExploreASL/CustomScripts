@@ -8,6 +8,8 @@ function [json, newCaseRoot, iSessionsNum, studyPar] = xASL_adni_CopyAndModifySe
 % -----------------------------------------------------------------------------------------------------------------------------------------------------
 % DESCRIPTION:  Main script for copying and modifying individual sessions.
 %
+%               Written by M. Stritt, 2021.
+%
 % EXAMPLE:      n/a
 % -----------------------------------------------------------------------------------------------------------------------------------------------------
 % Copyright 2015-2021 ExploreASL

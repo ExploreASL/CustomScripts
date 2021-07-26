@@ -8,6 +8,8 @@ function [dateLists, names] = xASL_adni_GetDateListAndNames(dateLists, names, cu
 % -----------------------------------------------------------------------------------------------------------------------------------------------------
 % DESCRIPTION:  Check modalities and get the directories.
 %
+%               Written by M. Stritt, 2021.
+%
 % EXAMPLE:      n/a
 % -----------------------------------------------------------------------------------------------------------------------------------------------------
 % Copyright 2015-2021 ExploreASL

@@ -8,6 +8,8 @@ function [adniCases,foundASL,foundT1] = xASL_adni_GetData(adniDirectory)
 % -----------------------------------------------------------------------------------------------------------------------------------------------------
 % DESCRIPTION:  Basic settings for ADNI data.
 %
+%               Written by M. Stritt, 2021.
+%
 % EXAMPLE:      [adniCases,foundASL,foundT1] = xASL_adni_GetData(adniDirectory);
 % -----------------------------------------------------------------------------------------------------------------------------------------------------
 % Copyright 2015-2021 ExploreASL
