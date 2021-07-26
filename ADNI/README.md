@@ -21,7 +21,7 @@ Script to process the ADNI data.
 
 ## userConfig.json
 
-Short example:
+JSON file to define your **ADNI** version, your local **ADNI** directory, the resulting **BIDS** directory and the path to a TSV file containing processing informations.
 
 - `ADNI_ORIGINAL_DIR`: Path to the original ADNI data (ADNI-2 or ADNI-3).
 - `ADNI_OUTPUT_DIR`: Path to the resulting BIDS & xASL derivatives data.
