@@ -20,6 +20,7 @@ function studyPar = xASL_adni_FixStudyParBasedOnDataPar(json, studyPar)
     
     if strcmpi(json.x.Vendor,'GE')
         studyPar.ASLContext = 'm0scan,deltam';
+        studyPar.M0 = true;
     end
     
     if strcmpi(json.x.Vendor,'Philips')
