@@ -38,6 +38,9 @@ function studyPar = xASL_adni_FixStudyParBasedOnDataPar(json, studyPar)
     % [ms] -> [s]
     studyPar.PostLabelingDelay = json.x.Q.Initial_PLD/1000;
     studyPar.LabelingDuration = json.x.Q.LabelingDuration/1000;
+    
+    % ArterialSpinLabelingType
+    studyPar.ArterialSpinLabelingType = json.x.Q.LabelingType;
 
 end
 
