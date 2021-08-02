@@ -18,6 +18,8 @@ x = ExploreASL;
 clc
 
 % Basic settings
+fprintf('Convert raw ADNI data to sourcedata...\n');
+fprintf('ExploreASL:         %s\n',x.Version);
 [userConfig,adniDirectory,adniDirectoryResults] = xASL_adni_BasicSettings();
 
 % Get ADNI cases
