@@ -41,6 +41,24 @@ function [userConfig,adniDirectory,adniDirectoryResults] = xASL_adni_BasicSettin
     else
         adniDirectory = uigetdir([], 'Select ADNI directory...');
         adniDirectoryResults = uigetdir([], 'Select ADNI results directory...');
+        userConfig.ADNI_ORIGINAL_DIR = adniDirectory;
+        userConfig.ADNI_OUTPUT_DIR = adniDirectoryResults;
+        userConfig.ADNI_PROCESSED = fullfile(adniDirectoryResults,'data.tsv');
+        userConfig.ADNI_VERSION = 2;
+    end
+
+    % Print userConfig fields
+    if isfield(userConfig,'ADNI_ORIGINAL_DIR')
+        fprintf('ADNI_ORIGINAL_DIR:  %s',userConfig.ADNI_ORIGINAL_DIR);
+    end
+    if isfield(userConfig,'ADNI_OUTPUT_DIR')
+        fprintf('ADNI_OUTPUT_DIR:    %s',userConfig.ADNI_OUTPUT_DIR);
+    end
+    if isfield(userConfig,'ADNI_PROCESSED')
+        fprintf('ADNI_PROCESSED:     %s',userConfig.ADNI_PROCESSED);
+    end
+    if isfield(userConfig,'ADNI_VERSION')
+        fprintf('ADNI_VERSION:       %s',userConfig.ADNI_VERSION);
     end
 
 end

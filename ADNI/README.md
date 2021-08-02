@@ -26,14 +26,15 @@ JSON file to define your **ADNI** version, your local **ADNI** directory, the re
 - `ADNI_ORIGINAL_DIR`: Path to the original ADNI data (ADNI-2 or ADNI-3).
 - `ADNI_OUTPUT_DIR`: Path to the resulting BIDS & xASL derivatives data.
 - `ADNI_PROCESSED`: Path a TSV file where the information about processed datasets will be stored.
+- `ADNI_VERSION`: Version of ADNI (2 or 3).
 
 
 ```json
 {
-	"ADNI_VERSION": 2,	
 	"ADNI_ORIGINAL_DIR": "path\\ADNI\\test_in",
 	"ADNI_OUTPUT_DIR": "path\\ADNI\\test_out",
-	"ADNI_PROCESSED": "path\\ADNI\\data.tsv"
+	"ADNI_PROCESSED": "path\\ADNI\\data.tsv",
+	"ADNI_VERSION": 2
 }
 ```
 
