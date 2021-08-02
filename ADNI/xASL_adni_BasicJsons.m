@@ -21,7 +21,7 @@ function [sourceStructure,studyPar] = xASL_adni_BasicJsons()
     % subject: token 1, visit: token 2, session: none, scan: token 3
     sourceStructure.tokenOrdering = [1,2,0,3];
     % visit/session/scan aliases
-    sourceStructure.tokenVisitAliases = {'session_1','_1','session_2','_2','session_3','_3','session_4','_4','session_5','_5','session_6','_6','session_7','_7'};
+    sourceStructure.tokenVisitAliases = {'session_1','1','session_2','2','session_3','3','session_4','4','session_5','5','session_6','6','session_7','7'};
     sourceStructure.tokenSessionAliases = {'', ''};
     sourceStructure.tokenScanAliases = {'^ASL$','ASL4D','^T1w$','T1w','^M0$','M0','^T2$','T2w','^FLAIR$','FLAIR'};
     % Match directories
