@@ -24,10 +24,11 @@ function [json,studyPar] = xASL_adni_GetJsonPhilips(headerDCM, ADNI_VERSION, adn
     % Create x struct
     json.x = struct;
     json.x.name = adniCases{iCase,1};
-    json.x.M0 = 'UseControlAsM0';
+    json.x.M0 = 3.7394*10^6; % We have to use a fixed number, because we only have deltam and no M0 scan
     json.x.Q.LabelingType = 'PASL';
     json.x.Quality = 1;
     json.x.Vendor = 'Philips';
+    
     if isfield(headerDCM,'SeriesDescription')
         if ischar(headerDCM.SeriesDescription)
             if ~isempty(regexpi(headerDCM.SeriesDescription,'PASL'))
@@ -53,6 +54,23 @@ function [json,studyPar] = xASL_adni_GetJsonPhilips(headerDCM, ADNI_VERSION, adn
         json.x.readout_dim = '2D';
     else
         json.x.readout_dim = '3D';
+    end
+    
+    if isfield(headerDCM,'SoftwareVersions')
+        if strcmp(json.x.readout_dim,'2D')
+            % R3 & R5 have different slice timing vectors
+            softwareVersion = headerDCM.SoftwareVersions;
+            softwareVersion = str2num(softwareVersion(1));
+            % I assume 40 acquisitions here
+            switch softwareVersion
+                case 3
+                    studyPar.SliceTiming = (3238-2000)/40; % Min TR 3238, PLD 2000
+                case 5
+                    studyPar.SliceTiming = (3679-2000)/40; % Min TR 3679, PLD 2000
+                otherwise
+                    studyPar.SliceTiming = (3238-2000)/40; % We assume the older version here
+            end
+        end
     end
     
     %% Fix study par

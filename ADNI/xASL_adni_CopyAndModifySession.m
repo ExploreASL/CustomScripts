@@ -36,6 +36,12 @@ function [json, newCaseRoot, iSessionsNum, studyPar] = xASL_adni_CopyAndModifySe
     dcmPaths = xASL_adm_GetFileList(fullfile(newCase,'ASL'),'^.+\.dcm$','FPListRec');
     if ~isempty(dcmPaths)
         headerDCM = xASL_io_DcmtkRead(dcmPaths{1});
+        if ~isfield(headerDCM,'Manufacturer')
+            headerDCM.Manufacturer = 'unknown';
+        end
+        if ~isfield(headerDCM,'SoftwareVersions')
+            headerDCM.SoftwareVersions = 'unknown';
+        end
 
         % Determine manufacturer from DICOM
         if ~isempty(regexpi(headerDCM.Manufacturer,'Siemens'))
