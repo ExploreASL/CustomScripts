@@ -23,7 +23,7 @@ function [sourceStructure,studyPar] = xASL_adni_BasicJsons()
     % visit/session/scan aliases
     sourceStructure.tokenVisitAliases = {'session_1','ses-1','session_2','ses-2','session_3','ses-3','session_4','ses-4','session_5','ses-5','session_6','ses-6','session_7','ses-7'};
     sourceStructure.tokenSessionAliases = {'', ''};
-    sourceStructure.tokenScanAliases = {'^ASL$','ASL4D','^T1w$','T1','^M0$','M0','^T2$','T2','^FLAIR$','FLAIR'};
+    sourceStructure.tokenScanAliases = {'^ASL$','ASL4D','^T1w$','T1w','^M0$','M0','^T2$','T2w','^FLAIR$','FLAIR'};
     % Match directories
     sourceStructure.bMatchDirectories = true;
 
