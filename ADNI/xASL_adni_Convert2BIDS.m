@@ -46,10 +46,10 @@ for iCase = 1:size(adniCases,1)
     catch
         warning('Import of %s failed...',adniCases{iCase,1});
     end
+    % Add custom participants.tsv
+    xASL_adni_AddParticipantsTSV(currentDir,adniCases{iCase,1});
     
 end
-
-
 
 
 

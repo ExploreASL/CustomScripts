@@ -28,10 +28,13 @@ function [json,studyPar] = xASL_adni_GetJsonGE(headerDCM, ADNI_VERSION, adniCase
     json.x.Q.LabelingType = 'PCASL';
     json.x.Quality = 1;
     json.x.Vendor = 'GE';
+    % Fallback values
+    json.x.Q.Initial_PLD = 2025;
+    json.x.Q.LabelingDuration = 700;
     % I think there's a little mix-up here between PLD and Labeling Duration
     if isfield(headerDCM,'GELabelingDuration')
         if isnumeric(headerDCM.GELabelingDuration)
-            json.x.Q.Initial_PLD = headerDCM.GELabelingDuration;
+            json.x.Q.LabelingDuration = headerDCM.GELabelingDuration;
         end
     end
     % We use PCASL on default anyway, but it should also be in the series description
@@ -42,8 +45,7 @@ function [json,studyPar] = xASL_adni_GetJsonGE(headerDCM, ADNI_VERSION, adniCase
             end
         end
     end
-    % Typical value for GE scanners with this software
-    json.x.Q.LabelingDuration = 700;
+    
     % The ADNI GE scanners only use 3D spiral
     json.x.Sequence = '3D_spiral';
     
