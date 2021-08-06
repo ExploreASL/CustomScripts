@@ -4,28 +4,48 @@
 clear all
 clc
 
-Odir='/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/OASIS/test_rawdata';
+%Initiating ExploreASL because we'll use some of its functions for sorting the data
+ExploreASL_Master('',0);
+
+Odir='/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/OASIS/test_rawdata2';
 
 ScannersList = xASL_adm_GetFileList(Odir, '^Siemens_', 'FPList',[0 Inf], true);
 
-
 for iSc=1:length(ScannersList)
     
-    Rdir = fullfile(ScannersList{iSc},'rawdata/');
+    Rdir = fullfile(ScannersList{iSc});
     
     SubjList = xASL_adm_GetFileList(Rdir, '^sub-OAS', 'FPList',[0 Inf], true);
     
     for iSub=1:length(SubjList)
         
+
         JsonsAnatList = xASL_adm_GetFileList(SubjList{iSub}, '(T1.json)|(FLAIR.json) ', 'FPListRec',[0 Inf], false);  
-        JsonsASLList = xASL_adm_GetFileList(SubjList{iSub}, '(ASL4D.json)', 'FPListRec',[0 Inf], false);  
+        JsonsASLList = xASL_adm_GetFileList(SubjList{iSub}, '(asl.json)', 'FPListRec',[0 Inf], false);  
         
-        % == Anatomical Jsons ==%
+        NiftiASLList = xASL_adm_GetFileList(SubjList{iSub}, '(asl.nii) ', 'FPListRec',[0 Inf], false);
+        
+        % == For OASIS, removing the first volume of the Niftis ==%
+         for iN=1:length(NiftiASLList)
+            
+             ASLIm=xASL_io_Nifti2Im(NiftiASLList{iN});
+             
+             if size(ASLIm,4)~=104
+                 ASLIm(:,:,:,1)=[]; %deletes the first volume, so we can have 104 instead of 105 ovluems (first is dummy scan)
+                 xASL_io_SaveNifti(NiftiASLList{iN},NiftiASLList{iN},ASLIm)
+             end
+         end
+        
+         %StudyPar
+         studyParPath = fullfile(Rdir,'studyPar.json');
+         studyPar = spm_jsonread(studyParPath);
+         
+         %== Anatomical (T1,FLAIR) Jsons ==%
          for iJ=1:length(JsonsAnatList)
             
             % Load and correct Anat JSONs 
             jsonAnat = spm_jsonread(JsonsAnatList{iJ});
-            jsonAnat = xASL_bids_BIDSifyAnatJSON(jsonAnat);
+            jsonAnat = xASL_bids_BIDSifyAnatJSON(jsonAnat,studyPar);
             jsonAnat = xASL_bids_VendorFieldCheck(jsonAnat);
             jsonAnatCheck = xASL_bids_JsonCheck(jsonAnat,'');
             
@@ -36,10 +56,8 @@ for iSc=1:length(ScannersList)
         % == ASL jsons == %
         for iA=1:length(JsonsASLList)
             [dir, ASLfile] = fileparts(JsonsASLList{iA});
-            ASLOutPath = ASLfile(1:end-6); %removing the ASL4D part
+            ASLOutPath = ASLfile(1:end-4); %removing the _asl part
             bidsPar = xASL_bids_Config();
-            studyPar=fullfile(ScannersList{iSc},'studyPar.json');
-            studyPar=spm_jsonread(studyPar);
 
             jsonASL = spm_jsonread(JsonsASLList{iA});
             headerASL = xASL_io_ReadNifti(fullfile(dir, [ASLfile '.nii'])); %path for the .nii corresponding to .json
@@ -51,7 +69,7 @@ for iSc=1:length(ScannersList)
             jsonLocal = xASL_bids_BIDSifyASLNII(jsonLocal, bidsPar,fullfile(dir, [ASLfile '.nii']), fullfile(dir, ASLOutPath));
             jsonLocal = xASL_bids_VendorFieldCheck(jsonLocal);
             jsonASLCheck = xASL_bids_JsonCheck(jsonLocal,'ASL');
-            jsonFinalName= fullfile(dir,ASLOutPath,'_asl.json');
+            jsonFinalName= fullfile(dir,ASLfile);
             
             %Save Json
             spm_jsonwrite(jsonFinalName,jsonASLCheck);

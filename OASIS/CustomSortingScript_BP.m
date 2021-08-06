@@ -2,8 +2,12 @@
 
 ExploreASL_Master('',0);
 
-Odir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/OASIS/sourcedata/';
-Ddir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/OASIS/rawdata';
+%Odir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/OASIS/test_sourcedata/';
+%Ddir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/OASIS/test_rawdata';
+
+Odir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/OASIS/test_sourcedata2/';
+Ddir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/OASIS/test_rawdata2';
+
 
 xASL_adm_CreateDir(Ddir);  
 Slist1 = xASL_adm_GetFileList(Odir, '^OAS\d*', 'FPList',[0 Inf], true);
@@ -33,7 +37,7 @@ for iS1=1:length(Slist1)
             DestSubjSesDir = fullfile(DestSubjDir, ses); %.../OAS30001/ses2430
             xASL_adm_CreateDir(DestSubjSesDir);
             
-            % BIDS folder -> dataset_description.JSON file
+            % OASIS' BIDS folder -> dataset_description.JSON file
             BIDSfolder = xASL_adm_GetFileList(MRlist{iMR}, 'BIDS$', 'FPList',[0 Inf], true);
             JSONlist = xASL_adm_GetFileList(BIDSfolder, '\.json$', 'FPList',[0 Inf]);
             DestFile = fullfile(DestSubjSesDir, ['dataset_description.json']);
@@ -46,7 +50,7 @@ for iS1=1:length(Slist1)
                 BIDSDir = fullfile(ScanList{iScan}, 'BIDS');
                 ScanType = {'T1w','FLAIR','asl' 'fieldmap','TOF_angio', 'swi'}; % DICOM name
                 SubDirName = {'anat' 'anat' 'perf' 'fmap' 'other' 'other'}; %these empty spaces can be 'Other' for TOF and swi
-                FileName = {'T1' 'FLAIR' 'ASL4D' 'fieldmap' 'TOF_angio' 'swi'};
+                FileName = {'T1w' 'FLAIR' 'asl' 'fieldmap' 'TOF_angio' 'swi'};
                 for iType=1:length(ScanType)
                     
                     % == Inside NIFTI folder (to get scan.niis)  == %
@@ -136,7 +140,7 @@ for iS1=1:length(Slist1)
     end
 end
 
-
+%%
 scanners = unique(scannerList(:,3));
 root = Ddir;
 
@@ -156,7 +160,7 @@ for iScanner = 1:length(scanners)
         if strcmp(scannerList{i,3},scanners{iScanner})
             source = fullfile(root,scannerList{i,1},scannerList{i,2});
             ASL_dir=fullfile(source, 'perf');
-            ASLfile_find=xASL_adm_GetFileList(ASL_dir, '\ASL4D.nii.gz$', 'FPList',[0 Inf]); %check if ther
+            ASLfile_find=xASL_adm_GetFileList(ASL_dir, 'asl.nii.gz$', 'FPList',[0 Inf]); %check if ther
             if isempty (ASLfile_find)
                 FinalDest = fullfile(NoASLDest, scannerList{i,1},scannerList{i,2});
             else
@@ -167,6 +171,8 @@ for iScanner = 1:length(scanners)
         end
     end
 end
+
+%%
 
 % == Delete the remaining "sub-OAS..." folders (Should be empty now) ==
 

@@ -29,7 +29,9 @@ for iS1=1:length(Slist1)
     end
     
     DestSubjSesDir = fullfile(DestSubjDir,SessionName); % ending with /D10001M-2
+    
     xASL_adm_CreateDir(DestSubjSesDir);
+    %If the folder already exists, skip the next part (to be faster to repeat this script only for some of the subjects)
     
     SubjFolderList = xASL_adm_GetFileList(Slist1{iS1}, '^1*', 'FPList',[0 Inf], true); %identifies folders inside the subject's folder
     for iF=1:length(SubjFolderList)
@@ -50,8 +52,21 @@ for iS1=1:length(Slist1)
             DestLPSDir = fullfile(DestSubjSesDir, 'LabelingPlaneScans');
             xASL_adm_CreateDir(DestLPSDir);
             xASL_Copy(SubjFolderList{iF}, DestLPSDir, true);
+            
+        elseif ~isempty(regexpi(Scan,'Perfusion_Weighted')) %Perfusion Weighted scans
+            DestPWDir = fullfile(DestSubjSesDir, 'PerfusionWeightedScans');
+            xASL_adm_CreateDir(DestPWDir);
+            xASL_Copy(SubjFolderList{iF}, DestPWDir, true);
+            
+        elseif ~isempty(regexpi(Scan,'relCBF')) %rel CBF scans
+            Dest_rBCFDir = fullfile(DestSubjSesDir, 'relCBFScans');
+            xASL_adm_CreateDir(Dest_rBCFDir);
+            xASL_Copy(SubjFolderList{iF}, Dest_rBCFDir, true);
         else
-            fprintf('warning: unexpected scan');%warning if none of the cases
+            fprintf(['warning: unexpected scan:', Scan, 'saving it in a folder called OtherScans']);%warning if none of the cases
+            Dest_OthersDir = fullfile(DestSubjSesDir, 'OtherScans');
+            xASL_adm_CreateDir(Dest_OthersDir);
+            xASL_Copy(SubjFolderList{iF}, Dest_OthersDir, true);
         end
         
     end
@@ -132,7 +147,7 @@ for iScanner = 1:length(scanners)
             source = fullfile(Ddir,scannerlist{iElement,1},scannerlist{iElement,2});
             FinalDest = fullfile(ScannerDest, 'sourcedata',scannerlist{iElement,1});
             xASL_adm_CreateDir(FinalDest);
-            xASL_Move(source,FinalDest,true); % Use the recursive option
+            xASL_Copy(source,FinalDest,true); % Use the recursive option
             
         end
         
