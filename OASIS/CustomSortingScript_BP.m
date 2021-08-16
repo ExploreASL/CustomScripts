@@ -5,8 +5,8 @@ ExploreASL_Master('',0);
 %Odir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/OASIS/test_sourcedata/';
 %Ddir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/OASIS/test_rawdata';
 
-Odir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/OASIS/test_sourcedata2/';
-Ddir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/OASIS/test_rawdata2';
+Odir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/OASIS/sourcedata/';
+Ddir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/OASIS/rawdata';
 
 
 xASL_adm_CreateDir(Ddir);  
@@ -167,7 +167,11 @@ for iScanner = 1:length(scanners)
                 FinalDest = fullfile(FinalDest_Temp, scannerList{i,1},scannerList{i,2});
             end
             
-            xASL_Move(source,FinalDest,true); % Use the recursive option
+            if isdir(source)
+                xASL_Move(source,FinalDest,true); % Use the recursive option
+            else
+                warning(['The folder ',source,' does not exist'])
+            end
         end
     end
 end
