@@ -18,6 +18,7 @@ function [studyPar,json] = xASL_adni_FixStudyParBasedOnDataPar(json, studyPar)
 
     if isfield(json.x.Q,'LabelingType')
         studyPar.LabelingType = json.x.Q.LabelingType;
+        json.x.Q = rmfield(json.x.Q,'LabelingType');
     end
     
     if strcmpi(studyPar.Manufacturer,'GE')

@@ -23,9 +23,8 @@ function [json,studyPar] = xASL_adni_GetJsonGE(headerDCM, ADNI_VERSION, adniCase
     % Create x struct
     json.x = struct;
     json.x.dataset.name = adniCases{iCase,1};
-    % The M0 scan is included in the ASL sequence, but should be separated by the import workflow
-    json.x.Q.M0 = 'separate_scan';
-    json.x.Q.LabelingType = 'PCASL';
+    % json.x.Q.M0 = 'separate_scan'; % The M0 scan is included in the ASL sequence, but should be separated by the import workflow. We automatically set this using the studyPar though.
+    % json.x.Q.LabelingType = 'PCASL';
     json.x.settings.Quality = 1;
     % json.x.Vendor = 'GE'; % This is added to the studyPar.json now
     % Fallback values
@@ -60,6 +59,8 @@ function [json,studyPar] = xASL_adni_GetJsonGE(headerDCM, ADNI_VERSION, adniCase
     
     % GE should have Background suppression
     studyPar.BackgroundSuppression = true;
+    studyPar.BackgroundSuppressionNumberPulses = 4;
+    studyPar.BackgroundSuppressionPulseTime = {1.465, 2.1, 2.6, 2.88};
     
 
 end
