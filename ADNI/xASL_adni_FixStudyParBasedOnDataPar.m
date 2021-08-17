@@ -17,6 +17,7 @@ function [studyPar,json] = xASL_adni_FixStudyParBasedOnDataPar(json, studyPar)
     % Previously we used json.x.Vendor instead of studyPar.Manufacturer
 
     if isfield(json.x.Q,'LabelingType')
+        studyPar.ArterialSpinLabelingType = json.x.Q.LabelingType;
         studyPar.LabelingType = json.x.Q.LabelingType;
         json.x.Q = rmfield(json.x.Q,'LabelingType');
     end
@@ -45,8 +46,7 @@ function [studyPar,json] = xASL_adni_FixStudyParBasedOnDataPar(json, studyPar)
     json.x.Q = rmfield(json.x.Q,'Initial_PLD');
     json.x.Q = rmfield(json.x.Q,'LabelingDuration');
     
-    % ArterialSpinLabelingType
-    studyPar.ArterialSpinLabelingType = json.x.Q.LabelingType;
+    
 
 end
 
