@@ -22,12 +22,12 @@ function [json,studyPar] = xASL_adni_GetJsonGE(headerDCM, ADNI_VERSION, adniCase
 
     % Create x struct
     json.x = struct;
-    json.x.name = adniCases{iCase,1};
+    json.x.dataset.name = adniCases{iCase,1};
     % The M0 scan is included in the ASL sequence, but should be separated by the import workflow
-    json.x.M0 = 'separate_scan';
+    json.x.Q.M0 = 'separate_scan';
     json.x.Q.LabelingType = 'PCASL';
-    json.x.Quality = 1;
-    json.x.Vendor = 'GE';
+    json.x.settings.Quality = 1;
+    % json.x.Vendor = 'GE'; % This is added to the studyPar.json now
     % Fallback values
     json.x.Q.Initial_PLD = 2025;
     json.x.Q.LabelingDuration = 700;
@@ -47,16 +47,19 @@ function [json,studyPar] = xASL_adni_GetJsonGE(headerDCM, ADNI_VERSION, adniCase
     end
     
     % The ADNI GE scanners only use 3D spiral
-    json.x.Sequence = '3D_spiral';
+    json.x.Q.Sequence = '3D_spiral';
     
-    if regexpi(json.x.Sequence,'2D')
-        json.x.readout_dim = '2D';
+    if regexpi(json.x.Q.Sequence,'2D')
+        json.x.Q.readoutDim = '2D';
     else
-        json.x.readout_dim = '3D';
+        json.x.Q.readoutDim = '3D';
     end
     
     %% Fix study par
-    studyPar = xASL_adni_FixStudyParBasedOnDataPar(json, studyPar);
+    [studyPar,json] = xASL_adni_FixStudyParBasedOnDataPar(json, studyPar);
+    
+    % GE should have Background suppression
+    studyPar.BackgroundSuppression = true;
     
 
 end

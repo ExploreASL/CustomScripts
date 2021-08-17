@@ -30,20 +30,18 @@ function [sourceStructure,studyPar] = xASL_adni_BasicJsons()
     % Define studyPar template
     studyPar.Authors = 'ADNI';
     studyPar.DatasetType = 'raw';
-    studyPar.License = 'RandomText';
-    studyPar.Authors = {'RandomText'};
-    studyPar.Acknowledgements = 'RandomText';
-    studyPar.HowToAcknowledge = 'Please cite this paper: https://www.ncbi.nlm.nih.gov/pubmed/001012092119281';
-    studyPar.Funding = {'RandomText'};
-    studyPar.EthicsApprovals = {'RandomText'};
-    studyPar.ReferencesAndLinks = {'RandomText'};
-    studyPar.DatasetDOI = 'RandomText';
+    studyPar.License = 'http://adni.loni.usc.edu/terms-of-use/';
+    studyPar.Authors = {'Alzheimers Disease Neuroimaging Initiative'};
+    studyPar.Acknowledgements = 'http://adni.loni.usc.edu/data-samples/access-data/groups-acknowledgements-journal-format/';
+    studyPar.HowToAcknowledge = 'ADNI website: http://adni.loni.usc.edu/';
+    studyPar.Funding = {'Alzheimers Disease Neuroimaging Initiative'};
+    studyPar.ReferencesAndLinks = {'http://adni.loni.usc.edu/'};
+    studyPar.DatasetDOI = 'http://adni.loni.usc.edu/';
     studyPar.VascularCrushing = false;
     studyPar.LabelingType = 'PASL';
-    studyPar.PASLType = 'PICORE';
+    % studyPar.PASLType = 'PICORE';
     studyPar.BackgroundSuppression = false;
     studyPar.M0 = false;
-    studyPar.LabelingLocationDescription = 'Fixed, 9 cm below ACPC';
     studyPar.ASLContext = 'm0scan,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label';
 
 

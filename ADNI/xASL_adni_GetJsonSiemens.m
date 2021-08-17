@@ -21,7 +21,7 @@ function [json,studyPar] = xASL_adni_GetJsonSiemens(headerDCM, ADNI_VERSION, adn
     [xasl, json, studyPar] = xASL_adni_PhoenixFix(xasl, studyPar, ADNI_VERSION, adniCases, iCase);
     
     %% Fix study par
-    studyPar = xASL_adni_FixStudyParBasedOnDataPar(json, studyPar);
+    [studyPar,json] = xASL_adni_FixStudyParBasedOnDataPar(json, studyPar);
 
 end
 
@@ -73,29 +73,29 @@ function [xasl, json, studyPar] = xASL_adni_PhoenixFix(xasl, studyPar, ADNI_VERS
 
     % Create x struct
     json.x = struct;
-    json.x.name = adniCases{iCase,1};
+    json.x.dataset.name = adniCases{iCase,1};
     %json.x.subject_regexp = '';
     if xasl.M0inASLsequence
-        json.x.M0PositionInASL4D = 1;
+        json.x.modules.asl.M0PositionInASL4D = 1;
     else
-        json.x.M0 = 'UseControlAsM0';
+        json.x.Q.M0 = 'UseControlAsM0';
     end
     json.x.Q.LabelingType = 'PASL';
     json.x.Q.Initial_PLD = xasl.PLD;
     json.x.Q.LabelingDuration = xasl.labelingDuration;
     % json.x.Q.SliceReadoutTime = xasl.sliceReadoutTime;
     if regexpi(xasl.PulseSequenceType,'2D')
-        json.x.readout_dim = '2D';
+        json.x.Q.readoutDim = '2D';
     else
-        json.x.readout_dim = '3D';
+        json.x.Q.readoutDim = '3D';
     end
-    json.x.Quality = 1;
-    json.x.Vendor = 'Siemens';
+    json.x.settings.Quality = 1;
+    % json.x.Vendor = 'Siemens'; % This is added to the studyPar.json now
     
-    if strcmp(json.x.readout_dim,'2D')
-        json.x.Sequence = '2D_EPI';
+    if strcmp(json.x.Q.readoutDim,'2D')
+        json.x.Q.Sequence = '2D_EPI';
     else
-        json.x.Sequence = '3D_GRASE';
+        json.x.Q.Sequence = '3D_GRASE';
     end
 
 

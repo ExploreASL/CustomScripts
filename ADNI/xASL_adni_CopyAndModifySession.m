@@ -46,12 +46,16 @@ function [json, newCaseRoot, iSessionsNum, studyPar] = xASL_adni_CopyAndModifySe
         % Determine manufacturer from DICOM
         if ~isempty(regexpi(headerDCM.Manufacturer,'Siemens'))
             manufacturer = 'Siemens';
+            studyPar.Manufacturer = 'Siemens';
         elseif ~isempty(regexpi(headerDCM.Manufacturer,'Philips'))
             manufacturer = 'Philips';
+            studyPar.Manufacturer = 'Philips';
         elseif ~isempty(regexpi(headerDCM.Manufacturer,'GE'))
             manufacturer = 'GE';
+            studyPar.Manufacturer = 'GE';
         else
             manufacturer = '';
+            studyPar.Manufacturer = '';
         end
 
         switch manufacturer

@@ -23,11 +23,11 @@ function [json,studyPar] = xASL_adni_GetJsonPhilips(headerDCM, ADNI_VERSION, adn
 
     % Create x struct
     json.x = struct;
-    json.x.name = adniCases{iCase,1};
-    json.x.M0 = 3.7394*10^6; % We have to use a fixed number, because we only have deltam and no M0 scan
+    json.x.dataset.name = adniCases{iCase,1};
+    json.x.Q.M0 = 3.7394*10^6; % We have to use a fixed number, because we only have deltam and no M0 scan
     json.x.Q.LabelingType = 'PASL';
-    json.x.Quality = 1;
-    json.x.Vendor = 'Philips';
+    json.x.settings.Quality = 1;
+    % json.x.Vendor = 'Philips'; % This is added to the studyPar.json now
     
     if isfield(headerDCM,'SeriesDescription')
         if ischar(headerDCM.SeriesDescription)
@@ -36,28 +36,28 @@ function [json,studyPar] = xASL_adni_GetJsonPhilips(headerDCM, ADNI_VERSION, adn
                 json.x.Q.Initial_PLD = 2000;
                 % I could not find this in the documents, but I'll assume they used the same labeling duration which was used for the 3D aquisitions
                 json.x.Q.LabelingDuration = 1800;
-                json.x.Sequence = '2D_EPI';
+                json.x.Q.Sequence = '2D_EPI';
                 json.x.Q.BackgroundSuppressionNumberPulses = 0;
             end
             if ~isempty(regexpi(headerDCM.SeriesDescription,'PCASL'))
                 json.x.Q.LabelingType = 'PCASL';
                 json.x.Q.Initial_PLD = 2000;
                 json.x.Q.LabelingDuration = 1800;
-                json.x.Sequence = '3D_GRASE';
+                json.x.Q.Sequence = '3D_GRASE';
                 % I could not find this in the documents, but I'll assume they did not use background suppression in 3D either
                 json.x.Q.BackgroundSuppressionNumberPulses = 0;
             end
         end
     end
     
-    if regexpi(json.x.Sequence,'2D')
-        json.x.readout_dim = '2D';
+    if regexpi(json.x.Q.Sequence,'2D')
+        json.x.Q.readoutDim = '2D';
     else
-        json.x.readout_dim = '3D';
+        json.x.Q.readoutDim = '3D';
     end
     
     if isfield(headerDCM,'SoftwareVersions')
-        if strcmp(json.x.readout_dim,'2D')
+        if strcmp(json.x.Q.readoutDim,'2D')
             % R3 & R5 have different slice timing vectors
             softwareVersion = headerDCM.SoftwareVersions;
             softwareVersion = str2num(softwareVersion(1));
@@ -74,7 +74,7 @@ function [json,studyPar] = xASL_adni_GetJsonPhilips(headerDCM, ADNI_VERSION, adn
     end
     
     %% Fix study par
-    studyPar = xASL_adni_FixStudyParBasedOnDataPar(json, studyPar);
+    [studyPar,json] = xASL_adni_FixStudyParBasedOnDataPar(json, studyPar);
 
 
 end
