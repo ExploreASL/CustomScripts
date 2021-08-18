@@ -156,7 +156,7 @@ for iL = 1:length(patientNameList)
 	imPV = [];
 	imPV(:,:,:,1) = imGM;
 	imPV(:,:,:,2) = imWM;
-	[imPVEC,~,imResidual] = xASL_im_PVCkernel(imCBF,imPV,[5 5 5],'asllani');
+	[imPVEC,~,imResidual] = xASL_im_PVCkernel(imCBF,imPV,[5 5 5],'flat');
 
 	% Remove from mask all voxels with too high residuals after PVEc
 	imMask = (imGM+imWM)>0.1;
@@ -260,7 +260,7 @@ for iL = 1:length(patientNameList)
 			maskPV = (imGM+imWM)>0.2;
 			imPV(:,:,:,1) = imGM;
 			imPV(:,:,:,2) = imWM;
-			[imPVEC,~,imResidual] = xASL_im_PVCkernel(imCBF.*maskPV,imPV.*repmat(maskPV,[1 1 1 2]),[5 5 5],'asllani');
+			[imPVEC,~,imResidual] = xASL_im_PVCkernel(imCBF.*maskPV,imPV.*repmat(maskPV,[1 1 1 2]),[5 5 5],'flat');
 			
 			% Remove from mask all voxels with too high residuals after PVEc
 			imMask = (imGM+imWM)>0.1;
