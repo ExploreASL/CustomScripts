@@ -59,6 +59,7 @@ function [json,studyPar] = xASL_adni_GetJsonGE(headerDCM, ADNI_VERSION, adniCase
     
     % GE should have Background suppression
     studyPar.BackgroundSuppression = true;
+    studyPar.LabelingDuration = 1.45;
     studyPar.BackgroundSuppressionNumberPulses = 4;
     studyPar.BackgroundSuppressionPulseTime = {1.465, 2.1, 2.6, 2.88};
     

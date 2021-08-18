@@ -24,7 +24,21 @@ function [json,studyPar] = xASL_adni_GetJsonPhilips(headerDCM, ADNI_VERSION, adn
     % Create x struct
     json.x = struct;
     json.x.dataset.name = adniCases{iCase,1};
-    json.x.Q.M0 = 3.7394*10^6; % We have to use a fixed number, because we only have deltam and no M0 scan
+    
+    % json.x.Q.M0 = 3.7394*10^6; % We have to use a fixed number, because we only have deltam and no M0 scan
+    % studyPar.M0 = false;
+    studyPar.M0Type = 'Estimate';
+    studyPar.M0Estimate = 3739400;
+    studyPar = rmfield(studyPar,'M0');
+    
+    studyPar.TotalAcquiredPairs = 30;
+    studyPar.LabelingDistance = 100;
+    studyPar.LabelingLocationDescription = 'Label gap 20mm';
+    studyPar.BolusCutOffFlag = false;
+    studyPar.PASLType = 'STAR';
+    studyPar.LabelingSlabThickness = 130;
+    studyPar.ASLContext = 'deltam';
+    
     json.x.Q.LabelingType = 'PASL';
     json.x.settings.Quality = 1;
     % json.x.Vendor = 'Philips'; % This is added to the studyPar.json now
@@ -37,7 +51,7 @@ function [json,studyPar] = xASL_adni_GetJsonPhilips(headerDCM, ADNI_VERSION, adn
                 % I could not find this in the documents, but I'll assume they used the same labeling duration which was used for the 3D aquisitions
                 json.x.Q.LabelingDuration = 1800;
                 json.x.Q.Sequence = '2D_EPI';
-                json.x.Q.BackgroundSuppressionNumberPulses = 0;
+                %json.x.Q.BackgroundSuppressionNumberPulses = 0;
             end
             if ~isempty(regexpi(headerDCM.SeriesDescription,'PCASL'))
                 json.x.Q.LabelingType = 'PCASL';
@@ -45,7 +59,7 @@ function [json,studyPar] = xASL_adni_GetJsonPhilips(headerDCM, ADNI_VERSION, adn
                 json.x.Q.LabelingDuration = 1800;
                 json.x.Q.Sequence = '3D_GRASE';
                 % I could not find this in the documents, but I'll assume they did not use background suppression in 3D either
-                json.x.Q.BackgroundSuppressionNumberPulses = 0;
+                %json.x.Q.BackgroundSuppressionNumberPulses = 0;
             end
         end
     end

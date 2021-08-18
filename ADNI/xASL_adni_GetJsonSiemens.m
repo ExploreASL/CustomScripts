@@ -22,6 +22,10 @@ function [json,studyPar] = xASL_adni_GetJsonSiemens(headerDCM, ADNI_VERSION, adn
     
     %% Fix study par
     [studyPar,json] = xASL_adni_FixStudyParBasedOnDataPar(json, studyPar);
+    
+    % Manual code
+    studyPar.LabelingLocationDescription = 'Fixed, 9 cm below ACPC';
+    studyPar.PASLType = 'PICORE';
 
 end
 

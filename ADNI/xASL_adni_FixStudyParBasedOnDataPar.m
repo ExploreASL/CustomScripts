@@ -27,13 +27,9 @@ function [studyPar,json] = xASL_adni_FixStudyParBasedOnDataPar(json, studyPar)
         studyPar.M0 = true;
     end
     
-    if strcmpi(studyPar.Manufacturer,'Philips')
-        studyPar.ASLContext = 'deltam';
-    end
-    
     if strcmpi(studyPar.Manufacturer,'Siemens')
         if strcmp(json.x.Q.readoutDim,'2D')
-            studyPar.ASLContext = 'm0scan,control,label';
+            studyPar.ASLContext = 'm0scan,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label,control,label';
         else
             studyPar.ASLContext = 'control,label';
         end
@@ -41,7 +37,7 @@ function [studyPar,json] = xASL_adni_FixStudyParBasedOnDataPar(json, studyPar)
     
     % [ms] -> [s]
     studyPar.PostLabelingDelay = json.x.Q.Initial_PLD/1000;
-    studyPar.LabelingDuration = json.x.Q.LabelingDuration/1000;
+    % studyPar.LabelingDuration = json.x.Q.LabelingDuration/1000;
     % We only need those parameters in the studyPar I think
     json.x.Q = rmfield(json.x.Q,'Initial_PLD');
     json.x.Q = rmfield(json.x.Q,'LabelingDuration');
