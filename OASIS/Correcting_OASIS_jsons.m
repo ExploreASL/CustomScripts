@@ -7,7 +7,7 @@ clc
 %Initiating ExploreASL because we'll use some of its functions for sorting the data
 ExploreASL_Master('',0);
 
-Odir='/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/OASIS/test_rawdata2';
+Odir='/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/OASIS/test_rawdata';
 
 ScannersList = xASL_adm_GetFileList(Odir, '^Siemens_', 'FPList',[0 Inf], true);
 
@@ -69,7 +69,7 @@ for iSc=1:length(ScannersList)
             jsonLocal = xASL_bids_BIDSifyASLNII(jsonLocal, bidsPar,fullfile(dir, [ASLfile '.nii']), fullfile(dir, ASLOutPath));
             jsonLocal = xASL_bids_VendorFieldCheck(jsonLocal);
             jsonASLCheck = xASL_bids_JsonCheck(jsonLocal,'ASL');
-            jsonFinalName= fullfile(dir,ASLfile);
+            jsonFinalName= fullfile(dir,[ASLfile '.json']);
             
             %Save Json
             spm_jsonwrite(jsonFinalName,jsonASLCheck);

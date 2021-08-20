@@ -1,9 +1,12 @@
 %% Custom Sorting script_BP
 
+clear
+clc
+
 ExploreASL_Master('',0);
 
-%Odir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/OASIS/test_sourcedata/';
-%Ddir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/OASIS/test_rawdata';
+% Odir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/OASIS/test_sourcedata3/';
+% Ddir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/OASIS/test_rawdata3';
 
 Odir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/OASIS/sourcedata/';
 Ddir = '/home/bestevespadrela/lood_storage/divi/Projects/ExploreASL/OASIS/rawdata';
@@ -26,8 +29,8 @@ for iS1=1:length(Slist1)
     
     MRlist = xASL_adm_GetFileList(Slist1{iS1}, '^OAS\d*_MR_.*', 'FPList',[0 Inf], true); %identifies the MR folders inside the subject's folder
     for iMR=1:length(MRlist)
-        if ~isempty(xASL_adm_GetFileList(MRlist{iMR}, '.*asl\.nii$', 'FPListRec',[0 Inf])) && ~isempty(xASL_adm_GetFileList(MRlist{iMR}, '.*T1w\.nii$', 'FPListRec',[0 Inf])) %goes through all the folders to find the T1 and asl files
-            % if contains asl & T1w
+        if ~isempty(xASL_adm_GetFileList(MRlist{iMR}, '.*asl\.nii$', 'FPListRec',[0 Inf])) || ~isempty(xASL_adm_GetFileList(MRlist{iMR}, '.*T1w\.nii$', 'FPListRec',[0 Inf])) %goes through all the folders to find the T1 and asl files
+            % if contains asl or T1w at least
             clear DestDir DestFile
             %== Create a subfolder with the name of the session ==%
             [~, SubjSesName] = fileparts(MRlist{iMR}); %subj+session name
@@ -112,8 +115,18 @@ for iS1=1:length(Slist1)
                                     if isfield(json,'ManufacturersModelName')
                                         scannerList{iElement,1} = sub;
                                         scannerList{iElement,2} = ses;
-                                        scannerList{iElement,3} = [json.Manufacturer '_' json.ManufacturersModelName '_' json.DeviceSerialNumber '_' json.SoftwareVersions];
+                                        if isfield(json,'DeviceSerialNumber')
+                                            scannerList{iElement,3} = [json.Manufacturer '_' json.ManufacturersModelName '_' json.DeviceSerialNumber '_' json.SoftwareVersions];
+                                        elseif isfield (json,'ConversionSoftwareVersion')
+                                            scannerList{iElement,3} = [json.Manufacturer '_' json.ManufacturersModelName '_' json.ConversionSoftwareVersion];
+                                        else
+                                            scannerList{iElement,3} = [json.Manufacturer '_' json.ManufacturersModelName];
+                                        end
+                                    
                                         iElement = iElement+1;
+                                    
+                                    else
+                                        warning('Manufacturer Model Name not specified in the json file')
                                     end
                                 end
                             end
@@ -149,12 +162,6 @@ xASL_adm_CreateDir(NoASLDest);
 
 for iScanner = 1:length(scanners)
     
-    % Create the output directory for the current scanner type
-   
-    FinalDest_Temp=fullfile(root,scanners{iScanner});
-    xASL_adm_CreateDir(FinalDest_Temp);
-    
-    
     % Copy all subjects that have this type to the directory
     for i = 1:size(scannerList,1)
         if strcmp(scannerList{i,3},scanners{iScanner})
@@ -164,6 +171,9 @@ for iScanner = 1:length(scanners)
             if isempty (ASLfile_find)
                 FinalDest = fullfile(NoASLDest, scannerList{i,1},scannerList{i,2});
             else
+                % If ASL is present, create the output directory for the current scanner type
+                FinalDest_Temp=fullfile(root,scanners{iScanner});
+                xASL_adm_CreateDir(FinalDest_Temp);
                 FinalDest = fullfile(FinalDest_Temp, scannerList{i,1},scannerList{i,2});
             end
             

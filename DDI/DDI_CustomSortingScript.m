@@ -81,7 +81,7 @@ T1List = xASL_adm_GetFileList(T1dir, '\.nii$', 'FPList',[0 Inf]);
 T1txtList = xASL_adm_GetFileList(T1dir, '\.txt$', 'FPList',[0 Inf]);
 %  length(T1List) = 620
 
-for iT=1:length(Slist1) % There are more T1 files than ASL files, so Slist1 gives us the ASL files
+for iT=1:length(Slist1) 
     [~, SubjT1] = fileparts(T1List{iT});
     [StartT, EndT] = regexp(SubjT1, '-\d*|\D-\d*'); % -digit or letter-digit
     SubjNameT = SubjT1(1:StartT-1);
@@ -128,29 +128,41 @@ for iF=1:length(Slist1)
     end
 end
 
+fprintf('T1 & FLAIR data sorting finished   ');
+
 %% Create scanners' folders
 
 %xASL_io_DcmtkRead
 scanners = unique(scannerlist(:,3));
-root = BasePath;
+root = fullfile(BasePath, 'DDI_sorted_August');
 
-for iScanner = 1:length(scanners)
-    
-    % Create the output directory for the current scanner type
-    ScannerName=scanners{iScanner};
-    ScannerDest=fullfile(root,ScannerName);
-    xASL_adm_CreateDir(ScannerDest);
+NoASLDest = fullfile (root,'SubjectsWithoutASL');
+xASL_adm_CreateDir(NoASLDest);
+
+for iScanner = 1:length(scanners) 
+    xASL_TrackProgress(iScanner, length(scanners));
+    clear FinalDest
 
     % Copy all subjects that have this type to the directory
     for iElement = 1:size(scannerlist,1)
-        if strcmp(scannerlist{iElement,3},ScannerName)
+        if strcmp(scannerlist{iElement,3},scanners{iScanner})
             source = fullfile(Ddir,scannerlist{iElement,1},scannerlist{iElement,2});
-            FinalDest = fullfile(ScannerDest, 'sourcedata',scannerlist{iElement,1});
+            
+            ASLfolder_find=xASL_adm_GetFileList(source, '^ASL', 'FPList',[0 Inf],true); % true for folders
+            if isempty (ASLfolder_find)
+                FinalDest = fullfile(NoASLDest, 'sourcedata',scannerlist{iElement,1},scannerlist{iElement,2});
+            else
+                % If ASL is present, create the output directory for the current scanner type
+                ScannerDest=fullfile(root,scanners{iScanner});
+                xASL_adm_CreateDir(ScannerDest);
+                FinalDest = fullfile(ScannerDest, 'sourcedata',scannerlist{iElement,1},scannerlist{iElement,2});
+            end
+            
             xASL_adm_CreateDir(FinalDest);
             xASL_Copy(source,FinalDest,true); % Use the recursive option
-            
         end
         
     end
     
 end
+
