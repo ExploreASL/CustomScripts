@@ -1,4 +1,4 @@
-% Move T1w to separate T1w folder
+%% Move T1w to separate T1w folder
 OriDir = '/home/hjmutsaerts/lood_storage/divi/Projects/ExploreASL/EMBARC/ASL';
 DestDir = '/home/hjmutsaerts/lood_storage/divi/Projects/ExploreASL/EMBARC/T1w';
 
@@ -11,7 +11,9 @@ for iFile=1:numel(FileList)
     xASL_Move(FileList{iFile}, NewPath);
 end
 
-% Curate subject/visit/scantype
+%% Curate subject/visit/scantype
+ExploreASL;
+
 DestDir = '/scratch/hjmutsaerts/EMBARC/sourcedata';
 OriDir = '/home/hjmutsaerts/lood_storage/divi/Projects/ExploreASL/EMBARC';
 FileList = xASL_adm_GetFileList(OriDir, '.*(ASL|MRI)\.tgz', 'FPListRec');
