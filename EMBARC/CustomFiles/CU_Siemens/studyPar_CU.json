@@ -1,0 +1,13 @@
+
+{"DatasetType":"raw",
+"License":"EMBARC",
+"Authors":["EMBARC"],
+"Acknowledgements":"EMBARC & ExploreASL Team",
+"VascularCrushing" : false,
+"LabelingType":"PCASL",
+"BackgroundSuppression":false,
+"LabelingDuration":1.516,
+"ASLContext": "label,control",
+"PostLabelingDelay":1.5,
+"AcquisitionVoxelSize":[3.4375,3.4375,5]
+}

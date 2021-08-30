@@ -1,0 +1,5 @@
+{"folderHierarchy":["^(.*)$","^ses-(1|2|3|4)$","^(T1w)$",".*"],
+"tokenOrdering":[1,2,0,3],
+"tokenVisitAliases":["1","1","2","2","3","3","4","4"],
+"tokenScanAliases":["^T1w$","T1w"],
+"bMatchDirectories":true}

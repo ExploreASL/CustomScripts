@@ -1,0 +1,11 @@
+{
+"MG0081_3": "AFNI export instead of DICOMS (scanned at GE?)",
+"TX0033_3":  "AFNI export instead of DICOMs (scanned at GE?)",
+"MG0026_3": "Philips instead of Siemens",
+"MG0040_3": "Philips instead of Siemens"
+"TX0037_3":  "Scanned at Philips at different center (Michigan)",
+"TX0038_3":  "Scanned at Siemens instead of Philips",
+"UM0012_3": "AFNI export instead of DICOMS (scanned at GE?)",
+"UM0014_3":  "Scanned at Siemens instead of Philips",
+"UM0017_3":  "Scanned at Philips at different center (UTexas)"
+}

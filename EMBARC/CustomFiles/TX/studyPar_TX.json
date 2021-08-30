@@ -1,0 +1,14 @@
+
+{"DatasetType":"raw",
+"License":"EMBARC",
+"Authors":["EMBARC"],
+"Acknowledgements":"EMBARC & ExploreASL Team",
+"VascularCrushing" : false,
+"LabelingType":"PCASL",
+"PostLabelingDelay":1.525,
+"LabelingDuration":1.65,
+"BackgroundSuppression":false,
+"SliceTiming":[0,0.03636,0.07271,0.10907,0.14543,0.18179,0.21814,0.2545,0.29086,0.32721,0.36357,0.39993,0.4362,0.47264,0.509,0.54536,0.58171,0.61807,0.65443,0.69079,0.72714,0.7635,0.79986,0.83621,0.87257,0.90893,0.94529,0.98164,1.018],
+"ASLContext": "control,label",
+"AcquisitionVoxelSize":[3.4375,3.4375,5]
+}
