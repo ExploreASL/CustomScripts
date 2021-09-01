@@ -1,7 +1,7 @@
 MatlabPath=/opt/amc/matlab/R2019b/bin/matlab;
 DatasetRoot=/data/projects/EMBARC/EMBARC_ASL/MG_Siemens;
 # remove any locked folders
-rm $DataFolder/derivatives/ExploreASL/lock/*/*/*/locked -d; # remove locked folders
+rm $DatasetRoot/derivatives/ExploreASL/lock/*/*/*/locked -d; # remove locked folders
 xASLdir=/home/hjmutsaerts/scratch/ExploreASL;
 screenName=EMBARC_ASL_MG_SiemensFinalize;
 cd $xASLdir;
