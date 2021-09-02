@@ -1,0 +1,13 @@
+{"DatasetType":"raw",
+"License":"",
+"Authors":["EK,MR"],
+"LabelingDistance" : 95.86,
+"LabelingType":"PCASL",
+"PostLabelingDelay":1.8,
+"BackgroundSuppression":true,
+"LabelingDuration":1.8,
+"ASLContext":"deltam",
+"BackgroundSuppressionNumberPulses":2,
+"BackgroundSuppressionPulseTime":[1.83,3.155],
+"SliceTiming":0.0400526,
+}
