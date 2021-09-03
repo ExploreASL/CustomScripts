@@ -18,7 +18,7 @@ function [json, newCaseRoot, iSessionsNum, studyPar] = xASL_adni_CopyAndModifySe
     iSessionsNum = dataset.iSessionsNum;
     iSessions = dataset.iSessions;
     iCase = dataset.iCase;
-    currentDir = dataset.currentDir;  
+    currentDir = dataset.currentDir;
         
     % Get this session
     thisSessions = ['session_' num2str(iSessionsNum)];
@@ -26,8 +26,15 @@ function [json, newCaseRoot, iSessionsNum, studyPar] = xASL_adni_CopyAndModifySe
     dateLists.dateList_ASL{iSessions,1} = [thisSessions '_' dateLists.dateList_ASL{iSessions,2}];
 
     % Determine new case directory
-    newCase = fullfile(adniDirectoryResults,adniCases{iCase,1},'sourcedata','sub-001',dateLists.dateList_ASL{iSessions,1});
-    newCaseRoot = fullfile(adniDirectoryResults,adniCases{iCase,1});
+    if ~isempty(adniDirectoryResults)
+        newCase = fullfile(adniDirectoryResults,adniCases{iCase,1},'sourcedata','sub-001',dateLists.dateList_ASL{iSessions,1});
+        newCaseRoot = fullfile(adniDirectoryResults,adniCases{iCase,1});
+    else
+        error('The value of adniDirectoryResults is empty...');
+    end
+    
+    % Print current session
+    fprintf('%s...\n',dateLists.dateList_ASL{iSessions,1});
 
     % Copy ASL session to new directory
     xASL_Copy(fullfile(currentDir,names.ASL_name,dateLists.dateList_ASL{iSessions,2}),fullfile(newCase,'ASL'),1);
