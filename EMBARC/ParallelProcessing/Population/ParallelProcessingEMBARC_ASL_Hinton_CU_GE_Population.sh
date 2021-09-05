@@ -5,5 +5,5 @@ rm $DatasetRoot/derivatives/ExploreASL/lock/*/*/*/locked -d; # remove locked fol
 xASLdir=/home/hjmutsaerts/scratch/ExploreASL;
 screenName=EMBARC_ASL_CU_GEFinalize;
 cd $xASLdir;
-screen -dmSL $screenName nice -n 10 $MatlabPath -nodesktop -nosplash -r "cd('$xASLdir');ExploreASL('$DatasetRoot', 0, [1 0 0], false, 1, 1);system('screen -SX $screenName kill');" &
+screen -dmSL $screenName nice -n 10 $MatlabPath -nodesktop -nosplash -r "cd('$xASLdir');ExploreASL('$DatasetRoot', 0, [0 0 1], false, 1, 1);system('screen -SX $screenName kill');" &
 # this will process any residual scans & create an overview report
