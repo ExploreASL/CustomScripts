@@ -51,7 +51,9 @@ function xASL_adni_CreateSourceSubject(adniCases,userConfig,adniDirectory,adniDi
             % Check if ASL has a corresponding T1w, if not then skip the this visit
             foundT1wForASL = false;
             for iSessions_MPRAGE = 1:numel(dateLists.dateList_MPRAGE)
-                if strcmp(dateLists.dateList_MPRAGE{iSessions_MPRAGE,1},dateLists.dateList_ASL{iSessions,1})
+                currentT1w = dateLists.dateList_MPRAGE{iSessions_MPRAGE,1};
+                currentASL = dateLists.dateList_ASL{iSessions,1};
+                if strcmp(currentT1w(1:10),currentASL(1:10))
                     foundT1wForASL = true;
                 end
             end
