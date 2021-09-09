@@ -19,6 +19,10 @@ function [json, newCaseRoot, iSessionsNum, studyPar] = xASL_adni_CopyAndModifySe
     iSessions = dataset.iSessions;
     iCase = dataset.iCase;
     currentDir = dataset.currentDir;
+    
+    % Get ADNI subject
+    [~, subjectADNI] = fileparts(currentDir);
+    subjectADNIvalid = strrep(subjectADNI,'_','');
         
     % Get this session
     thisSessions = ['session_' num2str(iSessionsNum)];
@@ -27,7 +31,7 @@ function [json, newCaseRoot, iSessionsNum, studyPar] = xASL_adni_CopyAndModifySe
 
     % Determine new case directory
     if ~isempty(adniDirectoryResults)
-        newCase = fullfile(adniDirectoryResults,adniCases{iCase,1},'sourcedata','sub-001',dateLists.dateList_ASL{iSessions,1});
+        newCase = fullfile(adniDirectoryResults,adniCases{iCase,1},'sourcedata',['sub-' subjectADNIvalid],dateLists.dateList_ASL{iSessions,1});
         newCaseRoot = fullfile(adniDirectoryResults,adniCases{iCase,1});
     else
         error('The value of adniDirectoryResults is empty...');

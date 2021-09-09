@@ -17,26 +17,29 @@ function xASL_adni_AddParticipantsTSV(currentDir,adniCase)
 % Copyright 2015-2021 ExploreASL
 
     %% Add participants.tsv
-    sessionList = xASL_adm_GetFsList(fullfile(currentDir,'sourcedata','sub-001'),'^session_.+$',true);
+    adniName = strrep(adniCase,'_','');
+    sessionList = xASL_adm_GetFsList(fullfile(currentDir,'sourcedata',['sub-' adniName]),'^session_.+$',true);
     
-    % Initialize sessions cell array
-    session{1,1} = 'participant_id';
-    session{1,2} = 'session';
-    session{1,3} = 'adni_id';
-    session{1,4} = 'date';
-    
-    % Iterate over sessions
-    for iSession=1:numel(sessionList)
-        curSessionName = sessionList{iSession};
-        fprintf('%s ...\n',curSessionName);
-        regExpNum = regexp(curSessionName,'_\d{1}_');
-        session{iSession+1,1} = 'sub-001';
-        session{iSession+1,2} = ['ASL_' num2str(iSession)];
-        session{iSession+1,3} = adniCase;
-        session{iSession+1,4} = curSessionName(regExpNum+3:end);
+    if ~isempty(sessionList)
+        % Initialize sessions cell array
+        session{1,1} = 'participant_id';
+        session{1,2} = 'session';
+        session{1,3} = 'adni_id';
+        session{1,4} = 'date';
+
+        % Iterate over sessions
+        for iSession=1:numel(sessionList)
+            curSessionName = sessionList{iSession};
+            fprintf('%s ...\n',curSessionName);
+            regExpNum = regexp(curSessionName,'_\d{1}_');
+            session{iSession+1,1} = adniName;
+            session{iSession+1,2} = ['ASL_' num2str(iSession)];
+            session{iSession+1,3} = adniCase;
+            session{iSession+1,4} = curSessionName(regExpNum+3:end);
+        end
+
+        xASL_tsvWrite(session,fullfile(currentDir,'derivatives','ExploreASL','participants.tsv'));
     end
-    
-    xASL_tsvWrite(session,fullfile(currentDir,'derivatives','ExploreASL','participants.tsv'));
     
 
 
