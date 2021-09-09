@@ -83,25 +83,33 @@ function [json, newCaseRoot, iSessionsNum, studyPar] = xASL_adni_CopyAndModifySe
 
     % Check if there are other modalities for this session
     for iSessions_MPRAGE = 1:numel(dateLists.dateList_MPRAGE)
-        if strcmp(dateLists.dateList_MPRAGE{iSessions_MPRAGE,1},dateLists.dateList_ASL{iSessions,2})
+        currentALSsession = dateLists.dateList_ASL{iSessions,2};
+        currentT1wsession = dateLists.dateList_MPRAGE{iSessions_MPRAGE,1};
+        if strcmp(currentT1wsession(1:10),currentALSsession(1:10))
             % Copy MPRAGE session to new directory
             xASL_Copy(fullfile(currentDir,names.MPRAGE_name,dateLists.dateList_MPRAGE{iSessions_MPRAGE,1}),fullfile(newCase,'T1w'));
         end
     end
     for iSessions_FLAIR = 1:numel(dateLists.dateList_FLAIR)
-        if strcmp(dateLists.dateList_FLAIR{iSessions_FLAIR,1},dateLists.dateList_ASL{iSessions,2})
+        currentALSsession = dateLists.dateList_ASL{iSessions,2};
+        currentFLAIRsession = dateLists.dateList_FLAIR{iSessions_FLAIR,1};
+        if strcmp(currentFLAIRsession(1:10),currentALSsession(1:10))
             % Copy MPRAGE session to new directory
             xASL_Copy(fullfile(currentDir,names.FLAIR_name,dateLists.dateList_FLAIR{iSessions_FLAIR,1}),fullfile(newCase,'FLAIR'));
         end
     end
     for iSessions_CALIBRATION = 1:numel(dateLists.dateList_CALIBRATION)
-        if strcmp(dateLists.dateList_CALIBRATION{iSessions_CALIBRATION,1},dateLists.dateList_ASL{iSessions,2})
+        currentALSsession = dateLists.dateList_ASL{iSessions,2};
+        currentM0session = dateLists.dateList_CALIBRATION{iSessions_CALIBRATION,1};
+        if strcmp(currentM0session(1:10),currentALSsession(1:10))
             % Copy MPRAGE session to new directory
             xASL_Copy(fullfile(currentDir,names.CALIBRATION_name,dateLists.dateList_CALIBRATION{iSessions_CALIBRATION,1}),fullfile(newCase,'CALIBRATION'));
         end
     end
     for iSessions_M0 = 1:numel(dateLists.dateList_M0)
-        if strcmp(dateLists.dateList_M0{iSessions_M0,1},dateLists.dateList_ASL{iSessions,2})
+        currentALSsession = dateLists.dateList_ASL{iSessions,2};
+        currentM0session = dateLists.dateList_M0{iSessions_M0,1};
+        if strcmp(currentM0session(1:10),currentALSsession(1:10))
             % Copy MPRAGE session to new directory
             xASL_Copy(fullfile(currentDir,names.M0_name,dateLists.dateList_M0{iSessions_M0,1}),fullfile(newCase,'M0'));
         end

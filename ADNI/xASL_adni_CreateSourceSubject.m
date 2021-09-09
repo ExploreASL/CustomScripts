@@ -66,12 +66,19 @@ function xASL_adni_CreateSourceSubject(adniCases,userConfig,adniDirectory,adniDi
                 dataset.currentDir = currentDir;
                 [json, newCaseRoot, iSessionsNum, studyPar] = xASL_adni_CopyAndModifySession(dataset, ...
                     userConfig, dateLists, studyPar, names, adniCases, adniDirectoryResults);
+            else
+                % Fallback
+                newCaseRoot = '';
             end
             
         end
         
         % Merge identical dataPar.json files
-        xASL_adni_MergeJsons(newCaseRoot);
+        if ~isempty(newCaseRoot)
+            xASL_adni_MergeJsons(newCaseRoot);
+        else
+            warning('Something went wrong trying to convert %s...',currentDir);
+        end
         
         % Add sourceStructure.json and studyPar.json
         spm_jsonwrite(fullfile(newCaseRoot,'sourceStructure.json'),sourceStructure);
