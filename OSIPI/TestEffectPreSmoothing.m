@@ -3,11 +3,14 @@ ExploreASL;
 pathData = '/Users/henk/ExploreASL/OSIPI_TF6.1/Synthetic';
 folderList = xASL_adm_GetFileList(pathData, '^sub-DRO\d', 'FPList', [0 Inf], 1);
 
+NIIlist = {'/Users/henk/ExploreASL/Tryout/OSIPI_TF6.1/Synthetic/sub-DRO8/perf/sub-DRO8_m0scan.nii';
+    '/Users/henk/ExploreASL/Tryout/OSIPI_TF6.1/Synthetic/sub-DRO9/perf/sub-DRO9_m0scan.nii'};
+
 for iFolder=1:numel(folderList)
 
     NIIlist = xASL_adm_GetFileList(folderList{iFolder}, '^.*(m0scan|asl)\.nii$', 'FPListRec');
 
-    for iNii=2:length(NIIlist)
+    for iNii=1:length(NIIlist)
         [Fpath, Ffile] = xASL_fileparts(NIIlist{iNii});
         pathT1 = xASL_adm_GetFileList(fullfile(fileparts(Fpath), 'anat'), '^.*T1w\.nii');
         pathTemp = fullfile(Fpath, [Ffile '_temp.nii']);

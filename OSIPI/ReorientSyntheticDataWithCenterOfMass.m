@@ -11,10 +11,10 @@ for iList=1:length(DirList)
 end
 
 %% New BIDS /rawdata format
-Root = '/Users/henk/ExploreASL/OSIPI_TF6.1/Synthetic';
+Root = '/Users/henk/ExploreASL/Tryout/OSIPI_TF6.1/Synthetic';
 DirList = xASL_adm_GetFileList(Root, '^sub-DRO\d$', 'FPList', [0 Inf], 1);
 
-for iList=1:length(DirList)
+for iList=3:5 % 1:length(DirList)
     OtherList = xASL_adm_GetFileList(fullfile(DirList{iList}, 'perf'), '^.*(m0scan|asl)\.nii$', 'FPListRec');
     T1list = xASL_adm_GetFileList(fullfile(DirList{iList}, 'anat'), '^.*T1w\.nii$', 'FPList');
 
