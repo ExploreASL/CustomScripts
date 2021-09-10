@@ -1,5 +1,5 @@
 MatlabPath=/opt/amc/matlab/R2019b/bin/matlab;
-DatasetRoot=/data/projects/EMBARC/EMBARC_ASL/TX_Philips;
+DatasetRoot=/data/projects/depredict/repositories/EMBARC/data/EMBARC_ASL/TX_Philips;
 # remove any locked folders
 rm $DatasetRoot/derivatives/ExploreASL/lock/*/*/*/locked -d; # remove locked folders
 xASLdir=/home/hjmutsaerts/scratch/ExploreASL;
