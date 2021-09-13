@@ -1,7 +1,7 @@
 # note to first remove any existing locked folders
-let nParallel=4;
+let nParallel=8;
 MatlabPath=/opt/amc/matlab/R2019b/bin/matlab;
-DatasetRoot=/data/projects/EMBARC/EMBARC_ASL/TX_Philips;
+DatasetRoot=/data/projects/depredict/repositories/EMBARC/data/EMBARC_ASL/TX_Philips;
 # rm $DataFolder/lock/*/*/*/locked -d; # remove locked folders
 # rf $DataFolder/lock/xASL_module_Population; # Population lock folder
 xASLdir=/home/hjmutsaerts/scratch/ExploreASL;
