@@ -17,7 +17,7 @@ function [sourceStructure,studyPar] = xASL_adni_BasicJsons()
     % Define sourceStructure template
 
     % token 1: (.+), token 2: (session_\\d{1}), token 3: (ASL|T1w|M0|T2|FLAIR)
-    sourceStructure.folderHierarchy = {'^sub-(.+)$','^(session_\d{1}).+$','^(ASL|T1w|M0|T2|FLAIR)$', 'S.+$'};
+    sourceStructure.folderHierarchy = {'^sub-(.+)$','^(session_\d{1}).+$','^(ASL|T1w|M0|T2|FLAIR)$', '^(S|I).+$'};
     % subject: token 1, visit: token 2, session: none, scan: token 3
     sourceStructure.tokenOrdering = [1,2,0,3];
     % visit/session/scan aliases
