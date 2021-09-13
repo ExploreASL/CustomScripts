@@ -12,66 +12,66 @@ Slist1 = xASL_adm_GetFileList(Odir, '^D', 'FPList',[0 Inf], true);
 
 fprintf('Converting DDI data to ExploreASL-compatible:   ');
 iElement=1;
-
-for iS1=1:length(Slist1)
-    xASL_TrackProgress(iS1, length(Slist1));
-    clear DestSubjDir
-    %== Create a directory with the name of the subject ==%
-    [~, Subj] = fileparts(Slist1{iS1});
-    [StartI, EndI] = regexp(Subj, '-\d*|\D-\d*'); % -digit or letter-digit
-    SubjName = Subj(1:StartI-1); %D10001
-    SessionName = Subj(1:length(Subj)); %D10001M-2
-    Sessions{iS1} = SessionName; 
-    
-    DestSubjDir = fullfile(Ddir, SubjName); % ending with /D10001
-    if isempty(dir(DestSubjDir))
-        xASL_adm_CreateDir(DestSubjDir);
-    end
-    
-    DestSubjSesDir = fullfile(DestSubjDir,SessionName); % ending with /D10001M-2
-    
-    xASL_adm_CreateDir(DestSubjSesDir);
-    %If the folder already exists, skip the next part (to be faster to repeat this script only for some of the subjects)
-    
-    SubjFolderList = xASL_adm_GetFileList(Slist1{iS1}, '^1*', 'FPList',[0 Inf], true); %identifies folders inside the subject's folder
-    for iF=1:length(SubjFolderList)
-        DicomsList = xASL_adm_GetFileList(SubjFolderList{iF});
-        DR = xASL_io_DcmtkRead (DicomsList{1});
-        Scan = DR.SeriesDescription;
-        if ~isempty(regexpi(Scan,'PCASL')) %ASL folder with 1400 DICOMs
-            DestASLDir = fullfile(DestSubjSesDir, 'ASL');
-            xASL_adm_CreateDir(DestASLDir);
-            xASL_Copy(SubjFolderList{iF}, DestASLDir, true);
-            
-        elseif ~isempty(regexpi(Scan,'M0')) %M0 DICOMs
-            DestM0Dir = fullfile(DestSubjSesDir, 'M0');
-            xASL_adm_CreateDir(DestM0Dir);
-            xASL_Copy(SubjFolderList{iF}, DestM0Dir, true);
-            
-        elseif ~isempty(regexpi(Scan,'PCA5NEX')) %Labeling plane scans
-            DestLPSDir = fullfile(DestSubjSesDir, 'LabelingPlaneScans');
-            xASL_adm_CreateDir(DestLPSDir);
-            xASL_Copy(SubjFolderList{iF}, DestLPSDir, true);
-            
-        elseif ~isempty(regexpi(Scan,'Perfusion_Weighted')) %Perfusion Weighted scans
-            DestPWDir = fullfile(DestSubjSesDir, 'PerfusionWeightedScans');
-            xASL_adm_CreateDir(DestPWDir);
-            xASL_Copy(SubjFolderList{iF}, DestPWDir, true);
-            
-        elseif ~isempty(regexpi(Scan,'relCBF')) %rel CBF scans
-            Dest_rBCFDir = fullfile(DestSubjSesDir, 'relCBFScans');
-            xASL_adm_CreateDir(Dest_rBCFDir);
-            xASL_Copy(SubjFolderList{iF}, Dest_rBCFDir, true);
-        else
-            fprintf(['warning: unexpected scan:', Scan, 'saving it in a folder called OtherScans']);%warning if none of the cases
-            Dest_OthersDir = fullfile(DestSubjSesDir, 'OtherScans');
-            xASL_adm_CreateDir(Dest_OthersDir);
-            xASL_Copy(SubjFolderList{iF}, Dest_OthersDir, true);
-        end
-        
-    end
-    
-end
+% 
+% for iS1=1:length(Slist1)
+%     xASL_TrackProgress(iS1, length(Slist1));
+%     clear DestSubjDir
+%     %== Create a directory with the name of the subject ==%
+%     [~, Subj] = fileparts(Slist1{iS1});
+%     [StartI, EndI] = regexp(Subj, '-\d*|\D-\d*'); % -digit or letter-digit
+%     SubjName = Subj(1:StartI-1); %D10001
+%     SessionName = Subj(1:length(Subj)); %D10001M-2
+%     Sessions{iS1} = SessionName; 
+%     
+%     DestSubjDir = fullfile(Ddir, SubjName); % ending with /D10001
+%     if isempty(dir(DestSubjDir))
+%         xASL_adm_CreateDir(DestSubjDir);
+%     end
+%     
+%     DestSubjSesDir = fullfile(DestSubjDir,SessionName); % ending with /D10001M-2
+%     
+%     xASL_adm_CreateDir(DestSubjSesDir);
+%     %If the folder already exists, skip the next part (to be faster to repeat this script only for some of the subjects)
+%     
+%     SubjFolderList = xASL_adm_GetFileList(Slist1{iS1}, '^1*', 'FPList',[0 Inf], true); %identifies folders inside the subject's folder
+%     for iF=1:length(SubjFolderList)
+%         DicomsList = xASL_adm_GetFileList(SubjFolderList{iF});
+%         DR = xASL_io_DcmtkRead (DicomsList{1});
+%         Scan = DR.SeriesDescription;
+%         if ~isempty(regexpi(Scan,'PCASL')) %ASL folder with 1400 DICOMs
+%             DestASLDir = fullfile(DestSubjSesDir, 'ASL');
+%             xASL_adm_CreateDir(DestASLDir);
+%             xASL_Copy(SubjFolderList{iF}, DestASLDir, true);
+%             
+%         elseif ~isempty(regexpi(Scan,'M0')) %M0 DICOMs
+%             DestM0Dir = fullfile(DestSubjSesDir, 'M0');
+%             xASL_adm_CreateDir(DestM0Dir);
+%             xASL_Copy(SubjFolderList{iF}, DestM0Dir, true);
+%             
+%         elseif ~isempty(regexpi(Scan,'PCA5NEX')) %Labeling plane scans
+%             DestLPSDir = fullfile(DestSubjSesDir, 'LabelingPlaneScans');
+%             xASL_adm_CreateDir(DestLPSDir);
+%             xASL_Copy(SubjFolderList{iF}, DestLPSDir, true);
+%             
+%         elseif ~isempty(regexpi(Scan,'Perfusion_Weighted')) %Perfusion Weighted scans
+%             DestPWDir = fullfile(DestSubjSesDir, 'PerfusionWeightedScans');
+%             xASL_adm_CreateDir(DestPWDir);
+%             xASL_Copy(SubjFolderList{iF}, DestPWDir, true);
+%             
+%         elseif ~isempty(regexpi(Scan,'relCBF')) %rel CBF scans
+%             Dest_rBCFDir = fullfile(DestSubjSesDir, 'relCBFScans');
+%             xASL_adm_CreateDir(Dest_rBCFDir);
+%             xASL_Copy(SubjFolderList{iF}, Dest_rBCFDir, true);
+%         else
+%             fprintf(['warning: unexpected scan:', Scan, 'saving it in a folder called OtherScans']);%warning if none of the cases
+%             Dest_OthersDir = fullfile(DestSubjSesDir, 'OtherScans');
+%             xASL_adm_CreateDir(Dest_OthersDir);
+%             xASL_Copy(SubjFolderList{iF}, Dest_OthersDir, true);
+%         end
+%         
+%     end
+%     
+% end
 
 %% T1 & FLAIR
 % == T1 ==
@@ -95,14 +95,14 @@ for iT=1:length(Slist1)
     scannerlist{iT,2} = SessionNameT;
     scannerlist{iT,3} = [txt.Manufacturer '_' txt.ModelName '_' strrep(txt.SoftwareVersion,'\','_')];
    
-    if ~isempty(strcmp(SessionNameT,Sessions))
-        indT1 = find(strcmp(SessionNameT,Sessions));
-        SesT1 = Sessions{indT1};
-        T1DestDir = fullfile(Ddir,SubjNameT,SesT1,'T1');
-        xASL_Copy(T1List{iT},T1DestDir,true); % Copies T1.nii file
-        T1txtDestDir = fullfile(Ddir,SubjNameT,SesT1, 'T1.txt');
-        xASL_Copy(T1txtList{iT},T1txtDestDir,true); % Copies T1.txt also
-    end
+%     if ~isempty(strcmp(SessionNameT,Sessions))
+%         indT1 = find(strcmp(SessionNameT,Sessions));
+%         SesT1 = Sessions{indT1};
+%         T1DestDir = fullfile(Ddir,SubjNameT,SesT1,'T1');
+%         xASL_Copy(T1List{iT},T1DestDir,true); % Copies T1.nii file
+%         T1txtDestDir = fullfile(Ddir,SubjNameT,SesT1, 'T1.txt');
+%         xASL_Copy(T1txtList{iT},T1txtDestDir,true); % Copies T1.txt also
+%     end
 end
 
 % == FLAIR ==
