@@ -37,17 +37,21 @@ adniCases = adniCases';
 for iCase = 1:size(adniCases,1)
     % Get current case directory
     currentDir = fullfile(adniDirectoryResults,adniCases{iCase,1});
-    fprintf('Import %s...    ',adniCases{iCase,1});
-    xASL_TrackProgress(iCase/size(adniCases,1)*100);
-    fprintf('\n');
-    % Run ExploreASL DCM2BIDS
-    try
-        x = ExploreASL(currentDir,[1 1 0 1],0); % All import modules besides defacing
-    catch
-        warning('Import of %s failed...',adniCases{iCase,1});
+    if ~xASL_exist(fullfile(currentDir,'rawdata'),'dir')
+        fprintf('Import %s...    ',adniCases{iCase,1});
+        xASL_TrackProgress(iCase/size(adniCases,1)*100);
+        fprintf('\n');
+        % Run ExploreASL DCM2BIDS
+        try
+            x = ExploreASL(currentDir,[1 1 0 1],0); % All import modules besides defacing
+        catch
+            warning('Import of %s failed...',adniCases{iCase,1});
+        end
+        % Add custom participants.tsv
+        xASL_adni_AddParticipantsTSV(currentDir,adniCases{iCase,1});
+    else
+        fprintf('The rawdata for %s was already created...\n',adniCases{iCase,1});
     end
-    % Add custom participants.tsv
-    xASL_adni_AddParticipantsTSV(currentDir,adniCases{iCase,1});
     
 end
 

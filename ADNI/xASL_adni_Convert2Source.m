@@ -42,8 +42,12 @@ modalitiesOfInterest = {'ASL','MPRAGE','FLAIR','CALIBRATION','M0','FSPGR'}';
 
 % Iterate over datasets
 for iCase = 1:size(adniCases,1)
-    xASL_adni_CreateSourceSubject(adniCases,userConfig,adniDirectory,adniDirectoryResults,...
-                                  sourceStructure,studyPar,iCase,modalitiesOfInterest);
+    if ~xASL_exist(fullfile(adniDirectoryResults,adniCases{iCase,1}),'dir')
+        xASL_adni_CreateSourceSubject(adniCases,userConfig,adniDirectory,adniDirectoryResults,...
+                                      sourceStructure,studyPar,iCase,modalitiesOfInterest);
+    else
+        fprintf('The sourcedata for %s was already created...\n',adniCases{iCase,1});
+    end
 end
 
 
