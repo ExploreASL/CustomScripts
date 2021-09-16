@@ -33,6 +33,10 @@ end
 % Transpose list
 adniCases = adniCases';
 
+% Iterator for error list
+iE = 1;
+listFailed = {};
+
 %% Iterate over cases
 for iCase = 1:size(adniCases,1)
     % Get current case directory
@@ -44,8 +48,11 @@ for iCase = 1:size(adniCases,1)
         % Run ExploreASL DCM2BIDS
         try
             x = ExploreASL(currentDir,[1 1 0 1],0); % All import modules besides defacing
-        catch
+        catch ME
             warning('Import of %s failed...',adniCases{iCase,1});
+            listFailed{iE,1} = adniCases{iCase,1};
+            listFailed{iE,2} =  ME.message;
+            iE = iE+1;
         end
         % Add custom participants.tsv
         xASL_adni_AddParticipantsTSV(currentDir,adniCases{iCase,1});
@@ -53,6 +60,15 @@ for iCase = 1:size(adniCases,1)
         fprintf('The rawdata for %s was already created...\n',adniCases{iCase,1});
     end
     
+end
+
+fprintf('\n====================================================================================================\n');
+% Check if there were errors
+if isempty(listFailed)
+    fprintf('No errors during conversion...\n');
+else
+    fprintf('Some errors during conversion...\n');
+    fprintf('Please check the listFailed cell array...\n');
 end
 
 
