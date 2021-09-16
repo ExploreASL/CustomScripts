@@ -33,10 +33,26 @@ adniCases = adniCases';
 
 %% Iterate over cases
 for iCase = 1:size(adniCases,1)
+    
     % On default the logging field should not exist
     loggingExists = false;
+    
     % Get current case directory
     currentDir = fullfile(adniDirectoryResults,adniCases{iCase,1});
+    
+    % Check TSV file
+    currentTSV = xASL_tsvRead(userConfig.ADNI_PROCESSED);
+    boolArrayTSV = ismember(currentTSV(:,1),adniCases{iCase,1});
+    if sum(boolArrayTSV)>0
+        indexCase = find(boolArrayTSV);
+        if strcmp(currentTSV{indexCase,2},'OK')
+            fprintf('%s was already processed successfully...\n',adniCases{iCase,1});
+            continue
+        else
+            warning('%s was processes unsuccessfully before...',adniCases{iCase,1});
+        end
+    end
+    
     fprintf('Process %s...    ',adniCases{iCase,1});
     xASL_TrackProgress(iCase/size(adniCases,1)*100);
     fprintf('\n');

@@ -1,4 +1,4 @@
- 
+
 # ADNI
 
 Conversion scripts written by M. Stritt, 2021.
@@ -19,7 +19,7 @@ Script to convert the cases in source structure to ASL-BIDS using ExploreASL.
 
 Script to process the ADNI data.
 
-## userConfig.json  
+## userConfig.json
 
 JSON file to define your **ADNI** version, your local **ADNI** directory, the resulting **BIDS** directory and the path to a TSV file containing processing informations.
 
@@ -37,3 +37,13 @@ JSON file to define your **ADNI** version, your local **ADNI** directory, the re
 	"ADNI_VERSION": 2
 }
 ```
+
+### Tested datasets
+
+```
+ADNI_Case	Logging
+006_S_6681	OK
+011_S_4105	OK
+027_S_5079	OK
+```
+
