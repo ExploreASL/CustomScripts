@@ -40,15 +40,42 @@ fprintf('Determining sessions from date strings...\n');
 % Modalities of interest
 modalitiesOfInterest = {'ASL','MPRAGE','FLAIR','CALIBRATION','M0','FSPGR'}';
 
+% Iterator for error list
+iE = 1;
+listFailed = {};
+
 % Iterate over datasets
 for iCase = 1:size(adniCases,1)
     if ~xASL_exist(fullfile(adniDirectoryResults,adniCases{iCase,1}),'dir')
-        xASL_adni_CreateSourceSubject(adniCases,userConfig,adniDirectory,adniDirectoryResults,...
-                                      sourceStructure,studyPar,iCase,modalitiesOfInterest);
+        try
+            xASL_adni_CreateSourceSubject(adniCases,userConfig,adniDirectory,adniDirectoryResults,...
+                                          sourceStructure,studyPar,iCase,modalitiesOfInterest);
+        catch ME
+            fprintf('Something went wrong for %s...\n',adniCases{iCase,1});
+            fprintf('Error message: %s\n', ME.message);
+            listFailed{iE,1} = adniCases{iCase,1};
+            listFailed{iE,2} =  ME.message;
+            iE = iE+1;
+        end
     else
         fprintf('The sourcedata for %s was already created...\n',adniCases{iCase,1});
     end
 end
+
+fprintf('\n====================================================================================================\n');
+if isempty(listFailed)
+    fprintf('No errors during conversion...\n');
+else
+    fprintf('Some errors during conversion...\n');
+    fprintf('Please check the listFailed cell array...\n');
+end
+outputCases = xASL_adm_GetFsList(adniDirectoryResults,'^\d{3}_.+$',true);
+if size(adniCases,1)~=size(outputCases,1)
+    fprintf('Number of input cases is not equal to number of output cases...\n');
+end
+
+
+
 
 
 
