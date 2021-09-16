@@ -78,11 +78,11 @@ function [json,studyPar] = xASL_adni_GetJsonPhilips(headerDCM, ADNI_VERSION, adn
             % I assume 40 acquisitions here
             switch softwareVersion
                 case 3
-                    studyPar.SliceTiming = (3238-2000)/40; % Min TR 3238, PLD 2000
+                    studyPar.SliceTiming = (3238-2000)/40/1000; % Min TR 3238, PLD 2000
                 case 5
-                    studyPar.SliceTiming = (3679-2000)/40; % Min TR 3679, PLD 2000
+                    studyPar.SliceTiming = (3679-2000)/40/1000; % Min TR 3679, PLD 2000
                 otherwise
-                    studyPar.SliceTiming = (3238-2000)/40; % We assume the older version here
+                    studyPar.SliceTiming = (3238-2000)/40/1000; % We assume the older version here
             end
         end
     end
