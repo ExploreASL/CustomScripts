@@ -41,15 +41,17 @@ for iCase = 1:size(adniCases,1)
     currentDir = fullfile(adniDirectoryResults,adniCases{iCase,1});
     
     % Check TSV file
-    currentTSV = xASL_tsvRead(userConfig.ADNI_PROCESSED);
-    boolArrayTSV = ismember(currentTSV(:,1),adniCases{iCase,1});
-    if sum(boolArrayTSV)>0
-        indexCase = find(boolArrayTSV);
-        if strcmp(currentTSV{indexCase,2},'OK')
-            fprintf('%s was already processed successfully...\n',adniCases{iCase,1});
-            continue
-        else
-            warning('%s was processes unsuccessfully before...',adniCases{iCase,1});
+    if xASL_exist(userConfig.ADNI_PROCESSED,'file')
+        currentTSV = xASL_tsvRead(userConfig.ADNI_PROCESSED);
+        boolArrayTSV = ismember(currentTSV(:,1),adniCases{iCase,1});
+        if sum(boolArrayTSV)>0
+            indexCase = find(boolArrayTSV);
+            if strcmp(currentTSV{indexCase,2},'OK')
+                fprintf('%s was already processed successfully...\n',adniCases{iCase,1});
+                continue
+            else
+                warning('%s was processes unsuccessfully before...',adniCases{iCase,1});
+            end
         end
     end
     
