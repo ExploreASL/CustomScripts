@@ -38,12 +38,3 @@ JSON file to define your **ADNI** version, your local **ADNI** directory, the re
 }
 ```
 
-### Tested datasets
-
-```
-ADNI_Case	Logging
-006_S_6681	OK
-011_S_4105	OK
-027_S_5079	OK
-```
-
