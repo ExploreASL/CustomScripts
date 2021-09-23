@@ -23,6 +23,28 @@ function [json,studyPar] = xASL_adni_GetJsonSiemens(headerDCM, ADNI_VERSION, adn
     %% Fix study par
     [studyPar,json] = xASL_adni_FixStudyParBasedOnDataPar(json, studyPar);
     
+    % ASL context problems
+    % In ADNI-3 003_S_6264 e.g., we have one session with 10 control/label pairs (20 volumes) and one session with 1 dummy M0 and 9
+    % control/label pairs. This crashes the import right now. We need to manually fix the studyPar/ASLContext there (use m0scan,control,label,...)
+    
+    if mod(numel(dcmPaths),2)
+        % Uneven number of acquisitions
+        studyPar.ASLContext = ['m0scan' repmat(',control,label',1,(numel(dcmPaths)-1)/2)];
+    else
+        % Even number of acquisitions
+        studyPar.ASLContext = 'control,label';
+    end
+    
+    % The problem is... that if we overwrite this in studyPar, it tries to
+    % use the same for both sessions again...
+    
+    
+    
+    % Create studyPar for each session and if they dont match afterwards,
+    % we split the dataset for the import?
+    
+    
+    
     % Manual code
     studyPar.LabelingLocationDescription = 'Fixed, 9 cm below ACPC';
     studyPar.PASLType = 'PICORE';
