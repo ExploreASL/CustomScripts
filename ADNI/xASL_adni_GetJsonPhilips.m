@@ -1,4 +1,4 @@
-function [json,studyPar] = xASL_adni_GetJsonPhilips(headerDCM, ADNI_VERSION, adniCases, iCase, studyPar)
+function [json,studyPar] = xASL_adni_GetJsonPhilips(dataset, headerDCM, ADNI_VERSION, adniCases, iCase, studyPar)
 %xASL_adni_GetJsonPhilips Minor helper function
 %
 % INPUT:        n/a

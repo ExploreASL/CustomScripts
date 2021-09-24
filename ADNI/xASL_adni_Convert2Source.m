@@ -51,7 +51,7 @@ for iCase = 1:size(adniCases,1)
             xASL_adni_CreateSourceSubject(adniCases,userConfig,adniDirectory,adniDirectoryResults,...
                                           sourceStructure,studyPar,iCase,modalitiesOfInterest);
         catch ME
-            fprintf('Something went wrong for %s...\n',adniCases{iCase,1});
+            fprintf(2,'Something went wrong for %s...\n',adniCases{iCase,1});
             fprintf('Error message: %s\n', ME.message);
             listFailed{iE,1} = adniCases{iCase,1};
             listFailed{iE,2} =  ME.message;

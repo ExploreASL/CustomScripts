@@ -31,8 +31,8 @@ function [json, newCaseRoot, iSessionsNum, studyPar] = xASL_adni_CopyAndModifySe
 
     % Determine new case directory
     if ~isempty(adniDirectoryResults)
-        newCase = fullfile(adniDirectoryResults,adniCases{iCase,1},'sourcedata',['sub-' subjectADNIvalid],dateLists.dateList_ASL{iSessions,1});
-        newCaseRoot = fullfile(adniDirectoryResults,adniCases{iCase,1});
+        dataset.newCase = fullfile(adniDirectoryResults,adniCases{iCase,1},'sourcedata',['sub-' subjectADNIvalid],dateLists.dateList_ASL{iSessions,1});
+        dataset.newCaseRoot = fullfile(adniDirectoryResults,adniCases{iCase,1});
     else
         error('The value of adniDirectoryResults is empty...');
     end
@@ -41,10 +41,10 @@ function [json, newCaseRoot, iSessionsNum, studyPar] = xASL_adni_CopyAndModifySe
     fprintf('%s...\n',dateLists.dateList_ASL{iSessions,1});
 
     % Copy ASL session to new directory
-    xASL_Copy(fullfile(currentDir,names.ASL_name,dateLists.dateList_ASL{iSessions,2}),fullfile(newCase,'ASL'),1);
+    xASL_Copy(fullfile(currentDir,names.ASL_name,dateLists.dateList_ASL{iSessions,2}),fullfile(dataset.newCase,'ASL'),1);
 
     % Get Dicoms
-    dcmPaths = xASL_adm_GetFileList(fullfile(newCase,'ASL'),'^.+\.dcm$','FPListRec');
+    dcmPaths = xASL_adm_GetFileList(fullfile(dataset.newCase,'ASL'),'^.+\.dcm$','FPListRec');
     if ~isempty(dcmPaths)
         headerDCM = xASL_io_DcmtkRead(dcmPaths{1});
         if ~isfield(headerDCM,'Manufacturer')
@@ -71,17 +71,17 @@ function [json, newCaseRoot, iSessionsNum, studyPar] = xASL_adni_CopyAndModifySe
 
         switch manufacturer
             case 'Siemens'
-                [json,studyPar] = xASL_adni_GetJsonSiemens(headerDCM, userConfig.ADNI_VERSION, adniCases, iCase, studyPar, dcmPaths);
+                [json,studyPar] = xASL_adni_GetJsonSiemens(dataset, headerDCM, userConfig.ADNI_VERSION, adniCases, iCase, studyPar, dcmPaths);
             case 'Philips'
-                [json,studyPar] = xASL_adni_GetJsonPhilips(headerDCM, userConfig.ADNI_VERSION, adniCases, iCase, studyPar);
+                [json,studyPar] = xASL_adni_GetJsonPhilips(dataset, headerDCM, userConfig.ADNI_VERSION, adniCases, iCase, studyPar);
             case 'GE'
-                [json,studyPar] = xASL_adni_GetJsonGE(headerDCM, userConfig.ADNI_VERSION, adniCases, iCase, studyPar);
+                [json,studyPar] = xASL_adni_GetJsonGE(dataset, headerDCM, userConfig.ADNI_VERSION, adniCases, iCase, studyPar);
             otherwise
                 warning('Unknown manufacturer...');
         end
 
         % Write JSON file
-        spm_jsonwrite(fullfile(newCaseRoot,['dataPar-' thisSessions '.json']),json);
+        spm_jsonwrite(fullfile(dataset.newCaseRoot,['dataPar-' thisSessions '.json']),json);
 
     end
 
@@ -91,7 +91,7 @@ function [json, newCaseRoot, iSessionsNum, studyPar] = xASL_adni_CopyAndModifySe
         currentT1wsession = dateLists.dateList_MPRAGE{iSessions_MPRAGE,1};
         if strcmp(currentT1wsession(1:10),currentALSsession(1:10))
             % Copy MPRAGE session to new directory
-            xASL_Copy(fullfile(currentDir,names.MPRAGE_name,dateLists.dateList_MPRAGE{iSessions_MPRAGE,1}),fullfile(newCase,'T1w'));
+            xASL_Copy(fullfile(currentDir,names.MPRAGE_name,dateLists.dateList_MPRAGE{iSessions_MPRAGE,1}),fullfile(dataset.newCase,'T1w'));
         end
     end
     for iSessions_FLAIR = 1:numel(dateLists.dateList_FLAIR)
@@ -99,7 +99,7 @@ function [json, newCaseRoot, iSessionsNum, studyPar] = xASL_adni_CopyAndModifySe
         currentFLAIRsession = dateLists.dateList_FLAIR{iSessions_FLAIR,1};
         if strcmp(currentFLAIRsession(1:10),currentALSsession(1:10))
             % Copy MPRAGE session to new directory
-            xASL_Copy(fullfile(currentDir,names.FLAIR_name,dateLists.dateList_FLAIR{iSessions_FLAIR,1}),fullfile(newCase,'FLAIR'));
+            xASL_Copy(fullfile(currentDir,names.FLAIR_name,dateLists.dateList_FLAIR{iSessions_FLAIR,1}),fullfile(dataset.newCase,'FLAIR'));
         end
     end
     for iSessions_CALIBRATION = 1:numel(dateLists.dateList_CALIBRATION)
@@ -107,7 +107,7 @@ function [json, newCaseRoot, iSessionsNum, studyPar] = xASL_adni_CopyAndModifySe
         currentM0session = dateLists.dateList_CALIBRATION{iSessions_CALIBRATION,1};
         if strcmp(currentM0session(1:10),currentALSsession(1:10))
             % Copy MPRAGE session to new directory
-            xASL_Copy(fullfile(currentDir,names.CALIBRATION_name,dateLists.dateList_CALIBRATION{iSessions_CALIBRATION,1}),fullfile(newCase,'CALIBRATION'));
+            xASL_Copy(fullfile(currentDir,names.CALIBRATION_name,dateLists.dateList_CALIBRATION{iSessions_CALIBRATION,1}),fullfile(dataset.newCase,'CALIBRATION'));
         end
     end
     for iSessions_M0 = 1:numel(dateLists.dateList_M0)
@@ -115,9 +115,12 @@ function [json, newCaseRoot, iSessionsNum, studyPar] = xASL_adni_CopyAndModifySe
         currentM0session = dateLists.dateList_M0{iSessions_M0,1};
         if strcmp(currentM0session(1:10),currentALSsession(1:10))
             % Copy MPRAGE session to new directory
-            xASL_Copy(fullfile(currentDir,names.M0_name,dateLists.dateList_M0{iSessions_M0,1}),fullfile(newCase,'M0'));
+            xASL_Copy(fullfile(currentDir,names.M0_name,dateLists.dateList_M0{iSessions_M0,1}),fullfile(dataset.newCase,'M0'));
         end
     end
+    
+    % Return variable
+    newCaseRoot = dataset.newCaseRoot;
 
 
 end

@@ -1,4 +1,4 @@
-function [json,studyPar] = xASL_adni_GetJsonGE(headerDCM, ADNI_VERSION, adniCases, iCase, studyPar)
+function [json,studyPar] = xASL_adni_GetJsonGE(dataset, headerDCM, ADNI_VERSION, adniCases, iCase, studyPar)
 %xASL_adni_GetJsonGE Minor helper function
 %
 % INPUT:        n/a
