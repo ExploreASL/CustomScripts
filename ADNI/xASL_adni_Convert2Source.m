@@ -19,6 +19,7 @@
 % Copyright 2015-2021 ExploreASL
 
 %% Initialization
+clear
 x = ExploreASL;
 clc
 
@@ -52,7 +53,7 @@ for iCase = 1:size(adniCases,1)
                                           sourceStructure,studyPar,iCase,modalitiesOfInterest);
         catch ME
             fprintf(2,'Something went wrong for %s...\n',adniCases{iCase,1});
-            fprintf('Error message: %s\n', ME.message);
+            fprintf(2, 'Error message: %s\n', ME.message);
             listFailed{iE,1} = adniCases{iCase,1};
             listFailed{iE,2} =  ME.message;
             iE = iE+1;

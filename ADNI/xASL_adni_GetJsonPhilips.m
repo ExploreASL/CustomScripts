@@ -29,7 +29,9 @@ function [json,studyPar] = xASL_adni_GetJsonPhilips(dataset, headerDCM, ADNI_VER
     % studyPar.M0 = false;
     studyPar.M0Type = 'Estimate';
     studyPar.M0Estimate = 3739400;
-    studyPar = rmfield(studyPar,'M0');
+    if isfield(studyPar,'M0')
+        studyPar = rmfield(studyPar,'M0');
+    end
     
     studyPar.TotalAcquiredPairs = 30;
     studyPar.LabelingDistance = 100;

@@ -47,8 +47,10 @@ function xASL_adni_MergeJsons(newCaseRoot)
         fclose all;
         dataParJsons = xASL_adm_GetFileList(newCaseRoot,'^dataPar.+\.json$','FPListRec');
         newName = strrep(dataParJsons{1},'-session_1','');
-        xASL_Copy(dataParJsons{1},newName);
-        xASL_delete(dataParJsons{1});
+        if xASL_exist(dataParJsons{1},'file')
+            xASL_Copy(dataParJsons{1},newName);
+            xASL_delete(dataParJsons{1});
+        end
     end
 
 
