@@ -26,35 +26,43 @@ function [json,studyPar] = xASL_adni_GetJsonSiemens(dataset, headerDCM, ADNI_VER
     % ASL context problems
     % In ADNI-3 003_S_6264 e.g., we have one session with 10 control/label pairs (20 volumes) and one session with 1 dummy M0 and 9
     % control/label pairs. This crashes the import right now. We need to manually fix the studyPar/ASLContext there (use m0scan,control,label,...)
-    
-    if mod(numel(dcmPaths),2)
-        % Uneven number of acquisitions: the following line would work for single-session datasets, but if the protocol
-        % differs for multi-session (like in ADNI-3 003_S_6264), we need to manually split of the M0 scan instead.
-        singleSession = false; % because we can't know automatically right now
-        if singleSession
+    if ADNI_VERSION==3
+        if mod(numel(dcmPaths),2)
+            % Uneven number of acquisitions: the following line would work for single-session datasets, but if the protocol
+            % differs for multi-session (like in ADNI-3 003_S_6264), we need to manually split of the M0 scan instead.
+            singleSession = false; % because we can't know automatically right now
+            if singleSession
+                studyPar.ASLContext = ['m0scan' repmat(',control,label',1,(numel(dcmPaths)-1)/2)];
+            else
+                studyPar.ASLContext = 'control,label';
+                % I'd assume that the image with instance number 1 is the dummy/m0 scan
+                for iFile=1:numel(dcmPaths)
+                    header = xASL_io_DcmtkRead(dcmPaths{iFile});
+                    if isfield(header,'InstanceNumber') && header.InstanceNumber==1
+                        % fprintf('found %s ...\n', dcmPaths{iFile});
+                        [curDir, m0fileName, m0Ext] = fileparts(dcmPaths{iFile});
+                        [~, dirNumber] = fileparts(curDir);
+                        m0dir = fullfile(dataset.newCase,'M0',dirNumber);
+                        xASL_Move(dcmPaths{iFile},fullfile(m0dir,[m0fileName m0Ext]));
+                        continue
+                    end
+                end
+            end
+        else
+            % Even number of acquisitions
+            studyPar.ASLContext = 'control,label';
+        end
+    else
+        % ADNI-2: Seems like ExploreASL does the splitting automatically for the even older sequences
+        if mod(numel(dcmPaths),2)
             studyPar.ASLContext = ['m0scan' repmat(',control,label',1,(numel(dcmPaths)-1)/2)];
         else
             studyPar.ASLContext = 'control,label';
-            % I'd assume that the image with instance number 1 is the dummy/m0 scan
-            for iFile=1:numel(dcmPaths)
-                header = xASL_io_DcmtkRead(dcmPaths{iFile});
-                if isfield(header,'InstanceNumber') && header.InstanceNumber==1
-                    % fprintf('found %s ...\n', dcmPaths{iFile});
-                    [curDir, m0fileName, m0Ext] = fileparts(dcmPaths{iFile});
-                    [~, dirNumber] = fileparts(curDir);
-                    m0dir = fullfile(dataset.newCase,'M0',dirNumber);
-                    xASL_Move(dcmPaths{iFile},fullfile(m0dir,[m0fileName m0Ext]));
-                    continue
-                end
-            end
         end
-    else
-        % Even number of acquisitions
-        studyPar.ASLContext = 'control,label';
     end
     
     
-    warning('In ADNI-2 ExploreASL seems to automatically split of the dummy M0, I should turn off the behvaior above there...');
+    
     
     
     % Manual code
