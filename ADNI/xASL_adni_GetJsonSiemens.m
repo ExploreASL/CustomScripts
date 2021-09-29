@@ -53,6 +53,10 @@ function [json,studyPar] = xASL_adni_GetJsonSiemens(dataset, headerDCM, ADNI_VER
         studyPar.ASLContext = 'control,label';
     end
     
+    
+    warning('In ADNI-2 ExploreASL seems to automatically split of the dummy M0, I should turn off the behvaior above there...');
+    
+    
     % Manual code
     studyPar.LabelingLocationDescription = 'Fixed, 9 cm below ACPC';
     studyPar.PASLType = 'PICORE';
