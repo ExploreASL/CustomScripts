@@ -28,12 +28,13 @@ function [json,studyPar] = xASL_adni_GetJsonSiemens(dataset, headerDCM, ADNI_VER
     % control/label pairs. This crashes the import right now. We need to manually fix the studyPar/ASLContext there (use m0scan,control,label,...)
     if ADNI_VERSION==3
         if mod(numel(dcmPaths),2)
-            % Uneven number of acquisitions: the following line would work for single-session datasets, but if the protocol
-            % differs for multi-session (like in ADNI-3 003_S_6264), we need to manually split of the M0 scan instead.
-            singleSession = false; % because we can't know automatically right now
-            if singleSession
+            % For the old MOSAIC images with 105 scans the workflow seems to work automatically and splits off the M0 during import/processing ...
+            if numel(dcmPaths)==105
                 studyPar.ASLContext = ['m0scan' repmat(',control,label',1,(numel(dcmPaths)-1)/2)];
             else
+                % ...for some of the newer ones this does not seem to work though. We have an uneven number of acquisitions:
+                % the following line would work for single-session datasets, but if the protocol differs for multi-session
+                % (like in ADNI-3 003_S_6264), we need to manually split of the M0 scan instead.
                 studyPar.ASLContext = 'control,label';
                 % I'd assume that the image with instance number 1 is the dummy/m0 scan
                 for iFile=1:numel(dcmPaths)
