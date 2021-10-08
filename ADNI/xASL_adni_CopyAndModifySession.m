@@ -55,18 +55,23 @@ function [json, newCaseRoot, iSessionsNum, studyPar] = xASL_adni_CopyAndModifySe
         end
 
         % Determine manufacturer from DICOM
-        if ~isempty(regexpi(headerDCM.Manufacturer,'Siemens'))
-            manufacturer = 'Siemens';
-            studyPar.Manufacturer = 'Siemens';
-        elseif ~isempty(regexpi(headerDCM.Manufacturer,'Philips'))
-            manufacturer = 'Philips';
-            studyPar.Manufacturer = 'Philips';
-        elseif ~isempty(regexpi(headerDCM.Manufacturer,'GE'))
-            manufacturer = 'GE';
-            studyPar.Manufacturer = 'GE';
+        if isfield(headerDCM,'Manufacturer') && ~isempty(headerDCM.Manufacturer)
+            if ~isempty(regexpi(headerDCM.Manufacturer,'Siemens'))
+                manufacturer = 'Siemens';
+                studyPar.Manufacturer = 'Siemens';
+            elseif ~isempty(regexpi(headerDCM.Manufacturer,'Philips'))
+                manufacturer = 'Philips';
+                studyPar.Manufacturer = 'Philips';
+            elseif ~isempty(regexpi(headerDCM.Manufacturer,'GE'))
+                manufacturer = 'GE';
+                studyPar.Manufacturer = 'GE';
+            else
+                manufacturer = '';
+                studyPar.Manufacturer = '';
+            end
         else
+            fprintf(2,'Missing manufacturer DICOM tag...\n');
             manufacturer = '';
-            studyPar.Manufacturer = '';
         end
 
         switch manufacturer
@@ -78,6 +83,7 @@ function [json, newCaseRoot, iSessionsNum, studyPar] = xASL_adni_CopyAndModifySe
                 [json,studyPar] = xASL_adni_GetJsonGE(dataset, headerDCM, userConfig.ADNI_VERSION, adniCases, iCase, studyPar);
             otherwise
                 warning('Unknown manufacturer...');
+                json = struct;
         end
 
         % Write JSON file
