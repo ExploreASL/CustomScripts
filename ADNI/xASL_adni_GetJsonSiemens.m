@@ -17,7 +17,13 @@ function [json,studyPar] = xASL_adni_GetJsonSiemens(dataset, headerDCM, ADNI_VER
     % Tested with 011_S_4105
 
     % Phoenix Protocol
-    [xasl,parameters,parameterList,phoenixProtocol] = xASL_bids_GetPhoenixProtocol(dcmPaths{1},true);
+    try
+        [xasl,parameters,parameterList,phoenixProtocol] = xASL_bids_GetPhoenixProtocol(dcmPaths{1},true);
+    catch ME
+        % Some cases do not seem to have a complete phoenix protocol
+        fprintf('Issue with phoenix protocol...\n');
+        xasl = struct;
+    end
     [xasl, json, studyPar] = xASL_adni_PhoenixFix(xasl, studyPar, ADNI_VERSION, adniCases, iCase);
     
     %% Fix study par
