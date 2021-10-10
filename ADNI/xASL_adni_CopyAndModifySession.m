@@ -47,8 +47,18 @@ function [json, newCaseRoot, iSessionsNum, studyPar] = xASL_adni_CopyAndModifySe
     dcmPaths = xASL_adm_GetFileList(fullfile(dataset.newCase,'ASL'),'^.+\.dcm$','FPListRec');
     if ~isempty(dcmPaths)
         headerDCM = xASL_io_DcmtkRead(dcmPaths{1});
-        if ~isfield(headerDCM,'Manufacturer')
+        if ~isfield(headerDCM,'Manufacturer') || isempty(headerDCM.Manufacturer)
             headerDCM.Manufacturer = 'unknown';
+            % Try to guess Manufacturer from Model if it exists
+            if isfield(headerDCM,'ManufacturersModelName')
+                modelList = xASL_bids_BIDSifyFixBasicFields_GetModelList();
+                for iModel = 1:size(modelList,1)
+                    % Determine Manufacturer based on ManufacturersModelName
+                    if ~isempty(regexpi(headerDCM.ManufacturersModelName,modelList{iModel,1}))
+                        headerDCM.Manufacturer = modelList{iModel,2};
+                    end
+                end
+            end
         end
         if ~isfield(headerDCM,'SoftwareVersions')
             headerDCM.SoftwareVersions = 'unknown';
@@ -127,6 +137,27 @@ function [json, newCaseRoot, iSessionsNum, studyPar] = xASL_adni_CopyAndModifySe
     
     % Return variable
     newCaseRoot = dataset.newCaseRoot;
+
+
+end
+
+
+
+%% Try to get manufacturer from model name
+function modelList = xASL_bids_BIDSifyFixBasicFields_GetModelList()
+
+    modelList = {
+        'Signa',             'GE'; ...
+        'Discovery',         'GE'; ...
+        'Achieva',           'Philips'; ...
+        'Ingenuity',         'Philips'; ...
+        'Intera',            'Philips'; ...
+        'Ingenia',           'Philips'; ...
+        'Skyra',             'Siemens'; ...
+        'TrioTim',           'Siemens'; ...
+        'Verio',             'Siemens'; ...
+        'Prisma',            'Siemens'
+    };
 
 
 end
