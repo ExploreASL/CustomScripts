@@ -22,15 +22,6 @@ All repetitions of ASL - but weirdly grouped, with M0
 01008-1: old protocol and different DICOM names
 02008-1: from server, different DICOM mapping
 
-
-
-
-
-
 06006-1: difference in names nii files
-
-
-
-
 
 04001-1: different DICOM mapping

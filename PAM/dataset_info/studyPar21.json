@@ -9,5 +9,11 @@
 "ASLContext":"deltam",
 "BackgroundSuppressionNumberPulses":2,
 "BackgroundSuppressionPulseTime":[1.83,3.155],
-"SliceTiming":0.0400526,
+"SliceTiming":0.040526,
+"AcquisitionVoxelSize":[3,3,7],
+"LabelingPulseAverageGradient":0.36,
+"LabelingPulseMaximumGradient":5,
+"LabelingPulseDuration":0.48,
+"LabelingPulseFlipAngle":27.81,
+"LabelingPulseInterval":1.21,
 }

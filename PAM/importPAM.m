@@ -1,5 +1,5 @@
 %% Set up the directories
-pathRoot = '/home/janpetr/tmp/PAM';
+pathRoot = '/pet/projekte/asl/data/PAM';
 
 %% Manually change some files with irregular names
 pathOriginal = fullfile(pathRoot,'originaldata');
@@ -15,7 +15,7 @@ xASL_delete(fullfile(pathOriginal,'04001','04001_1','04001_1 RDS'));
 rearrangeDataPAM(pathRoot);
 
 %% Run the import for the 4 flavors
-importTypes = {'1','2','3','4'};
+importTypes = {'11','12','13','21','22','23'};
 
 for iType = 1:length(importTypes)
 	% Rename the correct one
