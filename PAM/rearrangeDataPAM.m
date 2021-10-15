@@ -61,7 +61,7 @@ for iSubject = 1:length(listSubjects)
 					if ~isempty(listSequenceDir)
 						xASL_Copy(fullfile(inputPath,listSequenceDir{1},'resources','DICOM','files'),fullfile(outputDir,'ASL'));
 					else
-						fprintf(['Missing ASL for ' listSessions{iSession}]);
+						fprintf(['Missing ASL for ' listSessions{iSession} '\n']);
 					end
 				end
 				
@@ -70,7 +70,7 @@ for iSubject = 1:length(listSubjects)
 				if ~isempty(listSequenceDir)
 					xASL_Copy(fullfile(inputPath,listSequenceDir{1},'resources','DICOM','files'),fullfile(outputDir,'M0'));
 				else
-					fprintf(['Missing M0 for ' listSessions{iSession}]);
+					fprintf(['Missing M0 for ' listSessions{iSession} '\n']);
 				end
 			end
 			% T1W_3D_TFE
@@ -78,7 +78,7 @@ for iSubject = 1:length(listSubjects)
 			if ~isempty(listSequenceDir)
 				xASL_Copy(fullfile(inputPath,listSequenceDir{1},'resources','DICOM','files'),fullfile(outputDir,'T1w'));
 			else
-				fprintf(['Missing T1w for ' listSessions{iSession}]);
+				fprintf(['Missing T1w for ' listSessions{iSession} '\n']);
 			end
 				
 			% T2_FLAIR
@@ -86,7 +86,7 @@ for iSubject = 1:length(listSubjects)
 			if ~isempty(listSequenceDir)
 				xASL_Copy(fullfile(inputPath,listSequenceDir{1},'resources','DICOM','files'),fullfile(outputDir,'FLAIR'));
 			else
-				fprintf(['Missing FLAIR for ' listSessions{iSession}]);
+				fprintf(['Missing FLAIR for ' listSessions{iSession} '\n']);
 			end
 
 		else
@@ -126,6 +126,8 @@ for iSubject = 1:length(listSubjects)
 					outputDir = fullfile(pathSource3,listSubjects{iSubject},listSessions{iSession});
 					bSearchM0 = 1;
 					copy_single_DICOM(cellSequence, 'ASL', 'ASL', pathOriginal, listSubjects{iSubject}, listSessions{iSession}, listMainDir{1}, outputDir);
+				else
+					outputDir = fullfile(pathSource1,listSubjects{iSubject},listSessions{iSession});
 				end
 				
 				% If M0 expected than copy it
@@ -177,38 +179,40 @@ for iSubject = 1:length(listSubjects)
 					
 					% Make a list of directories and sort them then
 					% Check if we have the pCASL or SOURCE or ASL type and send to the correct flavor
-				bSearchM0 = 0;
-				if sum(cellfun(@(y) ~isempty(strfind(y,'SOURCE')),cellSequence(:,1)))
-					outputDir = fullfile(pathSource3,listSubjects{iSubject},listSessions{iSession});
-					bSearchM0 = 1;
-					copy_single_DIR(cellSequence, 'SOURCE', 'ASL', pathOriginal, listSubjects{iSubject}, listSessions{iSession}, listMainDir{1}, subdirName, outputDir);
-				elseif sum(cellfun(@(y) ~isempty(strfind(y,'pCASL')),cellSequence(:,1))) %1008
-					outputDir = fullfile(pathSource4,listSubjects{iSubject},listSessions{iSession});
-					copy_single_DIR(cellSequence, 'pCASL', 'ASL', pathOriginal, listSubjects{iSubject}, listSessions{iSession}, listMainDir{1}, subdirName, outputDir);
-				elseif sum(cellfun(@(y) ~isempty(strfind(y,'ASL')),cellSequence(:,1)))
-					% Those with 19 files exactly put to deltaM folder
-					iSequence = find(cellfun(@(y) ~isempty(strfind(y,'ASL')),cellSequence(:,1)));
-					listFile = xASL_adm_GetFileList(fullfile(pathOriginal,listSubjects{iSubject},listSessions{iSession},listMainDir{1},listSequences{iSequence},subdirName),'^.*$','List', [], false);
-					if length(listFile) == 19 %4001
-						outputDir = fullfile(pathSource1,listSubjects{iSubject},listSessions{iSession});
-					else %2008, 6006_1
+					bSearchM0 = 0;
+					if sum(cellfun(@(y) ~isempty(strfind(y,'SOURCE')),cellSequence(:,1)))
 						outputDir = fullfile(pathSource3,listSubjects{iSubject},listSessions{iSession});
+						bSearchM0 = 1;
+						copy_single_DIR(cellSequence, 'SOURCE', 'ASL', pathOriginal, listSubjects{iSubject}, listSessions{iSession}, listMainDir{1}, subdirName, outputDir);
+					elseif sum(cellfun(@(y) ~isempty(strfind(y,'pCASL')),cellSequence(:,1))) %1008
+						outputDir = fullfile(pathSource4,listSubjects{iSubject},listSessions{iSession});
+						copy_single_DIR(cellSequence, 'pCASL', 'ASL', pathOriginal, listSubjects{iSubject}, listSessions{iSession}, listMainDir{1}, subdirName, outputDir);
+					elseif sum(cellfun(@(y) ~isempty(strfind(y,'ASL')),cellSequence(:,1)))
+						% Those with 19 files exactly put to deltaM folder
+						iSequence = find(cellfun(@(y) ~isempty(strfind(y,'ASL')),cellSequence(:,1)));
+						listFile = xASL_adm_GetFileList(fullfile(pathOriginal,listSubjects{iSubject},listSessions{iSession},listMainDir{1},listSequences{iSequence},subdirName),'^.*$','List', [], false);
+						if length(listFile) == 19 %4001
+							outputDir = fullfile(pathSource1,listSubjects{iSubject},listSessions{iSession});
+						else %2008, 6006_1
+							outputDir = fullfile(pathSource3,listSubjects{iSubject},listSessions{iSession});
+						end
+						bSearchM0 = 1;
+						copy_single_DIR(cellSequence, 'ASL', 'ASL', pathOriginal, listSubjects{iSubject}, listSessions{iSession}, listMainDir{1}, subdirName, outputDir);
+					else
+						outputDir = fullfile(pathSource1,listSubjects{iSubject},listSessions{iSession});
 					end
-					bSearchM0 = 1;
-					copy_single_DIR(cellSequence, 'ASL', 'ASL', pathOriginal, listSubjects{iSubject}, listSessions{iSession}, listMainDir{1}, subdirName, outputDir);
-				end
-				
-				% If M0 expected than copy it
-				if bSearchM0
-					copy_single_DIR(cellSequence, 'M0', 'M0', pathOriginal, listSubjects{iSubject}, listSessions{iSession}, listMainDir{1}, subdirName, outputDir);
-				end
-				
-				% Copy also T1w and FLAIR
-				copy_single_DIR(cellSequence, 'T1W_3D', 'T1W', pathOriginal, listSubjects{iSubject}, listSessions{iSession}, listMainDir{1}, subdirName, outputDir);
-				copy_single_DIR(cellSequence, 'FLAIR', 'FLAIR', pathOriginal, listSubjects{iSubject}, listSessions{iSession}, listMainDir{1}, subdirName, outputDir);
-	
+					
+					% If M0 expected than copy it
+					if bSearchM0
+						copy_single_DIR(cellSequence, 'M0', 'M0', pathOriginal, listSubjects{iSubject}, listSessions{iSession}, listMainDir{1}, subdirName, outputDir);
+					end
+					
+					% Copy also T1w and FLAIR
+					copy_single_DIR(cellSequence, 'T1W_3D', 'T1W', pathOriginal, listSubjects{iSubject}, listSessions{iSession}, listMainDir{1}, subdirName, outputDir);
+					copy_single_DIR(cellSequence, 'FLAIR', 'FLAIR', pathOriginal, listSubjects{iSubject}, listSessions{iSession}, listMainDir{1}, subdirName, outputDir);
+					
 				else
-					fprintf(['Type of directory structure not recognized ' listSessions{iSession}]);
+					fprintf(['Type of directory structure not recognized ' listSessions{iSession} '\n']);
 				end
 			end
 		end
@@ -234,14 +238,14 @@ if ~isempty(iSequence)
 		if length(iSequenceClean) == 1
 			xASL_Copy(fullfile(pathOriginal,subjectName,sessionName,mainDir,cellSequence{iSequenceClean,2}),fullfile(outputDir,seqName,cellSequence{iSequenceClean,2}));
 		else
-			fprintf(['Error. Session ' sessionName '. Found multiple ' seqWild ', using the first']);
+			fprintf(['Error. Session ' sessionName '. Found multiple ' seqWild ', using the first one.\n']);
 			xASL_Copy(fullfile(pathOriginal,subjectName,sessionName,mainDir,cellSequence{iSequenceClean(1),2}),fullfile(outputDir,seqName,cellSequence{iSequenceClean(1),2}));
 		end
 	else
 		xASL_Copy(fullfile(pathOriginal,subjectName,sessionName,mainDir,cellSequence{iSequence,2}),fullfile(outputDir,seqName,cellSequence{iSequence,2}));
 	end
 else
-	fprintf(['Session ' sessionName '. Found no ' seqWild]);
+	fprintf(['Session ' sessionName '. Found no ' seqWild '\n']);
 end
 
 end
@@ -251,12 +255,12 @@ function copy_single_DIR(cellSequence, seqWild, seqName, pathOriginal, subjectNa
 iSequence = find(cellfun(@(y) ~isempty(strfind(y,seqWild)),cellSequence(:,1)));
 if ~isempty(iSequence)
 	if length(iSequence)>1
-		fprintf(['Session ' sessionName '. Found multiple ' seqWild]);
+		fprintf(['Session ' sessionName '. Found multiple ' seqWild '\n']);
 		iSequence = iSequence(1);
 	end
 	xASL_Copy(fullfile(pathOriginal,subjectName,sessionName,mainDir,cellSequence{iSequence,2}, subdirName),fullfile(outputDir,seqName));
 else
-	fprintf(['Session ' sessionName '. Found no ' seqWild]);
+	fprintf(['Session ' sessionName '. Found no ' seqWild '\n']);
 end
 
 end
