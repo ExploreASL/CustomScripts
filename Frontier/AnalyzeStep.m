@@ -371,17 +371,40 @@ for iMod = 1:nMod
 		plot([0.4,3.2],[0.4,3.2],'k--');
 		title(['mean CBF ' strMod ' ' strRoi]);
 		
+		%% 
 		figure(2);subplot(nMod,4,4*(iMod-1)+iRoi);ind = find(squeeze(resVec(iMod,1,iRoi,:)));
-		plot([30,80],[30,80],'k--');hold on
+		plot([30,80],[30,80],'k--','LineWidth',2);hold on
 		for iPnt = ind'
 			[tumorName, tumorColor] = assignNameAndColor(iPnt);
-			plot(squeeze(resMeanGM(iMod,1,iRoi,iPnt,1)),squeeze(resMeanGM(iMod,1,iRoi,iPnt,2)),tumorColor);
+			plot(squeeze(resMeanGM(iMod,1,iRoi,iPnt,1)),squeeze(resMeanGM(iMod,1,iRoi,iPnt,2)),tumorColor,'LineWidth',2);
 		end
 		%plot(squeeze(resMeanGM(iMod,2,iRoi,ind,1)),squeeze(resMeanGM(iMod,2,iRoi,ind,2)),'go');
 		%plot(squeeze(resMeanGM(iMod,3,iRoi,ind,1)),squeeze(resMeanGM(iMod,3,iRoi,ind,2)),'bx');
-		
 		title(['mean GM-CBF ' strMod ' ' strRoi]);
 		
+		%%
+		figure(19);subplot1 = subplot(nMod,4,4*(iMod-1)+iRoi);ind = find(squeeze(resVec(iMod,1,iRoi,:)));
+		
+		% Calculate the differences
+		locDif = squeeze(resMeanGM(iMod,1,iRoi,:,2))-squeeze(resMeanGM(iMod,1,iRoi,:,1));
+		% Plot the mean
+		plot([30,80],[mean(locDif),mean(locDif)],'k','LineWidth',2);hold on
+		% Plot the SD
+		plot([30,80],[mean(locDif)-1.96*std(locDif),mean(locDif)-1.96*std(locDif)],'k--','LineWidth',2);hold on
+		plot([30,80],[mean(locDif)+1.96*std(locDif),mean(locDif)+1.96*std(locDif)],'k--','LineWidth',2);hold on
+		for iPnt = ind'
+			[tumorName, tumorColor] = assignNameAndColor(iPnt);
+			plot((squeeze(resMeanGM(iMod,1,iRoi,iPnt,1))+squeeze(resMeanGM(iMod,1,iRoi,iPnt,2)))/2,...
+				squeeze(resMeanGM(iMod,1,iRoi,iPnt,2))-squeeze(resMeanGM(iMod,1,iRoi,iPnt,1)),...
+			    tumorColor,'LineWidth',2);
+		end
+		%plot(squeeze(resMeanGM(iMod,2,iRoi,ind,1)),squeeze(resMeanGM(iMod,2,iRoi,ind,2)),'go');
+		%plot(squeeze(resMeanGM(iMod,3,iRoi,ind,1)),squeeze(resMeanGM(iMod,3,iRoi,ind,2)),'bx');
+		title(['mean GM-CBF ' strMod ' ' strRoi]);
+		xlim(subplot1,[30 80]);
+		ylim(subplot1,[-max(abs(locDif))-5, max(abs(locDif))+5]);
+		
+		%%
 		if ((iMod == 1)||(iMod == 2)) && (iRoi == 2 || iRoi == 3)
 			% iVal 1 non-normalized
 			% iVal 2 GM normalized
@@ -626,7 +649,75 @@ for iMod = 1:nMod
 				title(['max CBF ' strMod ' ' strNormList{valVec(iVal)}]);
 			end
 		end
+		%% Figure 21 - tumor overview with Bland Altman
+		if iRoi == 3 && (iMod == 1 || iMod == 2)
+			valVec = [1,2,4,5];
+			for iVal = 1:length(valVec)
+				figure(21);subplot1 = subplot(2,4,4*(iMod-1)+iVal);
+				
+				% All subjects
+				ind = find(squeeze(resVec(iMod,valVec(iVal),iRoi,:)));
+								
+				% Calculate the difference and mean
+				locDif = squeeze(resMax(iMod,valVec(iVal),iRoi,:,2)-resMax(iMod,valVec(iVal),iRoi,:,1));
+				locAvg = squeeze(resMax(iMod,valVec(iVal),iRoi,:,2)+resMax(iMod,valVec(iVal),iRoi,:,1))/2;
+				
+				% Skip sixth subject with overestimation for the fitting
+				if iMod == 1
+					indFit = find(squeeze(resVec(iMod,valVec(iVal),iRoi,:)).*[1; 1; 1; 1; 1; 0; 1; 1]);
+					indOut = 6;
+				else
+					indFit = ind;
+					indOut = [];
+				end
+				
+				% Plot horizontal lines for mean and std
+				if valVec(iVal) > 4
+					locXlim = [1.3,3.3];
+				elseif valVec(iVal) > 2
+					locXlim = [2,4];
+				elseif valVec(iVal) > 1
+					locXlim = [0.8,2.3];
+				else
+					locXlim = [20,150];
+				end
+				plot(locXlim,[mean(locDif(indFit)),mean(locDif(indFit))],'k','LineWidth',2);hold on
+				plot(locXlim,[mean(locDif(indFit))-1.96*std(locDif(indFit)),mean(locDif(indFit))-1.96*std(locDif(indFit))],'k--','LineWidth',2);hold on
+				plot(locXlim,[mean(locDif(indFit))+1.96*std(locDif(indFit)),mean(locDif(indFit))+1.96*std(locDif(indFit))],'k--','LineWidth',2);hold on
+				
+				%groupMean = mean(resMean(iMod,1,iRoi,ind,1))/mean(resMean(iMod,2,iRoi,ind,1));
+				%plot(squeeze(resMax(iMod,1,iRoi,ind,1))/groupMean,squeeze(resMax(iMod,1,iRoi,ind,2))/groupMean,'r+');hold on
+				for iPnt = indFit'
+					[tumorName, tumorColor] = assignNameAndColor(iPnt);
+					plot(locAvg(iPnt),locDif(iPnt),tumorColor,'LineWidth',2);
+				end
+				
+				if ~isempty(indOut)
+					for iPnt = indOut'
+						[tumorName, tumorColor] = assignNameAndColor(iPnt);
+						plot(locAvg(iPnt),locDif(iPnt),tumorColor,'LineWidth',2);
+					end
+				end
+				
+				X = [ones(length(indFit),1),squeeze(resMax(iMod,valVec(iVal),iRoi,indFit,1))];
+				Y = squeeze(resMax(iMod,valVec(iVal),iRoi,indFit,2));
+				sol = pinv(X)*Y;
+				%imPseudoCBF = imPseudoCBF*sol(2)+sol(1);
+				%plot([0.4,3.2],[0.4*sol(2)+sol(1),3.2*sol(2)+sol(1)],'r-');
+				%plot(squeeze(resMax(iMod,3,iRoi,ind,1)),squeeze(resMax(iMod,3,iRoi,ind,2)),'bx');
+				xlim(subplot1,locXlim);
+				locYmax = max(max(abs(locDif)),abs(mean(locDif(indFit)))+1.96*std(locDif(indFit)));
+				ylim(subplot1,[-locYmax*1.15, locYmax*1.15]);
+				title(['max CBF ' strMod ' ' strNormList{valVec(iVal)}]);
+			end
+		end
+
 		
+		
+		
+		
+		
+		%%
 		figure(5);sp=subplot(nMod,4,4*(iMod-1)+iRoi);ind = find(squeeze(resVec(iMod,1,iRoi,:)));
 		imagesc(((squeeze(sum(resHist(iMod,1,iRoi,ind,:,:),4))).^0.4)');hold on
 		set(sp,'Layer','top','XTickLabel',{'25','50','75','100','125','150'});
@@ -643,10 +734,15 @@ for iMod = 1:nMod
 		axis(sp,'xy');
 		title(['hist CBF ' strMod ' ' strRoi]);
 		
-		if (iMod == 1 || iMod == 2) && (iRoi==3)
+		if (iMod == 1 || iMod == 2) && (iRoi==2 || iRoi==3)
 			iValN = [1,2,4,5];
 			for iVal = 1:length(iValN)
-				figure(7);sp=subplot(nMod,4,4*(iMod-1)+iVal);ind = find(squeeze(resVec(iMod,iValN(iVal),iRoi,:)));
+				if iRoi == 3
+					figure(7);% Tumor T1 lesion
+				else
+					figure(20);% Contralateral hemisphere
+				end
+				sp=subplot(nMod,4,4*(iMod-1)+iVal);ind = find(squeeze(resVec(iMod,iValN(iVal),iRoi,:)));
 				imagesc(((squeeze(sum(resHist(iMod,iValN(iVal),iRoi,ind,:,:),4))).^0.4)');hold on
 				if iVal == 1
 					set(sp,'Layer','top','XTick',[12 24 36 48 60],'XTickLabel',{'25','50','75','100','125','150'});
