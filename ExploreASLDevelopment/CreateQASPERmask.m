@@ -18,3 +18,10 @@ imMask = imMask>0.5;
 
 % save image
 xASL_io_SaveNifti(pathPorous, pathMask, imMask, 8, 1);
+
+
+% Converting the templates
+pathLoad = '/Users/henk/ExploreASL/ExploreASL/Maps/Templates/QASPER/QASPER_Template.nii';
+imIs = xASL_io_Nifti2Im(pathLoad);
+% imIs = imIs./max(imIs(:));
+xASL_io_SaveNifti(pathLoad, pathLoad, imIs, 16, 1);
