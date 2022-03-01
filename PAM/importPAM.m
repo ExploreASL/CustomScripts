@@ -15,6 +15,7 @@ xASL_delete(fullfile(pathOriginal,'04001','04001_1','04001_1 RDS'));
 rearrangeDataPAM(pathRoot);
 
 %% Run the import for the 4 flavors
+% Import from DICOM to BIDS
 importTypes = {'11','12','13','21','22','23'};
 
 for iType = 1:length(importTypes)
@@ -22,12 +23,16 @@ for iType = 1:length(importTypes)
 	xASL_Move(fullfile(pathRoot,['studyPar' importTypes{iType} '.json']), fullfile(pathRoot,'studyPar.json'));
 	xASL_Move(fullfile(pathRoot,['sourcedata' importTypes{iType}]), fullfile(pathRoot,'sourcedata'));
 	
-	ExploreASL(pathRoot,1,0);
+	ExploreASL(pathRoot,[1 1 0 0],0);
 	
 	% Return back
 	xASL_Move(fullfile(pathRoot,'studyPar.json'), fullfile(pathRoot,['studyPar' importTypes{iType} '.json']));
 	xASL_Move(fullfile(pathRoot,'sourcedata'), fullfile(pathRoot,['sourcedata' importTypes{iType}]));
 end
+
+%% Run import from BIDS to ASL Legacy data format
+% Now that all is nicely in BIDS, we can prepare it for processing
+ExploreASL(pathRoot,[0 0 0 1],0);
 
 %% Run the processing
 ExploreASL(pathRoot,0,1);

@@ -238,8 +238,16 @@ if ~isempty(iSequence)
 		if length(iSequenceClean) == 1
 			xASL_Copy(fullfile(pathOriginal,subjectName,sessionName,mainDir,cellSequence{iSequenceClean,2}),fullfile(outputDir,seqName,cellSequence{iSequenceClean,2}));
 		else
-			fprintf(['Error. Session ' sessionName '. Found multiple ' seqWild ', using the first one.\n']);
-			xASL_Copy(fullfile(pathOriginal,subjectName,sessionName,mainDir,cellSequence{iSequenceClean(1),2}),fullfile(outputDir,seqName,cellSequence{iSequenceClean(1),2}));
+			if strcmp(seqWild,'SOURCE') || strcmp(seqWild,'M0') || length(iSequenceClean) > 10
+				% But it is OK for ASL - SOURCE or M0...
+				for iSC = 1:length(iSequenceClean)
+					xASL_Copy(fullfile(pathOriginal,subjectName,sessionName,mainDir,cellSequence{iSequenceClean(iSC),2}),fullfile(outputDir,seqName,cellSequence{iSequenceClean(iSC),2}));
+				end
+			else
+				% In case of repeated entries, keep skipping
+				fprintf(['Error. Session ' sessionName '. Found multiple ' seqWild ', using the first one.\n']);
+				xASL_Copy(fullfile(pathOriginal,subjectName,sessionName,mainDir,cellSequence{iSequenceClean(1),2}),fullfile(outputDir,seqName,cellSequence{iSequenceClean(1),2}));
+			end
 		end
 	else
 		xASL_Copy(fullfile(pathOriginal,subjectName,sessionName,mainDir,cellSequence{iSequence,2}),fullfile(outputDir,seqName,cellSequence{iSequence,2}));
