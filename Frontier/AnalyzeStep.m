@@ -405,7 +405,7 @@ for iMod = 1:nMod
 		ylim(subplot1,[-max(abs(locDif))-5, max(abs(locDif))+5]);
 		
 		%%
-		if ((iMod == 1)||(iMod == 2)) && (iRoi == 2 || iRoi == 3)
+		if ((iMod == 1)||(iMod == 2) || (iMod==3)) && (iRoi == 2 || iRoi == 3)
 			% iVal 1 non-normalized
 			% iVal 2 GM normalized
 			% iVal 4 WM normalized
@@ -427,10 +427,20 @@ for iMod = 1:nMod
 					if (iVal == 1)
 						[b,CI,pval,stats] = xASL_stat_MultipleLinReg(squeeze(resMeanGM(iMod,iVal,iRoi,ind,1)),squeeze(resMeanGM(iMod,iVal,iRoi,ind,2)),true);
 						[bnoInt,CInoInt,pvalnoInt,statsnoInt] = xASL_stat_MultipleLinReg(squeeze(resMeanGM(iMod,iVal,iRoi,ind,1)),squeeze(resMeanGM(iMod,iVal,iRoi,ind,2)),false);
-						% Mean relative difference
-						mrd = mean(2*abs(squeeze(resMeanGM(iMod,iVal,iRoi,ind,1))-squeeze(resMeanGM(iMod,iVal,iRoi,ind,2)))./(squeeze(resMeanGM(iMod,iVal,iRoi,ind,1))+squeeze(resMeanGM(iMod,iVal,iRoi,ind,2))))*100;
+						% Mean relative difference - the value of it for ASL and DSC and the p-val
+						valrd{iMod,iRoi,iVal,bExclude+1} = (squeeze(resMeanGM(iMod,iVal,iRoi,ind,1))-squeeze(resMeanGM(iMod,iVal,iRoi,ind,2)))./(squeeze(resMeanGM(iMod,iVal,iRoi,ind,1))+squeeze(resMeanGM(iMod,iVal,iRoi,ind,2)));
+						if iMod == 2
+							[~,pvalrd{iRoi,iVal,bExclude+1}] = xASL_stat_ttest(abs(valrd{1,iRoi,iVal,bExclude+1}), abs(valrd{2,iRoi,iVal,bExclude+1}));
+						end
+						mrd = mean(2*abs(valrd{iMod,iRoi,iVal,bExclude+1}))*100;
+						
 						% Mean relative difference from the fit
 						mrdnoInt = mean(2*abs(bnoInt*squeeze(resMeanGM(iMod,iVal,iRoi,ind,1))-squeeze(resMeanGM(iMod,iVal,iRoi,ind,2)))./(squeeze(resMeanGM(iMod,iVal,iRoi,ind,1))+squeeze(resMeanGM(iMod,iVal,iRoi,ind,2))))*100;
+						valrdnoInt{iMod,iRoi,iVal,bExclude+1} = (squeeze(bnoInt*resMeanGM(iMod,iVal,iRoi,ind,1))-squeeze(resMeanGM(iMod,iVal,iRoi,ind,2)))./(squeeze(resMeanGM(iMod,iVal,iRoi,ind,1))+squeeze(resMeanGM(iMod,iVal,iRoi,ind,2)));
+						if iMod == 2
+							[~,pvalrdnoInt{iRoi,iVal,bExclude+1}] = xASL_stat_ttest(abs(valrdnoInt{1,iRoi,iVal,bExclude+1}), abs(valrdnoInt{2,iRoi,iVal,bExclude+1}));
+						end
+						
 						pcc = corrcoef(squeeze(resMeanGM(iMod,iVal,iRoi,ind,1)),squeeze(resMeanGM(iMod,iVal,iRoi,ind,2)));
 						pcc = pcc(1,2);
 						RI = 100*1.96*std(squeeze(resMeanGM(iMod,iVal,iRoi,ind,1))-squeeze(resMeanGM(iMod,iVal,iRoi,ind,2)))/mean((squeeze(resMeanGM(iMod,iVal,iRoi,ind,1))+squeeze(resMeanGM(iMod,iVal,iRoi,ind,2)))/2);
@@ -440,9 +450,19 @@ for iMod = 1:nMod
 						[b,CI,pval,stats] = xASL_stat_MultipleLinReg(squeeze(resMean(iMod,iVal,iRoi,ind,1)),squeeze(resMean(iMod,iVal,iRoi,ind,2)),true);
 						[bnoInt,CInoInt,pvalnoInt,statsnoInt] = xASL_stat_MultipleLinReg(squeeze(resMean(iMod,iVal,iRoi,ind,1)),squeeze(resMean(iMod,iVal,iRoi,ind,2)),false);
 						% Mean relative difference
-						mrd = mean(2*abs(squeeze(resMean(iMod,iVal,iRoi,ind,1))-squeeze(resMean(iMod,iVal,iRoi,ind,2)))./(squeeze(resMean(iMod,iVal,iRoi,ind,1))+squeeze(resMean(iMod,iVal,iRoi,ind,2))))*100;
+						valrd{iMod,iRoi,iVal,bExclude+1} = (squeeze(resMean(iMod,iVal,iRoi,ind,1))-squeeze(resMean(iMod,iVal,iRoi,ind,2)))./(squeeze(resMean(iMod,iVal,iRoi,ind,1))+squeeze(resMean(iMod,iVal,iRoi,ind,2)));
+						if iMod == 2
+							[~,pvalrd{iRoi,iVal,bExclude+1}] = xASL_stat_ttest(abs(valrd{1,iRoi,iVal,bExclude+1}), abs(valrd{2,iRoi,iVal,bExclude+1}));
+						end
+						mrd = mean(2*abs(valrd{iMod,iRoi,iVal,bExclude+1}))*100;
+						
 						% Mean relative difference from the fit
 						mrdnoInt = mean(2*abs(squeeze(bnoInt*resMean(iMod,iVal,iRoi,ind,1))-squeeze(resMean(iMod,iVal,iRoi,ind,2)))./(squeeze(resMean(iMod,iVal,iRoi,ind,1))+squeeze(resMean(iMod,iVal,iRoi,ind,2))))*100;
+						valrdnoInt{iMod,iRoi,iVal,bExclude+1} = (squeeze(bnoInt*resMean(iMod,iVal,iRoi,ind,1))-squeeze(resMean(iMod,iVal,iRoi,ind,2)))./(squeeze(resMean(iMod,iVal,iRoi,ind,1))+squeeze(resMean(iMod,iVal,iRoi,ind,2)));
+						if iMod == 2
+							[~,pvalrdnoInt{iRoi,iVal,bExclude+1}] = xASL_stat_ttest(abs(valrdnoInt{1,iRoi,iVal,bExclude+1}), abs(valrdnoInt{2,iRoi,iVal,bExclude+1}));
+						end
+						mrd = mean(2*abs(valrd{iMod,iRoi,iVal,bExclude+1}))*100;
 						pcc = corrcoef(squeeze(resMean(iMod,iVal,iRoi,ind,1)),squeeze(resMean(iMod,iVal,iRoi,ind,2)));
 						pcc = pcc(1,2);
 						RI = 100*1.96*std(squeeze(resMean(iMod,iVal,iRoi,ind,1))-squeeze(resMean(iMod,iVal,iRoi,ind,2)))/mean((squeeze(resMean(iMod,iVal,iRoi,ind,1))+squeeze(resMean(iMod,iVal,iRoi,ind,2)))/2);
@@ -450,12 +470,24 @@ for iMod = 1:nMod
 					if iRoi == 3
 						[bmax,CImax,pvalmax,statsmax] = xASL_stat_MultipleLinReg(squeeze(resMax(iMod,iVal,iRoi,ind,1)),squeeze(resMax(iMod,iVal,iRoi,ind,2)),true);
 						[bmaxnoInt,CImaxnoInt,pvalmaxnoInt,statsmaxnoInt] = xASL_stat_MultipleLinReg(squeeze(resMax(iMod,iVal,iRoi,ind,1)),squeeze(resMax(iMod,iVal,iRoi,ind,2)),false);
-						mrdmax = mean(2*abs(squeeze(resMax(iMod,iVal,iRoi,ind,1))-squeeze(resMax(iMod,iVal,iRoi,ind,2)))./(squeeze(resMax(iMod,iVal,iRoi,ind,1))+squeeze(resMax(iMod,iVal,iRoi,ind,2))))*100;
+						
+						valrdmax{iMod,iRoi,iVal,bExclude+1} = (squeeze(resMax(iMod,iVal,iRoi,ind,1))-squeeze(resMax(iMod,iVal,iRoi,ind,2)))./(squeeze(resMax(iMod,iVal,iRoi,ind,1))+squeeze(resMax(iMod,iVal,iRoi,ind,2)));
+						mrdmax = mean(2*abs(valrdmax{iMod,iRoi,iVal,bExclude+1}))*100;
+						if iMod == 2
+							[~,pvalrdmax{iRoi,iVal,bExclude+1}] = xASL_stat_ttest(abs(valrdmax{1,iRoi,iVal,bExclude+1}), abs(valrdmax{2,iRoi,iVal,bExclude+1}));
+						end
+						
+						valrdmaxnoInt{iMod,iRoi,iVal,bExclude+1} = (squeeze(bmaxnoInt*resMax(iMod,iVal,iRoi,ind,1))-squeeze(resMax(iMod,iVal,iRoi,ind,2)))./(squeeze(resMax(iMod,iVal,iRoi,ind,1))+squeeze(resMax(iMod,iVal,iRoi,ind,2)));
+						mrdmax = mean(2*abs(valrdmax{iMod,iRoi,iVal,bExclude+1}))*100;
+						if iMod == 2
+							[~,pvalrdmaxnoInt{iRoi,iVal,bExclude+1}] = xASL_stat_ttest(abs(valrdmaxnoInt{1,iRoi,iVal,bExclude+1}), abs(valrdmaxnoInt{2,iRoi,iVal,bExclude+1}));
+						end
 						mrdmaxnoInt = mean(2*abs(bmaxnoInt*squeeze(resMax(iMod,iVal,iRoi,ind,1))-squeeze(resMax(iMod,iVal,iRoi,ind,2)))./(squeeze(resMax(iMod,iVal,iRoi,ind,1))+squeeze(resMax(iMod,iVal,iRoi,ind,2))))*100;
 						pccmax = corrcoef(squeeze(resMax(iMod,iVal,iRoi,ind,1)),squeeze(resMax(iMod,iVal,iRoi,ind,2)));
 						pccmax = pccmax(1,2);
 						RImax = 100*1.96*std(squeeze(resMax(iMod,iVal,iRoi,ind,1))-squeeze(resMax(iMod,iVal,iRoi,ind,2)))/mean((squeeze(resMax(iMod,iVal,iRoi,ind,1))+squeeze(resMax(iMod,iVal,iRoi,ind,2)))/2);
 					end
+					
 					xx = [];
 					yy = [];
 					for iL = ind
@@ -474,9 +506,20 @@ for iMod = 1:nMod
 					[bAllnoint,CIAllnoint,pvalAllnoint,statsAllnoint] = xASL_stat_MultipleLinReg(xxnonlow,yynonlow,false);
 					RIAll = 100*1.96*std(xxnonlow-yynonlow)/mean((xxnonlow+yynonlow)/2);
 					
-					mrdvoxel = mean(2*abs(xxnonlow-yynonlow)./(xxnonlow+yynonlow))*100;
+					valrdvoxel{iMod,iRoi,iVal,bExclude+1} = (xxnonlow-yynonlow)./(xxnonlow+yynonlow);
+					mrdvoxel = mean(2*abs(valrdvoxel{iMod,iRoi,iVal,bExclude+1}))*100;
+					if iMod == 2
+						[~,pvalrdvoxel{iRoi,iVal,bExclude+1}] = xASL_stat_ttest2(abs(valrdvoxel{1,iRoi,iVal,bExclude+1}), abs(valrdvoxel{2,iRoi,iVal,bExclude+1}));
+					end
 					
-					mrdvoxelnoInt = mean(2*abs(bAllnoint*xxnonlow-yynonlow)./(xxnonlow+yynonlow))*100;
+					mrdvoxel = mean(2*abs(valrdvoxel{iMod,iRoi,iVal,bExclude+1}))*100;
+					
+					
+					valrdvoxelnoInt{iMod,iRoi,iVal,bExclude+1} = (bAllnoint*xxnonlow-yynonlow)./(xxnonlow+yynonlow);
+					mrdvoxelnoInt = mean(2*abs(valrdvoxelnoInt{iMod,iRoi,iVal,bExclude+1}))*100;
+					if iMod == 2
+						[~,pvalrdvoxelnoInt{iRoi,iVal,bExclude+1}] = xASL_stat_ttest2(abs(valrdvoxelnoInt{1,iRoi,iVal,bExclude+1}), abs(valrdvoxelnoInt{2,iRoi,iVal,bExclude+1}));
+					end
 					
 					pccvoxelnoInt = corrcoef(bAllnoint*xxnonlow,yynonlow);
 					pccvoxelnoInt = pccvoxelnoInt(1,2);
@@ -493,31 +536,47 @@ for iMod = 1:nMod
 						str = [str ' tumor region'];
 						figure(18);
 					end
+					if nMod < 3
+						spN = 7;
+					else
+						spN = 10;
+					end
 					
 					if iMod == 1
 						if iVal == 1
 							str = [str ' for PET vs ASL:\n'];
-							subplot(1,7,1);
+							subplot(1,spN,1);
 						elseif iVal == 2
 							str = [str ' for GM-normalized PET vs ASL:\n'];
-							subplot(1,7,2);
+							subplot(1,spN,2);
 						elseif iVal == 4
 							str = [str ' for WM-normalized PET vs ASL:\n'];
-							subplot(1,7,3);
+							subplot(1,spN,3);
 						elseif iVal == 5
 							str = [str ' for contra-normalized PET vs ASL:\n'];
-							subplot(1,7,4);
+							subplot(1,spN,4);
 						end
-					else
+					elseif iMod == 2
 						if iVal == 2
 							str = [str ' for GM-normalized PET vs DSC:\n'];
-							subplot(1,7,5);
+							subplot(1,spN,5);
 						elseif iVal == 4
 							str = [str ' for WM-normalized PET vs DSC:\n'];
-							subplot(1,7,6);
+							subplot(1,spN,6);
 						elseif iVal == 5
 							str = [str ' for contra-normalized PET vs DSC:\n'];
-							subplot(1,7,7);
+							subplot(1,spN,7);
+						end
+					elseif iMod == 3
+						if iVal == 2
+							str = [str ' for GM-normalized ASL vs DSC:\n'];
+							subplot(1,spN,8);
+						elseif iVal == 4
+							str = [str ' for WM-normalized ASL vs DSC:\n'];
+							subplot(1,spN,9);
+						elseif iVal == 5
+							str = [str ' for contra-normalized ASL vs DSC:\n'];
+							subplot(1,spN,10);
 						end
 					end
 					fprintf(str);
@@ -530,33 +589,43 @@ for iMod = 1:nMod
 						end
 						fprintf([strCBF '. %.5f*X+%.5f, CI %.5f -- %.5f, p=%.5f. Adjusted R2 %.3f\n'],b(1),b(2),CI(1,1),CI(1,2),pval(1),stats.rSQadj);
 						fprintf([strCBF '. %.5f*X, CI %.5f -- %.5f, p=%.5f. Adjusted R2 %.3f\n'],bnoInt(1),CInoInt(1,1),CInoInt(1,2),pvalnoInt(1),statsnoInt.rSQadj);
-						fprintf(['Mean relative difference in ' strCBF ': %.2f%%, pcc %.2f, RI %.2f\n'],mrdnoInt,pcc,RI);
+						fprintf(['Mean relative difference in ' strCBF ': %.2f%%, pcc %.2f, RI %.2f\n'],mrdnoInt, pcc,RI);
+						if iMod == 2
+							fprintf('Pval of ASL vs DSC difference is: %.2d%% \n', pvalrdnoInt{iRoi,iVal,bExclude+1});
+						end
 					end
 					
 					if iRoi == 3
 						fprintf('Max CBF. %.5f*X+%.5f, CI %.5f -- %.5f, p=%.5f. Adjusted R2 %.3f\n',bmax(1),bmax(2),CImax(1,1),CImax(1,2),pvalmax(1),statsmax.rSQadj);
 						fprintf('Max CBF. %.5f*X, CI %.5f -- %.5f, p=%.5f. Adjusted R2 %.3f\n',bmaxnoInt(1),CImaxnoInt(1,1),CImaxnoInt(1,2),pvalmaxnoInt(1),statsmaxnoInt.rSQadj);
-						fprintf('Mean relative difference in max CBF: %.2f%%, pcc %.2f, RI %.2f\n',mrdmaxnoInt,pccmax,RImax);
+						fprintf('Mean relative difference in max CBF: %.2f%%, pcc %.2f, RI %.2f\n',mrdmaxnoInt, pccmax,RImax);
+						if iMod == 2
+							fprintf('Pval of ASL vs DSC difference is: %.2d%% \n', pvalrdmaxnoInt{iRoi,iVal,bExclude+1});
+						end
 					end
 					fprintf('Voxel-wise CBF. %.5f*X+%.5f, CI %.5f -- %.5f, p=%.5f. Adjusted R2 %.3f\n',bAll(1),bAll(2),CIAll(1,1),CIAll(1,2),pvalAll(1),statsAll.rSQadj);
 					fprintf('Voxel-wise CBF. %.5f*X, CI %.5f -- %.5f, p=%.5f. Adjusted R2 %.3f\n',bAllnoint(1),CIAllnoint(1,1),CIAllnoint(1,2),pvalAllnoint(1),statsAllnoint.rSQadj);
-					fprintf('Mean relative difference in voxel-wise CBF: %.2f%%, pcc %.2f, RI %.2f\n\n',mrdvoxelnoInt,pccvoxelnoInt,RIAll);
+					fprintf('Mean relative difference in voxel-wise CBF: %.2f%%,pcc %.2f, RI %.2f\n',mrdvoxelnoInt, pccvoxelnoInt,RIAll);
+					if iMod == 2
+							fprintf('Pval of ASL vs DSC difference is: %.2d%% \n\n', pvalrdvoxelnoInt{iRoi,iVal,bExclude+1});
+						end
 					%[b,bint,r,rint,stats] = regress(yy,[xx,ones(length(yy),1)]);
 					
-					hold on;
-					underRat = 0.005; % undersampling factor for the scatter plot
-					for iL = 1:size(listValRef,4)
-						% Plot all scatter plots for different subjects in a different color
-						xx = squeeze(listValRef{iMod,iVal,iRoi,iL});
-						yy = squeeze(listValSrc{iMod,iVal,iRoi,iL});
-						indXX = randi(length(xx),ceil(length(xx)*underRat),1);
-						xx = xx(indXX);
-						yy = yy(indXX);
-						clrInd = 'rgbcmykr';
-						plot(xx,yy,[clrInd(iL) 'o']);
-					end
-					hold off
-					
+					if iMod < 3
+						hold on;
+						underRat = 0.005; % undersampling factor for the scatter plot
+						for iL = 1:size(listValRef,4)
+							% Plot all scatter plots for different subjects in a different color
+							xx = squeeze(listValRef{iMod,iVal,iRoi,iL});
+							yy = squeeze(listValSrc{iMod,iVal,iRoi,iL});
+							indXX = randi(length(xx),ceil(length(xx)*underRat),1);
+							xx = xx(indXX);
+							yy = yy(indXX);
+							clrInd = 'rgbcmykr';
+							plot(xx,yy,[clrInd(iL) 'o']);
+						end
+						hold off
+					end					
 				end
 			end
 		end
@@ -571,7 +640,7 @@ for iMod = 1:nMod
 		
 		title(['mean CBF ' strMod ' ' strRoi]);
 		
-		figure(3);subplot(2,4,4*(iMod-1)+iRoi);
+		figure(3);subplot(nMod,4,4*(iMod-1)+iRoi);
 		ind = find(squeeze(resVec(iMod,1,iRoi,:)));
 		plot([0.4,2.6],[0.4,2.6],'k--');hold on
 		if iRoi == 3 && iMod == 1
@@ -607,7 +676,7 @@ for iMod = 1:nMod
 		if iRoi == 3 && (iMod == 1 || iMod == 2)
 			valVec = [1,2,4,5];
 			for iVal = 1:length(valVec)
-				figure(4);subplot(2,4,4*(iMod-1)+iVal);
+				figure(4);subplot(nMod,4,4*(iMod-1)+iVal);
 				ind = find(squeeze(resVec(iMod,valVec(iVal),iRoi,:)));
 				if valVec(iVal) > 2
 					plot([0.4,3.6],[0.4,3.6],'k--');hold on
@@ -653,7 +722,7 @@ for iMod = 1:nMod
 		if iRoi == 3 && (iMod == 1 || iMod == 2)
 			valVec = [1,2,4,5];
 			for iVal = 1:length(valVec)
-				figure(21);subplot1 = subplot(2,4,4*(iMod-1)+iVal);
+				figure(21);subplot1 = subplot(nMod,4,4*(iMod-1)+iVal);
 				
 				% All subjects
 				ind = find(squeeze(resVec(iMod,valVec(iVal),iRoi,:)));
@@ -768,7 +837,7 @@ for iMod = 1:nMod
 		if (iMod == 1) && (iRoi == 2)
 			for iL = 1:8
 				if xASL_exist(fullfile(rawDir,'analysis',patientNameList{iL},modDir,'Final_PET.nii'))
-					figure(9);sp=subplot(2,4,iL);
+					figure(9);sp=subplot(nMod,4,iL);
 					imagesc(((squeeze((resHist(iMod,1,iRoi,iL,:,:)))).^0.4)');hold on
 					set(sp,'Layer','top','XTickLabel',{'25','50','75','100','125','150'});
 					set(sp,'Layer','top','YTickLabel',{'25','50','75','100','125','150'});
@@ -776,7 +845,7 @@ for iMod = 1:nMod
 					axis(sp,'xy');
 					title(['hist CBF ' strMod ' ' strRoi ' P' num2str(iL)]);
 					
-					figure(10);sp=subplot(2,4,iL);
+					figure(10);sp=subplot(nMod,4,iL);
 					imagesc(((squeeze((resHist(iMod,2,iRoi,iL,:,:)))).^0.4)');hold on
 					set(sp,'Layer','top','XTick',[12 24 36 48 60],'XTickLabel',{'1','2','3','4','5'});
 					set(sp,'Layer','top','YTick',[12 24 36 48 60],'YTickLabel',{'1','2','3','4','5'});
@@ -790,7 +859,7 @@ for iMod = 1:nMod
 		if (iMod == 1) && (iRoi == 3)
 			for iL = 1:8
 				if xASL_exist(fullfile(rawDir,'analysis',patientNameList{iL},modDir,'Final_PET.nii'))
-					figure(13);sp=subplot(2,4,iL);
+					figure(13);sp=subplot(nMod,4,iL);
 					[tumorName, tumorColor] = assignNameAndColor(iL);
 					imagesc(((squeeze((resHist(iMod,1,iRoi,iL,:,:)))).^0.4)');hold on
 					set(sp,'Layer','top','XTickLabel',{'25','50','75','100','125','150'});
@@ -799,7 +868,7 @@ for iMod = 1:nMod
 					axis(sp,'xy');
 					title(['hist CBF ' strMod ' ' strRoi ' P' num2str(iL) 10 tumorName]);
 					
-					figure(14);sp=subplot(2,4,iL);
+					figure(14);sp=subplot(nMod,4,iL);
 					imagesc(((squeeze((resHist(iMod,2,iRoi,iL,:,:)))).^0.4)');hold on
 					%set(sp,'Layer','top','XTick',[12 24 36 48 60],'XTickLabel',{'1','2','3','4','5'});
 					set(sp,'Layer','top','XTickLabel',{'1','2','3'});
@@ -814,7 +883,7 @@ for iMod = 1:nMod
 		if (iMod == 2) && (iRoi == 3)
 			for iL = 1:8
 				if xASL_exist(fullfile(rawDir,'analysis',patientNameList{iL},modDir,['Final_DSC_' dscType '.nii']))
-					figure(15);sp=subplot(2,4,iL);
+					figure(15);sp=subplot(nMod,4,iL);
 					[tumorName, tumorColor] = assignNameAndColor(iL);
 					imagesc(((squeeze((resHist(iMod,1,iRoi,iL,:,:)))).^0.4)');hold on
 					set(sp,'Layer','top','XTickLabel',{'25','50','75','100','125','150'});
@@ -823,7 +892,7 @@ for iMod = 1:nMod
 					axis(sp,'xy');
 					title(['hist CBF ' strMod ' ' strRoi ' P' num2str(iL) 10 tumorName]);
 					
-					figure(16);sp=subplot(2,4,iL);
+					figure(16);sp=subplot(nMod,4,iL);
 					imagesc(((squeeze((resHist(iMod,2,iRoi,iL,:,:)))).^0.4)');hold on
 					%set(sp,'Layer','top','XTick',[12 24 36 48 60],'XTickLabel',{'1','2','3','4','5'});
 					set(sp,'Layer','top','XTick',[12 24 36 48 60],'XTickLabel',{'1','2','3','4','5'});
