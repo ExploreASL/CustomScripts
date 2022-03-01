@@ -22,7 +22,7 @@ for iType = 1:length(importTypes)
 	% Rename the correct one
 	xASL_Move(fullfile(pathRoot,['studyPar' importTypes{iType} '.json']), fullfile(pathRoot,'studyPar.json'));
 	xASL_Move(fullfile(pathRoot,['sourcedata' importTypes{iType}]), fullfile(pathRoot,'sourcedata'));
-	
+	system(['rm -r ' fullfile(pathRoot,'derivatives','ExploreASL','lock','xASL_module_Import')]);
 	ExploreASL(pathRoot,[1 1 0 0],0);
 	
 	% Return back
