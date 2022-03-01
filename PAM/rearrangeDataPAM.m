@@ -46,15 +46,15 @@ for iSubject = 1:length(listSubjects)
 			else
 				% Or finds SOURCE___ASL with full dynamics - Flavor type 2 
 				listSequenceDir = xASL_adm_GetFileList(inputPath,'^(?!(0))\d{1}\d{1}.*SOURCE___ASL.*$','List', [], true);
-				if ~isempty(listSequenceDir) %3034_2
+				if ~isempty(listSequenceDir) %3034_2, 6003_2
 					outputDir = fullfile(pathSource3,listSubjects{iSubject},listSessions{iSession});
 					xASL_Copy(fullfile(inputPath,listSequenceDir{1},'resources','DICOM','files'),fullfile(outputDir,'ASL'));
 				else
 					% Or finds -ASL_ - Flavor type 3 2005, 4001
 					listSequenceDir = xASL_adm_GetFileList(inputPath,'^(?!(0))\d{1}\d{1}(1).*-ASL_.*$','List', [], true);
 					listFiles = xASL_adm_GetFileList(fullfile(inputPath,listSequenceDir{1},'resources','DICOM','files'),'^.*$','List',[],false);
-					if numel(listFiles) > 1
-						outputDir = fullfile(pathSource3,listSubjects{iSubject},listSessions{iSession});
+					if numel(listFiles) > 1 %99001_1
+						outputDir = fullfile(pathSource1,listSubjects{iSubject},listSessions{iSession});
 					else
 						outputDir = fullfile(pathSource5,listSubjects{iSubject},listSessions{iSession});
 					end
@@ -110,7 +110,7 @@ for iSubject = 1:length(listSubjects)
 				end
 				% Check if we have the pCASL or SOURCE or ASL type and send to the correct flavor
 				bSearchM0 = 0;
-				if sum(cellfun(@(y) ~isempty(strfind(y,'SOURCE')),cellSequence(:,1)))  %2021, 3034_1
+				if sum(cellfun(@(y) ~isempty(strfind(y,'SOURCE')),cellSequence(:,1)))  %2021_1, 3034_1
 					listFiles = find(cellfun(@(y) ~isempty(strfind(y,'SOURCE')),cellSequence(:,1)));
 					if numel(listFiles)>1
 						outputDir = fullfile(pathSource3,listSubjects{iSubject},listSessions{iSession});
@@ -122,8 +122,8 @@ for iSubject = 1:length(listSubjects)
 				elseif sum(cellfun(@(y) ~isempty(strfind(y,'pCASL')),cellSequence(:,1))) % 1001
 					outputDir = fullfile(pathSource6,listSubjects{iSubject},listSessions{iSession});
 					copy_single_DICOM(cellSequence, 'pCASL', 'ASL', pathOriginal, listSubjects{iSubject}, listSessions{iSession}, listMainDir{1}, outputDir);
-				elseif sum(cellfun(@(y) ~isempty(strfind(y,'ASL')),cellSequence(:,1)))
-					outputDir = fullfile(pathSource3,listSubjects{iSubject},listSessions{iSession});
+				elseif sum(cellfun(@(y) ~isempty(strfind(y,'ASL')),cellSequence(:,1))) % 2008_2, 3026_1
+					outputDir = fullfile(pathSource1,listSubjects{iSubject},listSessions{iSession});
 					bSearchM0 = 1;
 					copy_single_DICOM(cellSequence, 'ASL', 'ASL', pathOriginal, listSubjects{iSubject}, listSessions{iSession}, listMainDir{1}, outputDir);
 				else
@@ -180,7 +180,7 @@ for iSubject = 1:length(listSubjects)
 					% Make a list of directories and sort them then
 					% Check if we have the pCASL or SOURCE or ASL type and send to the correct flavor
 					bSearchM0 = 0;
-					if sum(cellfun(@(y) ~isempty(strfind(y,'SOURCE')),cellSequence(:,1)))
+					if sum(cellfun(@(y) ~isempty(strfind(y,'SOURCE')),cellSequence(:,1))) %3048_1, 6002_2
 						outputDir = fullfile(pathSource3,listSubjects{iSubject},listSessions{iSession});
 						bSearchM0 = 1;
 						copy_single_DIR(cellSequence, 'SOURCE', 'ASL', pathOriginal, listSubjects{iSubject}, listSessions{iSession}, listMainDir{1}, subdirName, outputDir);
@@ -193,7 +193,7 @@ for iSubject = 1:length(listSubjects)
 						listFile = xASL_adm_GetFileList(fullfile(pathOriginal,listSubjects{iSubject},listSessions{iSession},listMainDir{1},listSequences{iSequence},subdirName),'^.*$','List', [], false);
 						if length(listFile) == 19 %4001
 							outputDir = fullfile(pathSource1,listSubjects{iSubject},listSessions{iSession});
-						else %2008, 6006_1
+						else %2008_1, 6006_1
 							outputDir = fullfile(pathSource3,listSubjects{iSubject},listSessions{iSession});
 						end
 						bSearchM0 = 1;
