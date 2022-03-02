@@ -6,7 +6,7 @@
 "PostLabelingDelay":1.6,
 "BackgroundSuppression":true,
 "LabelingDuration":1.65,
-"ASLContext":"label,label,label,label,label,label,label,label,label,label,label,label,label,label,label,label,label,label,label,label,label,label,label,label,label,label,label,label,label,label,control,control,control,control,control,control,control,control,control,control,control,control,control,control,control,control,control,control,control,control,control,control,control,control,control,control,control,control,control,control",
+"ASLContext":"label,control",
 "M0":3739400,
 "BackgroundSuppressionNumberPulses":2,
 "BackgroundSuppressionPulseTime":[1.663,2.8494],
