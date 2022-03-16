@@ -7,7 +7,7 @@
 "BackgroundSuppression":true,
 "LabelingDuration":1.65,
 "ASLContext":"deltam",
-"M0":3739400,
+"M0":1495760,
 "BackgroundSuppressionNumberPulses":2,
 "BackgroundSuppressionPulseTime":[1.663,2.8494],
 "SliceTiming":0.039473,
