@@ -27,7 +27,12 @@ for iSubject = 1:length(listSubjects)
 		% And sometimes the subdirectories come before the 'scans' directory
 		listMainDirAlt = xASL_adm_GetFileList(fullfile(pathOriginal,listSubjects{iSubject},listSessions{iSession}),'^\d{3}-.*','List', [], true);
 		
-		if ~isempty(listMainDir) || ~isempty(listMainDirAlt)
+		% In case the directory is 'scans/101' without sequence name added, then go for another branch
+		if ~isempty(listMainDir)
+			listOnlySequenceNumber = xASL_adm_GetFileList(fullfile(pathOriginal,listSubjects{iSubject},listSessions{iSession},'scans'),'^\d{3}$','List', [], true);
+		end
+		
+		if ~isempty(listMainDirAlt) || (~isempty(listMainDir) && isempty(listOnlySequenceNumber))
 			% The look for folder names that do not start with 0, starts with three numbers and the third number is one
 			%listSequenceDir = xASL_adm_GetFileList(inputPath,'^(?!(0))\d{1}\d{1}(1).*$','List', [], true);
 			
@@ -147,6 +152,11 @@ for iSubject = 1:length(listSubjects)
 					if ~isempty(listScanDir)
 						listMainDir{1} = fullfile(listMainDir{1},listScanDir{1});
 					end
+				else
+					% Or go for a dir that starts directly with 'scans'
+					listMainDir = xASL_adm_GetFileList(fullfile(pathOriginal,listSubjects{iSubject},listSessions{iSession}),'^scans$','List', [], true);
+				end
+				if ~isempty(listMainDir)
 					
 					% And then subdirectories have sequence numbers, but without sequence names
 					% Go through all directories with 3 numbers and more and not starting by a zero
