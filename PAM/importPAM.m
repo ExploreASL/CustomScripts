@@ -39,10 +39,14 @@ for iType = 1:length(importTypes)
 				% Load and reorder
 				imOld = xASL_io_Nifti2Im(fullfile(pathRoot,'derivatives','ExploreASL','temp',subjectList{iSubject},'ASL_1','ASL4D.nii'));
 				imReorder = zeros(size(imOld));
-				imReorder(:,:,:,1:2:end) = imOld(:,:,:,1:(size(imOld,4)/2));
-				imReorder(:,:,:,2:2:end) = imOld(:,:,:,(size(imOld,4)/2 + 1):end);
-				xASL_io_SaveNifti(fullfile(pathRoot,'derivatives','ExploreASL','temp',subjectList{iSubject},'ASL_1','ASL4D.nii'),...
-					              fullfile(pathRoot,'derivatives','ExploreASL','temp',subjectList{iSubject},'ASL_1','ASL4D.nii'),imReorder);
+				if (size(imOld,4))>=2
+					imReorder(:,:,:,1:2:end) = imOld(:,:,:,1:(size(imOld,4)/2));
+					imReorder(:,:,:,2:2:end) = imOld(:,:,:,(size(imOld,4)/2 + 1):end);
+					xASL_io_SaveNifti(fullfile(pathRoot,'derivatives','ExploreASL','temp',subjectList{iSubject},'ASL_1','ASL4D.nii'),...
+						fullfile(pathRoot,'derivatives','ExploreASL','temp',subjectList{iSubject},'ASL_1','ASL4D.nii'),imReorder);
+				else
+					warning(['Dataset ' fullfile(subjectList{iSubject},'ASL_1','ASL4D.nii') ' is expected to have more than 1 repetition']);
+				end
 			end
 		end
 		ExploreASL(pathRoot,[0 1 0 0],0);
