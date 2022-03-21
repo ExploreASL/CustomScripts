@@ -51,7 +51,9 @@ for iType = 1:length(importTypes)
 		end
 		ExploreASL(pathRoot,[0 1 0 0],0);
 	else
-		ExploreASL(pathRoot,[1 1 0 0],0);
+		%ExploreASL(pathRoot,[1 1 0 0],0);
+		ExploreASL(pathRoot,[1 0 0 0],0);
+		ExploreASL(pathRoot,[0 1 0 0],0);
 	end
 	
 	% Return back
