@@ -124,9 +124,19 @@ for iSubject = 1:length(listSubjects)
 					end
 					bSearchM0 = 1;
 					copy_single_DICOM(cellSequence, 'SOURCE', 'ASL', pathOriginal, listSubjects{iSubject}, listSessions{iSession}, listMainDir{1}, outputDir);
-				elseif sum(cellfun(@(y) ~isempty(strfind(y,'pCASL')),cellSequence(:,1))) % 1001
-					outputDir = fullfile(pathSource6,listSubjects{iSubject},listSessions{iSession});
-					copy_single_DICOM(cellSequence, 'pCASL', 'ASL', pathOriginal, listSubjects{iSubject}, listSessions{iSession}, listMainDir{1}, outputDir);
+				elseif sum(cellfun(@(y) ~isempty(strfind(y,'pCASL')),cellSequence(:,1))) % 1001_1, 01001_2
+					iSequence = find(cellfun(@(y) ~isempty(strfind(y,'pCASL')),cellSequence(:,1)));
+					if length(iSequence) > 1
+						iSequence = find(cellfun(@(y) ~isempty(strfind(y,'pCASL')) && isempty(strfind(y,'WIP')),cellSequence(:,1)));
+					end
+					headerDCM = xASL_io_DcmtkRead(fullfile(pathOriginal,listSubjects{iSubject},listSessions{iSession},listMainDir{1},listSequences{iSequence}),0);
+					if isfield(headerDCM,'NumberOfTemporalPositions') && headerDCM.NumberOfTemporalPositions == 1
+						outputDir = fullfile(pathSource2,listSubjects{iSubject},listSessions{iSession});
+						copy_single_DICOM(cellSequence, 'pCASL', 'ASL', pathOriginal, listSubjects{iSubject}, listSessions{iSession}, listMainDir{1}, outputDir);
+					else
+						outputDir = fullfile(pathSource6,listSubjects{iSubject},listSessions{iSession});
+						copy_single_DICOM(cellSequence, 'pCASL', 'ASL', pathOriginal, listSubjects{iSubject}, listSessions{iSession}, listMainDir{1}, outputDir);
+					end
 				elseif sum(cellfun(@(y) ~isempty(strfind(y,'ASL')),cellSequence(:,1))) % 2008_2, 3026_1
 					outputDir = fullfile(pathSource1,listSubjects{iSubject},listSessions{iSession});
 					bSearchM0 = 1;
