@@ -67,10 +67,10 @@ function [ResultsTable] = xASL_qc_TestExploreASL(TestDirOrig, TestDirDest, RunMe
 % ============================================================
 %% Admin
 % Run ExploreASL to get directories
-if isempty(which('ExploreASL_Master'))
+if isempty(which('ExploreASL'))
     cd ..;
 else
-    cd(fileparts(which('ExploreASL_Master')));
+    cd(fileparts(which('ExploreASL')));
 end
 if nargin<3
     RunMethod = 1; % Set 'serial' to be default
@@ -79,7 +79,7 @@ if nargin<4 || isempty(bTestSPM)
     bTestSPM = true;
 end
 if nargin<5 || isempty(MatlabPath)
-    MatlabPath = 'matlab';
+    MatlabPath = [];
 end
 if nargin<6 || isempty(EmailAddress)
     EmailAddress = [];
@@ -96,6 +96,13 @@ end
 
 if nargin<9 || isempty(testDataUsed)
     testDataUsed = 0;
+end
+
+if RunMethod>1
+    if isempty(MatlabPath) || (~exist(MatlabPath, 'file') && ~strcmp(MatlabPath(1:4),'bash'))
+        warning('Please provide the correct path to the matlab executable, skipping');
+        return;
+    end
 end
 
 if RunMethod>2
@@ -132,11 +139,11 @@ clc;
 path(pathdef);
 % Remove ExploreASL paths
 warning('off','MATLAB:rmpath:DirNotFound');
-rmpath(genpath(x.MyPath));
+rmpath(genpath(x.opts.MyPath));
 warning('on','MATLAB:rmpath:DirNotFound');
 
 % Add SPM path
-addpath(fullfile(x.MyPath,'External','SPMmodified'));
+addpath(fullfile(x.opts.MyPath,'External','SPMmodified'));
 
 % Initialize SPM, but only SPM
 spm('defaults','FMRI');
@@ -233,7 +240,7 @@ if bTestSPM
 
     % Test CAT12
     matlabbatch = [];
-    SPMTemplateNII    = fullfile(x.MyPath,'External','SPMmodified', 'tpm', 'TPM.nii');
+    SPMTemplateNII    = fullfile(x.opts.MyPath,'External','SPMmodified', 'tpm', 'TPM.nii');
 	[~,catVer] = cat_version();
 	if str2double(catVer) > 1500
 		catTempDir = 'templates_volumes';
@@ -319,7 +326,7 @@ for iList=1:length(Dlist)
     if ~isempty(DataParFile{iList})
         try
             % Run ExploreASL
-            cd(x.MyPath);
+            cd(x.opts.MyPath);
             
             if RunMethod>2 % prepare compilation testing
                 [Fpath, Ffile, Fext] = fileparts(MatlabPath);
@@ -332,14 +339,14 @@ for iList=1:length(Dlist)
             
             switch RunMethod
                 case 1 % run ExploreASL serially
-                    ExploreASL_Master(DataParFile{iList}{1}, 0, 1, false); % can we run screen from here? or run matlab in background, linux easy
+                    ExploreASL(fileparts(DataParFile{iList}{1}), 0, 1, false); % can we run screen from here? or run matlab in background, linux easy
                 case 2 % run ExploreASl parallel (start new MATLAB instances)
                     if isunix
                         ScreenString = ['screen -dmS ' ScreenName ' nice -n 10 ' MatlabPath ' -nodesktop -nosplash -r '];
-                        RunExploreASLString = ['"cd(''' x.MyPath ''');ExploreASL_Master(''' DataParFile{iList}{1} ''',0,1,0);system([''screen -SX ' ScreenName ' kill'']);"'];
+                        RunExploreASLString = ['"cd(''' x.opts.MyPath ''');ExploreASL(''' fileparts(DataParFile{iList}{1}) ''',0,1,0);system([''screen -SX ' ScreenName ' kill'']);"']; 
                     else
                         ScreenString = [MatlabPath ' -nodesktop -nosplash -r '];
-                        RunExploreASLString = ['"cd(''' x.MyPath ''');ExploreASL_Master(''' DataParFile{iList}{1} ''',0,1,0);system([''exit'']);"'];
+                        RunExploreASLString = ['"cd(''' x.opts.MyPath ''');ExploreASL(''' fileparts(DataParFile{iList}{1}) ''',0,1,0);system([''exit'']);"'];
                     end
                     system([ScreenString RunExploreASLString ' &']);
                 case 3 % run ExploreASL compilation serially
@@ -466,7 +473,7 @@ save(SaveFile, 'ResultsTable');
 %% 8) Compare table with reference table
 
 % Comparison with tsv file
-[ReferenceTables,ReferenceTable] = xASL_qc_LoadRefTable(fullfile(x.MyPath,'Testing','Reference','ReferenceValues.tsv'));
+[ReferenceTables,ReferenceTable] = xASL_qc_LoadRefTable(fullfile(x.opts.MyPath,'Testing','Reference','ReferenceValues.tsv'));
 ResultsComparison = xASL_qc_CompareTables(ReferenceTable,ResultsTable);
 save(SaveFile, 'ResultsTable', 'ReferenceTables', 'ReferenceTable', 'ResultsComparison');
 
