@@ -1,5 +1,6 @@
 function [ResultsTable] = xASL_qc_TestExploreASL_HM(RunMethod, bTestSPM, bOverwrite, bCompiled) 
 %xASL_qc_TestExploreASL_HM Run ExploreASL QC for test datasets
+% Note: addpath('../CustomScripts/ExploreASLLegacy/');
 
 if nargin<1 || isempty(RunMethod)
     RunMethod = 1;
@@ -17,13 +18,16 @@ end
 if ismac
     TestDirOrig = '/Users/henk/ExploreASL/TestDataSets';
     TestDirDest = '/Users/henk/ExploreASL/ASL/TestCasesProcessed';
+    MatlabPath = [];
 elseif ispc
     TestDirOrig = 'S:\gifmi\Projects\ExploreASL\ExploreASL_TestCases\ExploreASL_TestCases';
     TestDirDest = 'S:\gifmi\Projects\ExploreASL\ExploreASL_TestCases\ProcessedCases';
+    MatlabPath = [];
 else
     % linux
      TestDirOrig = '/scratch/hjmutsaerts/TestDataSets';
      TestDirDest = '/scratch/hjmutsaerts/ExploreASL_TestCasesProcessed';
+     MatlabPath = 'bash /opt/aumc-apps/matlab/R2021b/bin/matlab';
 end
 
 if bCompiled
@@ -50,7 +54,7 @@ if bCompiled
     
     [ResultsTable] = xASL_qc_TestExploreASL(TestDirOrig, TestDirDest, RunMethod, 0, MatlabPath, [], [], bOverwrite, [], RunTimePath, 0);
 else
-    [ResultsTable] = xASL_qc_TestExploreASL(TestDirOrig, TestDirDest, RunMethod, bTestSPM, [], [], [], bOverwrite, [], [], 0);
+    [ResultsTable] = xASL_qc_TestExploreASL(TestDirOrig, TestDirDest, RunMethod, bTestSPM, MatlabPath, [], [], bOverwrite, [], [], 0);
 end
 
 
