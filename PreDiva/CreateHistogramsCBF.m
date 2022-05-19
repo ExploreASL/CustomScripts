@@ -1,3 +1,6 @@
+% Check out CBF differences between crushed & non-crushed for baseline &
+% follow-up
+
 TP1_crushed = CBF(Session==1 & TimePoint==1);
 TP1_ncrushed = CBF(Session==2 & TimePoint==1);
 TP2_crushed = CBF(Session==1 & TimePoint==2);
@@ -21,7 +24,6 @@ plot(X_TP1_nc, N_TP1_nc/sum(N_TP1_nc)*100);
 xlabel('CBF non-crushed baseline (mL/100g/min)');
 ylabel('Probability (%)');
 
-
 subplot(2,2,3);
 plot(X_TP2_c, N_TP2_c/sum(N_TP2_c)*100);
 xlabel('CBF crushed follow-up (mL/100g/min)');
@@ -32,6 +34,8 @@ plot(X_TP2_nc, N_TP2_nc/sum(N_TP2_nc)*100);
 xlabel('CBF non-crushed follow-up (mL/100g/min)');
 ylabel('Probability (%)');
 
+% Check out the same for slice readout (TE)
+
 TP1_crushed = SliceReadoutMat(Session==1 & TimePoint==1);
 TP1_ncrushed = SliceReadoutMat(Session==2 & TimePoint==1);
 TP2_crushed = SliceReadoutMat(Session==1 & TimePoint==2);
@@ -41,3 +45,5 @@ unique(TP1_crushed)
 unique(TP1_ncrushed)
 unique(TP2_crushed)
 unique(TP2_ncrushed)
+
+% Check the same for the data Melanie has
