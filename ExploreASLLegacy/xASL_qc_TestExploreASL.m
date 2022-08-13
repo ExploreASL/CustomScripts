@@ -315,7 +315,7 @@ end
 
 % Get list of data to test
 Dlist = xASL_adm_GetFileList(TestDirDest,'^.*$','List',[0 Inf], true);
-LogFiles = cellfun(@(y) fullfile(TestDirDest,y,'Population','xASL_module_Population.log'), Dlist, 'UniformOutput',false);
+LogFiles = cellfun(@(y) fullfile(TestDirDest,y,'log','xASL_module_Population.log'), Dlist, 'UniformOutput',false);
 
 for iList=1:length(Dlist)
     AnalysisDir = fullfile(TestDirDest,Dlist{iList});
@@ -373,7 +373,7 @@ end
 
 % ============================================================
 %% 6) Pause until all results exist (if running parallel in background)
-if RunMethod==2
+if RunMethod==2 || RunMethod==4
     LogsDontExist = max(cellfun(@(y) ~exist(y,'file'), LogFiles));
 
     CountTime = 0;
