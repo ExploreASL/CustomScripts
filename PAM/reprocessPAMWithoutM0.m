@@ -17,7 +17,7 @@ for iSubject = 1:length(subjectList)
 	% Modify the ASL.json
 	% Correct M0 type
 	if xASL_exist(fullfile(pathRoot,'derivatives','ExploreASL',nameSubject,'ASL_1','ASL4D.json'))
-		jsonASL = spm_jsonread(fullfile(pathRoot,'derivatives','ExploreASL',nameSubject,'ASL_1','ASL4D.json'));
+		jsonASL = xASL_io_ReadJson(fullfile(pathRoot,'derivatives','ExploreASL',nameSubject,'ASL_1','ASL4D.json'));
 		if isfield(jsonASL,'M0Type')
 			jsonASL = rmfield(jsonASL,'M0Type');
 		end
@@ -28,7 +28,7 @@ for iSubject = 1:length(subjectList)
 		
 		% Round the BSup Time
 		jsonASL.BackgroundSuppressionPulseTime = round(jsonASL.BackgroundSuppressionPulseTime*1000)/1000;
-		spm_jsonwrite(fullfile(pathRoot,'derivatives','ExploreASL',nameSubject,'ASL_1','ASL4D.json'),jsonASL);
+		xASL_io_WriteJson(fullfile(pathRoot,'derivatives','ExploreASL',nameSubject,'ASL_1','ASL4D.json'),jsonASL);
 	end
 	
 	% Delete the locks for the ASL module

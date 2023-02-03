@@ -39,7 +39,7 @@ for iScanner=1:length(ScannerID)
         % Print JSON fields (if there are any)
         JSONlist = xASL_adm_GetFileList(Dlist{iDir}, '^(?!(QC|WAD)).*\.json$', 'FPListRec', [0 Inf]);
         if ~isempty(JSONlist)
-            json = spm_jsonread(JSONlist{1});
+            json = xASL_io_ReadJson(JSONlist{1});
             
             for iJSON=1:length(JSONfields)
                 if isfield(json,JSONfields{iJSON})

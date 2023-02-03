@@ -58,4 +58,4 @@ EPAD.Site060.Initial_PLD = 2000;
 EPAD.Site060.LabelingDuration = 800;
 EPAD.Site060.SliceReadoutTime = 0;
 
-spm_jsonwrite('/mnt/s4e_data/RAD/share/ExploreASL/CustomScripts/EPAD/DataPars/ASLQPars.json',EPAD);
+xASL_io_WriteJson('/mnt/s4e_data/RAD/share/ExploreASL/CustomScripts/EPAD/DataPars/ASLQPars.json',EPAD);

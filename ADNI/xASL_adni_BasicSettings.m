@@ -20,7 +20,7 @@ function [userConfig,adniDirectory,adniDirectoryResults] = xASL_adni_BasicSettin
     
     % Check if JSON with ADNI_VERSION, ADNI_ORIGINAL_DIR, ADNI_OUTPUT_DIR exists
     if xASL_exist(fullfile(ADNI_DIR,'userConfig.json'),'file')
-        userConfig = spm_jsonread(fullfile(ADNI_DIR,'userConfig.json'));
+        userConfig = xASL_io_ReadJson(fullfile(ADNI_DIR,'userConfig.json'));
     else
         fprintf('We could not find a userConfig.json file...\n');
         fprintf('Consider creating this JSON file with the following fields:\n');

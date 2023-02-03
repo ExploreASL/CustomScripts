@@ -60,7 +60,7 @@ sourceStructure.tokenSessionAliases = {'',''};
 sourceStructure.tokenScanAliases = {'^ASL_TI1700$','ASL4D','^T1_MPRAGE$','T1w','^M0_TI5000_AP$','M0','^M0_TI5000_PA$','M0-PA'};
 sourceStructure.bMatchDirectories = true;
 
-spm_jsonwrite(fullfile(studyROOT,'sourcestructure.json'),sourceStructure);
+xASL_io_WriteJson(fullfile(studyROOT,'sourcestructure.json'),sourceStructure);
 
 studyPar.DatasetType = 'raw';
 studyPar.LabelingType = 'PASL';
@@ -70,7 +70,7 @@ studyPar.BolusCutOffFlag = true;
 studyPar.BolusCutOffDelayTime = [0.7 1.6];
 studyPar.BolusCutOffTechnique = 'Q2TIPS';
 studyPar.ASLContext = 'label,control';
-spm_jsonwrite(fullfile(studyROOT,'studyPar.json'),studyPar);
+xASL_io_WriteJson(fullfile(studyROOT,'studyPar.json'),studyPar);
 
 %% IMPORT DICOM TO NII
 ExploreASL(studyROOT, [1 0 0 0],0);

@@ -97,7 +97,7 @@ function [json, newCaseRoot, iSessionsNum, studyPar] = xASL_adni_CopyAndModifySe
         end
 
         % Write JSON file
-        spm_jsonwrite(fullfile(dataset.newCaseRoot,['dataPar-' thisSessions '.json']),json);
+        xASL_io_WriteJson(fullfile(dataset.newCaseRoot,['dataPar-' thisSessions '.json']),json);
 
     end
 

@@ -174,9 +174,9 @@ fileList = xASL_adm_GetFileList(derivativesDir, '.*ASL4D\.json$', 'FPListRec');
 fprintf('Adding DummyScanPositionInASL4D to MG Siemens ASL4D.json:   ');
 for iJSON=1:numel(fileList)
     xASL_TrackProgress(iJSON, numel(fileList));
-    JSON = spm_jsonread(fileList{iJSON});
+    JSON = xASL_io_ReadJson(fileList{iJSON});
     JSON.DummyScanPositionInASL4D = [1 2];
-    spm_jsonwrite(fileList{iJSON}, JSON);
+    xASL_io_WriteJson(fileList{iJSON}, JSON);
 end
 fprintf('\n');
 
@@ -186,9 +186,9 @@ fileList = xASL_adm_GetFileList(derivativesDir, '.*ASL4D\.json$', 'FPListRec');
 fprintf('Adding DummyScanPositionInASL4D to CU Siemens ASL4D.json:   ');
 for iJSON=1:numel(fileList)
     xASL_TrackProgress(iJSON, numel(fileList));
-    JSON = spm_jsonread(fileList{iJSON});
+    JSON = xASL_io_ReadJson(fileList{iJSON});
     JSON.DummyScanPositionInASL4D = [1 2];
-    spm_jsonwrite(fileList{iJSON}, JSON);
+    xASL_io_WriteJson(fileList{iJSON}, JSON);
 end
 fprintf('\n');
 
@@ -205,9 +205,9 @@ fileList = xASL_adm_GetFileList(derivativesDir, '.*ASL4D\.json$', 'FPListRec');
 fprintf('Adding SliceReadoutTime to UM Philips ASL4D.json:   ');
 for iJSON=1:numel(fileList)
     xASL_TrackProgress(iJSON, numel(fileList));
-    JSON = spm_jsonread(fileList{iJSON});
+    JSON = xASL_io_ReadJson(fileList{iJSON});
     JSON.SliceReadoutTime = 'ShortestTR';
-    spm_jsonwrite(fileList{iJSON}, JSON);
+    xASL_io_WriteJson(fileList{iJSON}, JSON);
 end
 fprintf('\n');
 

@@ -14,9 +14,9 @@ rawDirROI = fullfile(rawDir,'rawROIs');
 imPar = ExploreASL_ImportConfig(rawDir);
 ExploreASL_Import(imPar, 0,1,0);
 
-jsonParms = spm_jsonread(fullfile(rawDir,'analysis','P05','ASL_1','ASL4D.json'));
+jsonParms = xASL_io_ReadJson(fullfile(rawDir,'analysis','P05','ASL_1','ASL4D.json'));
 jsonParms.MRScaleSlope = jsonParms.MRScaleSlope*2;
-spm_jsonwrite(fullfile(rawDir,'analysis','P05','ASL_1','ASL4D.json'),jsonParms);
+xASL_io_WriteJson(fullfile(rawDir,'analysis','P05','ASL_1','ASL4D.json'),jsonParms);
 
 % Now we have them!
 % Remove DSC of subjects 2 and 6 since these were not quantified

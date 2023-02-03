@@ -110,7 +110,7 @@ for iS1=1:length(Slist1)
                             
                             
                             if strcmp(ScanType{iType},'T1w') % Extract information from first scan every time -> with this '_' before T1w it works with the runs
-                                json = spm_jsonread(BIDSlist{iBids});
+                                json = xASL_io_ReadJson(BIDSlist{iBids});
                                 if isempty(regexp(ScanTypeName, '_run-0[2-9]|d+$','ONCE')) %digit>1 , between 2-9
                                     if isfield(json,'ManufacturersModelName')
                                         scannerList{iElement,1} = sub;

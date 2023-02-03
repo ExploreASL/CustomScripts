@@ -38,19 +38,19 @@ for iSc=1:length(ScannersList)
         
          %StudyPar
          studyParPath = fullfile(Rdir,'studyPar.json');
-         studyPar = spm_jsonread(studyParPath);
+         studyPar = xASL_io_ReadJson(studyParPath);
          
          %== Anatomical (T1,FLAIR) Jsons ==%
          for iJ=1:length(JsonsAnatList)
             
             % Load and correct Anat JSONs 
-            jsonAnat = spm_jsonread(JsonsAnatList{iJ});
+            jsonAnat = xASL_io_ReadJson(JsonsAnatList{iJ});
             jsonAnat = xASL_bids_BIDSifyAnatJSON(jsonAnat,studyPar);
             jsonAnat = xASL_bids_VendorFieldCheck(jsonAnat);
             jsonAnatCheck = xASL_bids_JsonCheck(jsonAnat,'');
             
             % Save the JSON
-            spm_jsonwrite(JsonsAnatList{iJ} ,jsonAnatCheck);
+            xASL_io_WriteJson(JsonsAnatList{iJ} ,jsonAnatCheck);
          end
         
         % == ASL jsons == %
@@ -59,7 +59,7 @@ for iSc=1:length(ScannersList)
             ASLOutPath = ASLfile(1:end-4); %removing the _asl part
             bidsPar = xASL_bids_Config();
 
-            jsonASL = spm_jsonread(JsonsASLList{iA});
+            jsonASL = xASL_io_ReadJson(JsonsASLList{iA});
             headerASL = xASL_io_ReadNifti(fullfile(dir, [ASLfile '.nii'])); %path for the .nii corresponding to .json
             
             
@@ -72,7 +72,7 @@ for iSc=1:length(ScannersList)
             jsonFinalName= fullfile(dir,[ASLfile '.json']);
             
             %Save Json
-            spm_jsonwrite(jsonFinalName,jsonASLCheck);
+            xASL_io_WriteJson(jsonFinalName,jsonASLCheck);
         end
     end
 end

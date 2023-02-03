@@ -120,7 +120,7 @@ end
 %% 3) Save new JSON file
 if ~isempty(PathChild)
     % any pre-existing JSON file will be overwritten
-    spm_jsonwrite(PathChild, ChildJSON);
+    xASL_io_WriteJson(PathChild, ChildJSON);
 end
 
 

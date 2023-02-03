@@ -107,11 +107,11 @@ for iPatient = 1:numel(allPatients)
         mkdir(fullfile(outputDir,thisPatient,'sourcedata','sub-001','session-1'));
 
         % Create sourceStructure.json
-        spm_jsonwrite(fullfile(outputDir,thisPatient,'sourceStructure.json'),sourceStructure);
+        xASL_io_WriteJson(fullfile(outputDir,thisPatient,'sourceStructure.json'),sourceStructure);
 
         % Create dataPar.json
         dataPar.name = thisPatient;
-        spm_jsonwrite(fullfile(outputDir,thisPatient,'dataPar.json'),dataPar);
+        xASL_io_WriteJson(fullfile(outputDir,thisPatient,'dataPar.json'),dataPar);
 
         % Copy series
         copySeriesTwins(patients,thisPatient,outputDir);

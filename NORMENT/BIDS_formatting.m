@@ -32,9 +32,9 @@ Subject_flair_json_path = [BIDSrequiredFilesfolder 'FLAIR.json'];
 Subject_asl_json_path = [BIDSrequiredFilesfolder 'asl.json'];
 
 % read JSONS
-jsonT1w = spm_jsonread(Subject_t1w_json_path);
-jsonFLAIR = spm_jsonread(Subject_flair_json_path);
-jsonASL = spm_jsonread(Subject_asl_json_path);
+jsonT1w = xASL_io_ReadJson(Subject_t1w_json_path);
+jsonFLAIR = xASL_io_ReadJson(Subject_flair_json_path);
+jsonASL = xASL_io_ReadJson(Subject_asl_json_path);
 
 % moving files and creating JSONS per subject/session
 
@@ -151,10 +151,10 @@ for subject = 1:nSubjects
     
     
     % write JSON's
-    spm_jsonwrite(Subject_T1w_JSON_BIDS_path, jsonT1w);
-    spm_jsonwrite(Subject_FLAIR_JSON_BIDS_path, jsonFLAIR);
+    xASL_io_WriteJson(Subject_T1w_JSON_BIDS_path, jsonT1w);
+    xASL_io_WriteJson(Subject_FLAIR_JSON_BIDS_path, jsonFLAIR);
     if exist(Subject_asl_path,'file')
-        spm_jsonwrite(Subject_asl_JSON_BIDS_path, jsonASL);
+        xASL_io_WriteJson(Subject_asl_JSON_BIDS_path, jsonASL);
     else
         disp('ASL.nii.gz does not exist, no ASL.json copied, continuing with next subject/session')
     end

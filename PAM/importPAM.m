@@ -26,7 +26,7 @@ for iType = 1:length(importTypes)
 	
 	% For sourcedata13 and sourcedata23, we need to reorder the NII from CCCLLL to CLCLCL
 	if strcmp(importTypes{iType},'13') || strcmp(importTypes{iType},'23')
-		ExploreASL(pathRoot,[1 0 0 0],0);
+		ExploreASL(pathRoot,[1 0 0],0);
 		% Go to derivatives/ExploreASL/temp a reorder everything there
 		
 		% Get all the subject names
@@ -49,11 +49,11 @@ for iType = 1:length(importTypes)
 				end
 			end
 		end
-		ExploreASL(pathRoot,[0 1 0 0],0);
+		ExploreASL(pathRoot,[0 1 0 ],0);
 	else
-		%ExploreASL(pathRoot,[1 1 0 0],0);
-		ExploreASL(pathRoot,[1 0 0 0],0);
-		ExploreASL(pathRoot,[0 1 0 0],0);
+		%ExploreASL(pathRoot,[1 1 0 ],0);
+		ExploreASL(pathRoot,[1 0 0],0);
+		ExploreASL(pathRoot,[0 1 0],0);
 	end
 	
 	% Return back
@@ -63,7 +63,7 @@ end
 
 %% Run import from BIDS to ASL Legacy data format
 % Now that all is nicely in BIDS, we can prepare it for processing
-ExploreASL(pathRoot,[0 0 0 1],0);
+ExploreASL(pathRoot);
 
 %% Run the processing
 ExploreASL(pathRoot,0,1);

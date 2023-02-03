@@ -51,11 +51,11 @@ for iSubject=1:length(SubjectList)
     % Find ASL&M0 JSON files
     JsonFiles = xASL_adm_GetFileList(fullfile(AnalysisDir, SubjectList{iSubject}), '^(ASL4D|M0)\.json$', 'FPListRec', [0 Inf]);
     for iJson=1:length(JsonFiles)    
-        parms = spm_jsonread(JsonFiles{iJson});
+        parms = xASL_io_ReadJson(JsonFiles{iJson});
         for iG=1:length(FieldsG)
             parms.(FieldsG{iG}) = G.(FieldsG{iG}){SequenceN};
         end
-        spm_jsonwrite(JsonFiles{iJson},parms);
+        xASL_io_WriteJson(JsonFiles{iJson},parms);
     end
     
 end

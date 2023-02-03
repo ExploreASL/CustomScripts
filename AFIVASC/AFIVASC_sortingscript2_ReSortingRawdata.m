@@ -79,7 +79,7 @@ for iSub=1:length(SubList)
             
             %Correcting ASL.jsons
             if strcmp(ext,'.json')
-                jsonASL = spm_jsonread(ASLList{iA});
+                jsonASL = xASL_io_ReadJson(ASLList{iA});
                 
                 %We need PostLabelingDelay, M0Type, LabelingDuration, ArterialSpinLabelingType=PCASL
                 
@@ -100,7 +100,7 @@ for iSub=1:length(SubList)
                     jsonASL.PostLabelingDelay=2.000; %run-2
                 end
                 
-                spm_jsonwrite(ASLList{iA} ,jsonASL);
+                xASL_io_WriteJson(ASLList{iA} ,jsonASL);
             end
             
             if ~isempty(regexp(ASLfilename,'ses-1_run-1','ONCE')) %run-1

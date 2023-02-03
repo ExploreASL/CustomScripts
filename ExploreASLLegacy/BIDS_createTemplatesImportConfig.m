@@ -190,6 +190,6 @@ for iFlavor=1:length(listOfConfigFlavors)
 
     % Write file
     validFileName = [genvarname(listOfConfigFlavors{iFlavor}) '.json'];
-    spm_jsonwrite(fullfile(customScripts, 'ConfigFiles', validFileName), imPar);
+    xASL_io_WriteJson(fullfile(customScripts, 'ConfigFiles', validFileName), imPar);
 end
 

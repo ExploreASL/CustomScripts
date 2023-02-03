@@ -118,7 +118,7 @@ if length(fields(NotCopiedList))>0
     warning('We couldnt find WMH segmentations for all subjects, please check //analysis/NotCopiedWMH_List.json');
     SavePath = fullfile(AnalysisDir, 'NotCopiedWMH_List.json');
     xASL_delete(SavePath);
-    spm_jsonwrite(SavePath, NotCopiedList);
+    xASL_io_WriteJson(SavePath, NotCopiedList);
 end
 
 end

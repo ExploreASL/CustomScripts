@@ -103,8 +103,8 @@ function xASL_adni_CreateSourceSubject(adniCases,userConfig,adniDirectory,adniDi
 
             % Add sourceStructure.json and studyPar.json
             if xASL_exist(fullfile(adniDirectoryResults,adniCases{iCase,1}),'dir')
-                spm_jsonwrite(fullfile(newCaseRoot,'sourceStructure.json'),sourceStructure);
-                spm_jsonwrite(fullfile(newCaseRoot,'studyPar.json'),studyPar);
+                xASL_io_WriteJson(fullfile(newCaseRoot,'sourceStructure.json'),sourceStructure);
+                xASL_io_WriteJson(fullfile(newCaseRoot,'studyPar.json'),studyPar);
             end
 
 

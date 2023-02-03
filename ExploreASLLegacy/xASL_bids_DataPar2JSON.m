@@ -74,7 +74,7 @@ for iList=1:length(FileList)
     JSON = xASL_bids_InsertJSONFields(DataPar, JSON, Fields2Skip);
     
     %% 6) Save (& overwrite if existed) new JSON
-    spm_jsonwrite(PathJSON, JSON);
+    xASL_io_WriteJson(PathJSON, JSON);
     %% 7) Delete parms.mat if existed
     xASL_delete(PathMAT);
 end

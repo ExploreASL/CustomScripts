@@ -68,7 +68,7 @@ for iD=1:length(DcmList)
    
     % Save the list
     SavePath = fullfile(DcmPath,'UnequalList.json');
-    spm_jsonwrite(SavePath, UnequalList);
+    xASL_io_WriteJson(SavePath, UnequalList);
 end
 
 fprintf('\n');

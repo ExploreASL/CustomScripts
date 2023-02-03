@@ -60,7 +60,7 @@ for iSubject=1:length(SubjectList)
 
     if ~isempty(JSONPath)
         for iJSON=1:length(JSONPath)
-            jsonData = spm_jsonread(JSONPath{iJSON});
+            jsonData = xASL_io_ReadJson(JSONPath{iJSON});
             if ~isfield(MotherData, CurrentSite)
                 warning('Parameters missing for this site:');
                 fprintf('%s\n', CurrentSite);
@@ -69,7 +69,7 @@ for iSubject=1:length(SubjectList)
                 for iField=1:length(FieldsAre)
                     jsonData.(FieldsAre{iField}) = MotherData.(CurrentSite).(FieldsAre{iField});
                 end
-                spm_jsonwrite(JSONPath{iJSON},jsonData);
+                xASL_io_WriteJson(JSONPath{iJSON},jsonData);
             end
         end
     end
