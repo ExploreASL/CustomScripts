@@ -1,0 +1,19 @@
+{
+    "scratchDir":"/scratch/radv/mshammer",
+    "XASLDIR":"/scratch/radv/mshammer/WeeklyTest/ExploreASL",
+    "FlavorTestConfig":"/scratch/radv/mshammer/WeeklyTest/FlavorConfig.json",
+    "FlavorDir":"/scratch/radv/mshammer/WeeklyTest/FlavorDatabase",
+    "TestDataSetSourceDir":"/scratch/radv/mshammer/WeeklyTest/TestDataSets",
+    "UnitTestingDir":"/scratch/radv/mshammer/WeeklyTest/Testing",
+    "ResultMasterDir":"/scratch/radv/mshammer/WeeklyTest/Results",
+    "EmailAdress":"m.hammer@amsterdamumc.nl",
+    "iNiceness":0,
+    "bPull":false,
+    "bSPMTest":true,
+    "bUnitTest":true,
+    "bFlavorTest":true,
+    "bTestDataSet":true,
+    "bCompile":false,
+    "bSummary":true,
+    "bEmail":false
+}
