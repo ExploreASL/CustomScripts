@@ -6,7 +6,6 @@
 Matlab=matlab-R2019b 
 
 # Get info from config Json
-scratchDir=`jq .scratchDir xASL_test_ConfigWeeklyTest.json -r`
 XASLDIR=`jq .XASLDIR xASL_test_ConfigWeeklyTest.json -r`
 FlavorTestConfig=`jq .FlavorTestConfig xASL_test_ConfigWeeklyTest.json -r`
 FlavorDir=`jq .FlavorDir xASL_test_ConfigWeeklyTest.json -r`
@@ -23,6 +22,7 @@ bCompile=`jq .bCompile xASL_test_ConfigWeeklyTest.json`
 bSummary=`jq .bSummary xASL_test_ConfigWeeklyTest.json`
 bEmail=`jq .bEmail xASL_test_ConfigWeeklyTest.json`
 iNiceness=`jq .iNiceness xASL_test_ConfigWeeklyTest.json` 
+bPrintSettings=true
 
 # Temporary Folders, ALL CONTENT WILL BE REMOVED FROM THIS FOLDER.
 ReferenceTSV=${XASLDIR}/Testing/Reference/ReferenceValues.tsv
@@ -39,33 +39,29 @@ touch ${VersionFile}
 # Initialize some variables
 cd ${XASLDIR}
 
-# Fetch remote branch, see if up to date and pull changes.
-if ${bPull}; then
-	echo "bPull was ${bPull}"
-	cd ${XASLDIR}
-	git remote update
-	if git status -uno | grep -q 'Your branch is up-to-date'; then
-		echo "Branch up to date, quitting CDCI" 
-		exit 0
-	elif git status -uno | grep -q 'Your branch is behind'; then
-		echo "Branch delayed, Proceeding to CDCI"
-		git pull
-	else 
-		echo "Error, Branch status not found, quitting CDCI."
-		exit 1
-	fi
-fi
-
 # Get current Commit hash
 RepositoryVersion=`git rev-parse --short HEAD` 
 echo "We're testing version on ExploreASL version ${RepositoryVersion}." >>  ${VersionFile}
+
+# Print settings
+if ${bPrintSettings}; then
+	settingsArray=(XASLDIR FlavorTestConfig FlavorDir TestDataSetSourceDir UnitTestingDir ResultMasterDir EmailAdress bPull bSPMTest bUnitTest bFlavorTest bTestDataSet bCompile bSummary bEmail iNiceness)
+	for Element in ${settingsArray[@]}; do
+	 	printf "%-20s %s\n" ${Element} "was set to ${!Element}" >> ${VersionFile}
+	done
+fi
 
 # Run SPM test (no output?, fix that)
 if ${bSPMTest}; then
 	# Run Explore ASL on the TestDataSet Directory
 	# Copy to a reference location and go there
+
+	# Go to directory and fetch latest version.
 	cd ${TestDataSetSourceDir}
-	git pull
+	if ${bPull}; then
+		git pull
+	fi
+
 	rm -rf ${TestDataSetWorkspaceDir}
 	cp -R ${TestDataSetSourceDir} ${TestDataSetWorkspaceDir} 
 	echo "SPMTest was conducted in ExploreASL version ${RepositoryVersion}." >>  ${VersionFile}
@@ -79,8 +75,13 @@ fi
 
 # Run UnitTest
 if ${bUnitTest}; then
+
+	# Go to directory and fetch latest version.
 	cd ${UnitTestingDir}
-	git pull
+	if ${bPull}; then
+		git pull
+	fi
+
 	UnitVersion=`git rev-parse --short HEAD` 
 	cd ${XASLDIR}
 	echo "Unit test directory was tested on version ${UnitVersion}." >>  ${VersionFile}
@@ -92,8 +93,12 @@ fi
 
 # Run Flavor Test Parallelize?
 if ${bFlavorTest}; then
+	# Go to directory and fetch latest version.
 	cd ${FlavorDir}
-	git pull
+	if ${bPull}; then
+		git pull
+	fi
+
 	FlavorVersion=`git rev-parse --short HEAD` 
 	cd ${XASLDIR}
 	echo "Flavor database test directory was tested  on version ${FlavorVersion}." >>  ${VersionFile}
@@ -108,13 +113,17 @@ if ${bTestDataSet}; then
 	# Run Explore ASL on the TestDataSet Directory
 	# Copy to a reference location and go there
 	cd ${TestDataSetSourceDir}
-	git pull
+	if ${bPull}; then
+		git pull
+	fi
+
 	TestDataSet=`git rev-parse --short HEAD` 
+	echo "TestDataSet directory was tested on version ${TestDataSet}." >> ${VersionFile}
+
 	cd ${XASLDIR}
 	rm -rf ${TestDataSetWorkspaceDir}
 	cp -R ${TestDataSetSourceDir} ${TestDataSetWorkspaceDir} 
 	cd ${TestDataSetWorkspaceDir}
-	echo "TestDataSet directory was tested on version ${bTestDataSet}." >> ${VersionFile}
 
 	# create an array of all folders in the reference directory
 	FolderArray=(*/)
@@ -155,7 +164,7 @@ if ${bEmail}; then
 		mail -s 'xASL git commit detected' -a ${RepositoryVersion}_Results.txt m.hammer@amsterdamumc.nl <<< 'Git commit ${RepositoryVersion} resulted in changes in the test results.\n Changes are attached in the text file.' 
 		exit 0
 	else 
-		echo "No Changes detected, aborting"
+		echo "No Changes detected, no email has been sent." >>  ${VersionFile}
 		rm ${RepositoryVersion}_Results.txt 
 		exit 0
 	fi 

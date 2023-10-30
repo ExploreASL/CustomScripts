@@ -8,7 +8,7 @@
     "ResultMasterDir":"/scratch/radv/mshammer/WeeklyTest/Results",
     "EmailAdress":"m.hammer@amsterdamumc.nl",
     "iNiceness":0,
-    "bPull":false,
+    "bPull":true,
     "bSPMTest":true,
     "bUnitTest":true,
     "bFlavorTest":true,
