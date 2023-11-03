@@ -6,23 +6,10 @@
 Matlab=matlab-R2019b 
 
 # Get info from config Json
-XASLDIR=`jq .XASLDIR xASL_test_ConfigWeeklyTest.json -r`
-FlavorTestConfig=`jq .FlavorTestConfig xASL_test_ConfigWeeklyTest.json -r`
-FlavorDir=`jq .FlavorDir xASL_test_ConfigWeeklyTest.json -r`
-TestDataSetSourceDir=`jq .TestDataSetSourceDir xASL_test_ConfigWeeklyTest.json -r`
-UnitTestingDir=`jq .UnitTestingDir xASL_test_ConfigWeeklyTest.json -r`
-ResultMasterDir=`jq .ResultMasterDir xASL_test_ConfigWeeklyTest.json -r`
-EmailAdress=`jq .EmailAdress xASL_test_ConfigWeeklyTest.json -r`
-bPull=`jq .bPull xASL_test_ConfigWeeklyTest.json`
-bSPMTest=`jq .bSPMTest xASL_test_ConfigWeeklyTest.json`
-bUnitTest=`jq .bUnitTest xASL_test_ConfigWeeklyTest.json`
-bFlavorTest=`jq .bFlavorTest xASL_test_ConfigWeeklyTest.json`
-bTestDataSet=`jq .bTestDataSet xASL_test_ConfigWeeklyTest.json`
-bCompile=`jq .bCompile xASL_test_ConfigWeeklyTest.json`
-bSummary=`jq .bSummary xASL_test_ConfigWeeklyTest.json`
-bEmail=`jq .bEmail xASL_test_ConfigWeeklyTest.json`
-iNiceness=`jq .iNiceness xASL_test_ConfigWeeklyTest.json` 
-bPrintSettings=true
+settingsArray=(XASLDIR FlavorTestConfig FlavorDir TestDataSetSourceDir UnitTestingDir ResultMasterDir EmailAdress bPull bSPMTest bUnitTest bFlavorTest bTestDataSet bCompile bSummary bEmail iNiceness)
+for Element in ${settingsArray[@]}; do
+	export "${Element}=`jq .${Element} xASL_test_ConfigWeeklyTest.json -r`"
+done
 
 # Temporary Folders, ALL CONTENT WILL BE REMOVED FROM THIS FOLDER.
 ReferenceTSV=${XASLDIR}/Testing/Reference/ReferenceValues.tsv
@@ -44,12 +31,10 @@ RepositoryVersion=`git rev-parse --short HEAD`
 echo "We're testing version on ExploreASL version ${RepositoryVersion}." >>  ${VersionFile}
 
 # Print settings
-if ${bPrintSettings}; then
-	settingsArray=(XASLDIR FlavorTestConfig FlavorDir TestDataSetSourceDir UnitTestingDir ResultMasterDir EmailAdress bPull bSPMTest bUnitTest bFlavorTest bTestDataSet bCompile bSummary bEmail iNiceness)
-	for Element in ${settingsArray[@]}; do
-	 	printf "%-20s %s\n" ${Element} "was set to ${!Element}" >> ${VersionFile}
-	done
-fi
+for Element in ${settingsArray[@]}; do
+	printf "%-20s %s\n" ${Element} "was set to ${!Element}" >> ${VersionFile}
+done
+
 
 # Run SPM test (no output?, fix that)
 if ${bSPMTest}; then
