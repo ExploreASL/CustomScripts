@@ -1,7 +1,7 @@
 % Admin
 
-dirLegacy = '/Users/hjmutsaerts/Downloads/BoleStudienFlavor/rawdata';
-dirRawdata = '/Users/hjmutsaerts/ExploreASL/ASL/BoleStudienFlavor/rawdataNew';
+dirLegacy = '/data/radv/radB/RAD/h.mutsaerts/Archive_ASL/BoleStudien/Bolestudie';
+dirRawdata = '/data/radv/radG/RAD/share/BoleStudien/rawdata';
 
 % Get subject numbers
 listSubjects = xASL_adm_GetFileList(dirLegacy, '\d{3}', 'list', [], 1);
@@ -13,7 +13,7 @@ participants(2:nSubjects+1,1) = listSubjects';
 
 
 % iterate over subjects
-for iSubject=1:nSubjects
+for iSubject=2:nSubjects
     xASL_TrackProgress(iSubject, nSubjects);
     dirSubjectOld = fullfile(dirLegacy, listSubjects{iSubject});
     dirSubjectNew = fullfile(dirRawdata, ['sub-' listSubjects{iSubject}]);
@@ -22,12 +22,26 @@ for iSubject=1:nSubjects
     % anatomic
     dirAnatNew = fullfile(dirSubjectNew, 'anat');
     xASL_adm_CreateDir(dirAnatNew);
-    
+    % T1w
     pathT1old = fullfile(dirSubjectOld, 'T1_ORI.nii');
-    pathT1new = fullfile(dirAnatNew, ['sub-' listSubjects{iSubject} '_T1.nii.gz']);
-    xASL_Copy(pathT1old, pathT1new, 1);
+    if ~xASL_exist(pathT1old)
+        pathT1old = fullfile(dirSubjectOld, 'T1.nii');
+        if ~xASL_exist(pathT1old)
+            warning(['Missing file: ' pathT1old]);
+        end
+    end
 
-    pathFLAIRold = fullfile(dirSubjectOld, 'FLAIR.nii');
+    pathT1new = fullfile(dirAnatNew, ['sub-' listSubjects{iSubject} '_T1.nii.gz']);
+    xASL_Copy(pathT1old, pathT1new);
+    %FLAIR
+    pathFLAIRold = fullfile(dirSubjectOld, 'FLAIR_ORI.nii');
+    if ~xASL_exist(pathFLAIRold)
+        pathFLAIRold = fullfile(dirSubjectOld, 'FLAIR.nii');
+        if ~xASL_exist(pathFLAIRold)
+            warning(['Missing file: ' pathFLAIRold]);
+        end
+    end
+
     pathFLAIRnew = fullfile(dirAnatNew, ['sub-' listSubjects{iSubject} '_FLAIR.nii.gz']);
     xASL_Copy(pathFLAIRold, pathFLAIRnew, 1);
 
@@ -37,11 +51,19 @@ for iSubject=1:nSubjects
     xASL_adm_CreateDir(dirPerfNew);
 
     pathPerfOld = fullfile(dirPerfOld, 'ASL4D.nii');
+    if ~xASL_exist(pathPerfOld)
+        warning(['Missing file: ' pathPerfOld]);
+    end
+
     pathPerfnew = fullfile(dirPerfNew, ['sub-' listSubjects{iSubject} '_asl.nii.gz']);
     xASL_Copy(pathPerfOld, pathPerfnew, 1);
 
     % get parameters
     pathMatOld = fullfile(dirPerfOld, 'ASL4D_parms.mat');
+    if ~xASL_exist(pathMatOld)
+        warning(['Missing file: ' pathMatOld]);
+    end
+
     parms = load(pathMatOld, '-mat');
     % add to json
     json = struct;
