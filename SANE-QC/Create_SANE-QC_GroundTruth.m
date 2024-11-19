@@ -18,8 +18,8 @@ pWMmask = pWM>0.05;
 % pCSFmask = pCSF>0.05;
 
 %NewIm(pCSFmask) = 1;
-NewIm(pWMmask) = 1;
-NewIm(pGMmask) = 2;
+NewIm(pWMmask) = 2;
+NewIm(pGMmask) = 1;
 
 % imshow3D([pGM.*3 pWM.*3 pCSF.*3 NewIm])
 
